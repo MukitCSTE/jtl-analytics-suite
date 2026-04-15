@@ -1,351 +1,533 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { AppBridge } from '@jtl-software/cloud-apps-core';
 import {
   Card,
-  CardHeader,
-  CardTitle,
   CardContent,
   Text,
   Stack,
-  Box,
   Button,
-  Badge,
 } from '@jtl-software/platform-ui-react';
 import {
   FileText,
   Send,
-  Mail,
-  Clock,
   Loader2,
-  CheckCircle,
-  Download,
-  Eye,
+  Bot,
+  User,
+  FileSpreadsheet,
+  File,
+  Settings,
+  Mic,
+  MicOff,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 
 interface ReportAgentViewProps {
   appBridge: AppBridge;
 }
 
-interface ReportRequest {
+interface Message {
   id: string;
-  query: string;
-  email: string;
-  delay: number; // minutes
-  status: 'pending' | 'generating' | 'sent' | 'failed';
-  scheduledTime: Date;
-  report?: string;
+  role: 'user' | 'agent';
+  content: string;
+  data?: any;
+  options?: { label: string; value: string; icon?: React.ReactNode }[];
+  inputType?: 'text' | 'email' | 'choice';
+  isLoading?: boolean;
 }
+
+type AgentState =
+  | 'idle'
+  | 'querying'
+  | 'showing_results'
+  | 'asking_satisfied'
+  | 'asking_email'
+  | 'asking_format'
+  | 'sending'
+  | 'sent';
 
 const AI_SERVER_URL = 'http://localhost:3006';
 
-const reportTemplates = [
-  { icon: '📊', label: 'Daily Sales Summary', query: 'Generate a daily sales report with total revenue, order count, and top products' },
-  { icon: '🚨', label: 'Fraud Alert Report', query: 'Generate a fraud detection report highlighting suspicious orders' },
-  { icon: '👑', label: 'Top Customers Report', query: 'Generate a report of top 10 customers by revenue this month' },
-  { icon: '📦', label: 'Inventory Status', query: 'Generate an inventory report showing low stock items' },
-  { icon: '🚚', label: 'Shipping Report', query: 'Generate a shipping report with pending and delivered orders' },
-  { icon: '📈', label: 'Weekly Trends', query: 'Generate a weekly sales trend analysis report' },
+const MODELS = [
+  { id: 'gpt-4o-mini', name: 'GPT-4o Mini (Fast)' },
+  { id: 'gpt-4o', name: 'GPT-4o (Powerful)' },
+  { id: 'gpt-4', name: 'GPT-4 (Legacy)' },
 ];
 
 const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
-  const [query, setQuery] = useState('');
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '1',
+      role: 'agent',
+      content: 'Hello! I\'m your Report Agent. What report would you like me to generate?\n\nFor example:\n• "Show me sales from last week"\n• "Top 10 customers this month"\n• "Orders pending shipment"',
+    },
+  ]);
+  const [input, setInput] = useState('');
+  const [agentState, setAgentState] = useState<AgentState>('idle');
+  const [currentReport, setCurrentReport] = useState<{ query: string; data: any; answer: string } | null>(null);
   const [email, setEmail] = useState('');
-  const [delay, setDelay] = useState(0); // 0 = now
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [report, setReport] = useState<string | null>(null);
-  const [reportData, setReportData] = useState<any>(null);
-  const [sentReports, setSentReports] = useState<ReportRequest[]>([]);
-  const [showPreview, setShowPreview] = useState(false);
+  const [selectedModel, setSelectedModel] = useState('gpt-4o-mini');
+  const [showSettings, setShowSettings] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const recognitionRef = useRef<any>(null);
 
-  const generateReport = async (reportQuery: string) => {
-    setIsGenerating(true);
-    setReport(null);
-    setReportData(null);
+  // Initialize speech recognition
+  useEffect(() => {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = false;
+      recognitionRef.current.lang = 'en-US';
+
+      recognitionRef.current.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setInput(transcript);
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onerror = () => {
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
+    }
+  }, []);
+
+  // Text-to-speech function
+  const speak = (text: string) => {
+    if (!voiceEnabled || !('speechSynthesis' in window)) return;
+
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
+
+    // Clean text (remove markdown)
+    const cleanText = text
+      .replace(/\*\*/g, '')
+      .replace(/\*/g, '')
+      .replace(/#{1,6}\s/g, '')
+      .replace(/---/g, '')
+      .replace(/\n+/g, '. ')
+      .substring(0, 500); // Limit length
+
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const toggleListening = () => {
+    if (!recognitionRef.current) {
+      alert('Speech recognition not supported in this browser');
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      recognitionRef.current.start();
+      setIsListening(true);
+    }
+  };
+
+  const stopSpeaking = () => {
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+  };
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const addMessage = (message: Omit<Message, 'id'>) => {
+    const newMessage = { ...message, id: Date.now().toString() };
+    setMessages(prev => [...prev, newMessage]);
+
+    // Speak agent messages
+    if (message.role === 'agent' && message.content && !message.isLoading) {
+      setTimeout(() => speak(message.content), 100);
+    }
+  };
+
+  const removeLoadingMessages = () => {
+    setMessages(prev => prev.filter(m => !m.isLoading));
+  };
+
+  const handleQuery = async (query: string) => {
+    // Add user message
+    addMessage({ role: 'user', content: query });
+
+    // Add loading message
+    addMessage({ role: 'agent', content: '', isLoading: true });
+    setAgentState('querying');
 
     try {
       const response = await fetch(`${AI_SERVER_URL}/query`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: reportQuery }),
+        body: JSON.stringify({ question: query }),
       });
 
       const data = await response.json();
-      setReport(data.answer);
-      setReportData(data.data);
-      setShowPreview(true);
+      removeLoadingMessages();
+
+      // Store report data
+      setCurrentReport({ query, data: data.data, answer: data.answer });
+
+      // Show results and ask if satisfied
+      addMessage({
+        role: 'agent',
+        content: data.answer + '\n\n---\n\n**Are you satisfied with this report?**',
+        data: data.data,
+        options: [
+          { label: 'Yes, send it!', value: 'yes' },
+          { label: 'No, let me refine', value: 'no' },
+        ],
+        inputType: 'choice',
+      });
+
+      setAgentState('asking_satisfied');
     } catch (error) {
-      setReport('Failed to generate report. Please try again.');
-    } finally {
-      setIsGenerating(false);
+      removeLoadingMessages();
+      addMessage({
+        role: 'agent',
+        content: 'Sorry, I couldn\'t generate that report. Please try again or rephrase your request.',
+      });
+      setAgentState('idle');
     }
   };
 
-  const sendReport = async () => {
-    if (!email || !report) return;
+  const handleSatisfied = (satisfied: boolean) => {
+    addMessage({ role: 'user', content: satisfied ? 'Yes, send it!' : 'No, let me refine' });
 
-    const newRequest: ReportRequest = {
-      id: Date.now().toString(),
-      query,
-      email,
-      delay,
-      status: delay > 0 ? 'pending' : 'sent',
-      scheduledTime: new Date(Date.now() + delay * 60 * 1000),
-      report,
-    };
-
-    setSentReports(prev => [newRequest, ...prev]);
-
-    if (delay > 0) {
-      // Simulate delayed sending
-      setTimeout(() => {
-        setSentReports(prev =>
-          prev.map(r => (r.id === newRequest.id ? { ...r, status: 'sent' } : r))
-        );
-      }, delay * 60 * 1000);
+    if (satisfied) {
+      addMessage({
+        role: 'agent',
+        content: 'Great! Where should I send this report?\n\nPlease enter your email address:',
+        inputType: 'email',
+      });
+      setAgentState('asking_email');
+    } else {
+      addMessage({
+        role: 'agent',
+        content: 'No problem! What changes would you like? Or ask for a different report:',
+      });
+      setAgentState('idle');
+      setCurrentReport(null);
     }
-
-    // Reset form
-    setQuery('');
-    setReport(null);
-    setShowPreview(false);
-    setDelay(0);
   };
 
-  const handleTemplateClick = (template: typeof reportTemplates[0]) => {
-    setQuery(template.query);
-    generateReport(template.query);
+  const handleEmail = (emailAddress: string) => {
+    setEmail(emailAddress);
+    addMessage({ role: 'user', content: emailAddress });
+
+    addMessage({
+      role: 'agent',
+      content: 'Perfect! What format would you like the report in?',
+      options: [
+        { label: 'PDF Document', value: 'pdf', icon: <File size={16} /> },
+        { label: 'Excel Spreadsheet', value: 'excel', icon: <FileSpreadsheet size={16} /> },
+      ],
+      inputType: 'choice',
+    });
+    setAgentState('asking_format');
   };
 
-  const downloadReport = () => {
-    if (!report) return;
-    const blob = new Blob([report], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `report-${new Date().toISOString().split('T')[0]}.md`;
-    a.click();
-    URL.revokeObjectURL(url);
+  const handleFormat = async (format: string) => {
+    addMessage({ role: 'user', content: format === 'pdf' ? 'PDF Document' : 'Excel Spreadsheet' });
+
+    addMessage({ role: 'agent', content: '', isLoading: true });
+    setAgentState('sending');
+
+    // Simulate sending (in real app, call backend to send email)
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    removeLoadingMessages();
+
+    addMessage({
+      role: 'agent',
+      content: `✅ **Report sent successfully!**\n\n📧 Sent to: ${email}\n📄 Format: ${format.toUpperCase()}\n📊 Report: ${currentReport?.query}\n\n---\n\nWould you like to generate another report?`,
+    });
+
+    setAgentState('idle');
+    setCurrentReport(null);
+    setEmail('');
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    const value = input.trim();
+    setInput('');
+
+    switch (agentState) {
+      case 'idle':
+        handleQuery(value);
+        break;
+      case 'asking_email':
+        if (value.includes('@')) {
+          handleEmail(value);
+        } else {
+          addMessage({ role: 'user', content: value });
+          addMessage({ role: 'agent', content: 'Please enter a valid email address:' });
+        }
+        break;
+      default:
+        handleQuery(value);
+    }
+  };
+
+  const handleOptionClick = (value: string) => {
+    switch (agentState) {
+      case 'asking_satisfied':
+        handleSatisfied(value === 'yes');
+        break;
+      case 'asking_format':
+        handleFormat(value);
+        break;
+    }
   };
 
   return (
-    <Stack spacing="6" direction="column">
+    <Stack spacing="4" direction="column" style={{ height: 'calc(100vh - 200px)' }}>
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <div
-          className="w-12 h-12 rounded-xl flex items-center justify-center"
-          style={{ background: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)' }}
-        >
-          <FileText size={24} color="white" />
-        </div>
-        <div>
-          <Text type="h2" weight="bold">
-            Report Agent
-          </Text>
-          <Text type="small" color="muted">
-            Generate and send reports on-demand. Just ask!
-          </Text>
-        </div>
-      </div>
-
-      {/* Value Proposition */}
-      <div
-        className="p-4 rounded-lg border-l-4"
-        style={{
-          background: 'linear-gradient(90deg, rgba(245,158,11,0.1) 0%, transparent 100%)',
-          borderColor: '#f59e0b',
-        }}
-      >
-        <Text type="small" weight="semibold" style={{ color: '#f59e0b' }}>
-          Reports delivered when you need them
-        </Text>
-        <Text type="small" color="muted">
-          Say "send me a sales report now" or "email me the fraud report in 5 minutes".
-          The agent generates the report and delivers it to your inbox instantly or on schedule.
-        </Text>
-      </div>
-
-      {/* Quick Templates */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Reports</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {reportTemplates.map((template, i) => (
-              <button
-                key={i}
-                onClick={() => handleTemplateClick(template)}
-                disabled={isGenerating}
-                className="p-4 text-left rounded-lg border hover:border-orange-300 hover:bg-orange-50 transition-all disabled:opacity-50"
-                style={{ borderColor: '#e5e7eb' }}
-              >
-                <span className="text-2xl">{template.icon}</span>
-                <Text type="small" weight="semibold" className="mt-2 block">
-                  {template.label}
-                </Text>
-              </button>
-            ))}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div
+            className="w-12 h-12 rounded-xl flex items-center justify-center"
+            style={{ background: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)' }}
+          >
+            <FileText size={24} color="white" />
           </div>
-        </CardContent>
-      </Card>
+          <div>
+            <Text type="h2" weight="bold">
+              Report Agent
+            </Text>
+            <Text type="small" color="muted">
+              Ask for reports, I'll generate and send them to you
+            </Text>
+          </div>
+        </div>
+        <Button
+          variant="outline"
+          label="Settings"
+          icon={<Settings size={16} />}
+          onClick={() => setShowSettings(!showSettings)}
+        />
+      </div>
 
-      {/* Custom Report Request */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Custom Report</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <Text type="small" weight="semibold" className="mb-2 block">
-                What report do you need?
-              </Text>
-              <input
-                ref={inputRef}
-                type="text"
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                placeholder="e.g., Send me a report of all orders over 500€ this week"
-                className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-orange-500"
-                style={{ borderColor: '#e5e7eb' }}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Text type="small" weight="semibold" className="mb-2 block">
-                  <Mail size={14} className="inline mr-1" />
-                  Email to
-                </Text>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  placeholder="your@email.com"
-                  className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  style={{ borderColor: '#e5e7eb' }}
-                />
-              </div>
-
-              <div>
-                <Text type="small" weight="semibold" className="mb-2 block">
-                  <Clock size={14} className="inline mr-1" />
-                  Send when?
-                </Text>
+      {/* Settings Panel */}
+      {showSettings && (
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-6 flex-wrap">
+              <div className="flex items-center gap-2">
+                <Text type="small" weight="semibold">AI Model:</Text>
                 <select
-                  value={delay}
-                  onChange={e => setDelay(Number(e.target.value))}
-                  className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  value={selectedModel}
+                  onChange={e => setSelectedModel(e.target.value)}
+                  className="px-3 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-orange-500"
                   style={{ borderColor: '#e5e7eb' }}
                 >
-                  <option value={0}>Now</option>
-                  <option value={1}>In 1 minute</option>
-                  <option value={2}>In 2 minutes</option>
-                  <option value={5}>In 5 minutes</option>
-                  <option value={10}>In 10 minutes</option>
-                  <option value={30}>In 30 minutes</option>
-                  <option value={60}>In 1 hour</option>
+                  {MODELS.map(model => (
+                    <option key={model.id} value={model.id}>
+                      {model.name}
+                    </option>
+                  ))}
                 </select>
               </div>
-            </div>
 
-            <div className="flex gap-3">
-              <Button
-                onClick={() => generateReport(query)}
-                disabled={!query || isGenerating}
-                variant="outline"
-                label={isGenerating ? 'Generating...' : 'Preview Report'}
-                icon={isGenerating ? <Loader2 size={16} className="animate-spin" /> : <Eye size={16} />}
-              />
-              {report && (
-                <>
-                  <Button
-                    onClick={sendReport}
-                    disabled={!email}
-                    variant="default"
-                    label={delay > 0 ? `Schedule (${delay} min)` : 'Send Now'}
-                    icon={<Send size={16} />}
-                    style={{ background: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)' }}
-                  />
-                  <Button
-                    onClick={downloadReport}
-                    variant="outline"
-                    label="Download"
-                    icon={<Download size={16} />}
-                  />
-                </>
+              <div className="flex items-center gap-2">
+                <Text type="small" weight="semibold">Voice Response:</Text>
+                <button
+                  onClick={() => setVoiceEnabled(!voiceEnabled)}
+                  className={`p-2 rounded-lg border transition-all ${voiceEnabled ? 'bg-orange-100 border-orange-300' : 'bg-gray-100'}`}
+                >
+                  {voiceEnabled ? <Volume2 size={18} className="text-orange-600" /> : <VolumeX size={18} className="text-gray-400" />}
+                </button>
+                <Text type="xs" color="muted">{voiceEnabled ? 'On' : 'Off'}</Text>
+              </div>
+
+              {isSpeaking && (
+                <button
+                  onClick={stopSpeaking}
+                  className="px-3 py-1 rounded-lg bg-red-100 text-red-600 text-sm flex items-center gap-1"
+                >
+                  <VolumeX size={14} /> Stop Speaking
+                </button>
               )}
             </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Report Preview */}
-      {showPreview && report && (
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Report Preview</CardTitle>
-              <Button
-                onClick={() => setShowPreview(false)}
-                variant="outline"
-                label="Close"
-              />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div
-              className="p-4 rounded-lg bg-gray-50 whitespace-pre-wrap text-sm"
-              style={{ maxHeight: '400px', overflow: 'auto' }}
-            >
-              {report}
-            </div>
           </CardContent>
         </Card>
       )}
 
-      {/* Sent Reports History */}
-      {sentReports.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Report History</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {sentReports.map(req => (
-                <div
-                  key={req.id}
-                  className="flex items-center justify-between p-3 rounded-lg border"
-                  style={{ borderColor: '#e5e7eb' }}
-                >
-                  <div className="flex items-center gap-3">
-                    {req.status === 'sent' ? (
-                      <CheckCircle size={20} className="text-green-500" />
-                    ) : req.status === 'pending' ? (
-                      <Clock size={20} className="text-orange-500" />
+      {/* Chat Area */}
+      <Card style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <CardContent style={{ flex: 1, overflow: 'auto', padding: '1rem' }}>
+          <div className="flex flex-col gap-4">
+            {messages.map(message => (
+              <div
+                key={message.id}
+                className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                {message.role === 'agent' && (
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{ background: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)' }}
+                  >
+                    {message.isLoading ? (
+                      <Loader2 size={16} color="white" className="animate-spin" />
                     ) : (
-                      <Loader2 size={20} className="text-blue-500 animate-spin" />
+                      <Bot size={16} color="white" />
                     )}
-                    <div>
-                      <Text type="small" weight="semibold">
-                        {req.query.substring(0, 50)}...
-                      </Text>
-                      <Text type="xs" color="muted">
-                        To: {req.email}
+                  </div>
+                )}
+
+                <div
+                  className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                    message.role === 'user'
+                      ? 'bg-orange-500 text-white rounded-br-md'
+                      : 'bg-gray-100 rounded-bl-md'
+                  }`}
+                >
+                  {message.isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-1">
+                        <div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" />
+                        <div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                        <div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                      </div>
+                      <Text type="small" color="muted">
+                        {agentState === 'querying' ? 'Generating report...' : 'Sending report...'}
                       </Text>
                     </div>
-                  </div>
-                  <Badge
-                    variant={req.status === 'sent' ? 'success' : req.status === 'pending' ? 'warning' : 'outline'}
-                    label={req.status === 'sent' ? 'Sent' : req.status === 'pending' ? `Sending at ${req.scheduledTime.toLocaleTimeString()}` : 'Generating'}
-                  />
+                  ) : (
+                    <>
+                      <div className="whitespace-pre-wrap text-sm" style={{ lineHeight: 1.6 }}>
+                        {message.content}
+                      </div>
+
+                      {/* Option buttons */}
+                      {message.options && (
+                        <div className="flex gap-2 mt-3 flex-wrap">
+                          {message.options.map(option => (
+                            <button
+                              key={option.value}
+                              onClick={() => handleOptionClick(option.value)}
+                              className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-orange-400 text-orange-600 hover:bg-orange-50 transition-all font-medium text-sm"
+                            >
+                              {option.icon}
+                              {option.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
+
+                {message.role === 'user' && (
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{ background: '#f59e0b' }}
+                  >
+                    <User size={16} color="white" />
+                  </div>
+                )}
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+        </CardContent>
+
+        {/* Input Area */}
+        <div className="border-t p-4" style={{ borderColor: '#e5e7eb' }}>
+          <form onSubmit={handleSubmit} className="flex gap-2">
+            {/* Voice Input Button */}
+            <button
+              type="button"
+              onClick={toggleListening}
+              disabled={agentState === 'querying' || agentState === 'sending'}
+              className={`p-3 rounded-xl border transition-all ${
+                isListening
+                  ? 'bg-red-500 border-red-500 text-white animate-pulse'
+                  : 'bg-gray-50 border-gray-200 hover:bg-orange-50 hover:border-orange-300'
+              }`}
+              title={isListening ? 'Stop listening' : 'Voice input'}
+            >
+              {isListening ? <MicOff size={20} /> : <Mic size={20} />}
+            </button>
+
+            <input
+              ref={inputRef}
+              type={agentState === 'asking_email' ? 'email' : 'text'}
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              placeholder={
+                isListening
+                  ? 'Listening...'
+                  : agentState === 'asking_email'
+                    ? 'Enter your email address...'
+                    : agentState === 'asking_satisfied' || agentState === 'asking_format'
+                      ? 'Or type your response...'
+                      : 'Ask for a report... (e.g., "Show me sales this week")'
+              }
+              disabled={agentState === 'querying' || agentState === 'sending' || isListening}
+              className="flex-1 px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              style={{ borderColor: isListening ? '#ef4444' : '#e5e7eb' }}
+            />
+            <Button
+              type="submit"
+              variant="default"
+              disabled={!input.trim() || agentState === 'querying' || agentState === 'sending'}
+              label=""
+              icon={
+                agentState === 'querying' || agentState === 'sending' ? (
+                  <Loader2 size={20} className="animate-spin" />
+                ) : (
+                  <Send size={20} />
+                )
+              }
+              style={{
+                background: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)',
+                borderRadius: '0.75rem',
+                padding: '0.75rem 1rem',
+              }}
+            />
+          </form>
+
+          {/* Quick suggestions */}
+          {agentState === 'idle' && messages.length <= 2 && (
+            <div className="flex gap-2 mt-3 flex-wrap">
+              {['Sales today', 'Top customers', 'Pending orders', 'Weekly summary'].map(suggestion => (
+                <button
+                  key={suggestion}
+                  onClick={() => {
+                    setInput(suggestion);
+                    handleQuery(suggestion);
+                  }}
+                  className="px-3 py-1 rounded-full text-xs border hover:bg-orange-50 hover:border-orange-300 transition-all"
+                  style={{ borderColor: '#e5e7eb' }}
+                >
+                  {suggestion}
+                </button>
               ))}
             </div>
-          </CardContent>
-        </Card>
-      )}
+          )}
+        </div>
+      </Card>
     </Stack>
   );
 };
