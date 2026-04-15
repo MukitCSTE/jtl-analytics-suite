@@ -12,6 +12,7 @@ import {
   BarChart3,
   Sparkles,
   HelpCircle,
+  Receipt,
 } from 'lucide-react';
 
 export type AnalyticsView =
@@ -23,6 +24,7 @@ export type AnalyticsView =
   | 'returns'
   | 'heatmap'
   | 'reports'
+  | 'tax'
   | 'ai'
   | 'faq';
 
@@ -41,6 +43,7 @@ const menuItems: { id: AnalyticsView; label: string; icon: React.FC<{ size?: num
   { id: 'shipping', label: 'Fulfillment', icon: Truck },
   { id: 'returns', label: 'Return Risk', icon: RotateCcw },
   { id: 'heatmap', label: 'Sales Heatmap', icon: Calendar },
+  { id: 'tax', label: 'Tax Analytics', icon: Receipt },
   { id: 'faq', label: 'FAQ & Setup', icon: HelpCircle },
 ];
 

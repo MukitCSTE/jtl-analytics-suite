@@ -12,6 +12,7 @@ import SalesHeatmapView from './views/SalesHeatmapView';
 import ReportAgentView from './views/ReportAgentView';
 import AiAssistantView from './views/AiAssistantView';
 import FaqView from './views/FaqView';
+import TaxAnalyticsView from './views/TaxAnalyticsView';
 
 function getInitialView(): AnalyticsView {
   const path = location.pathname;
@@ -24,6 +25,7 @@ function getInitialView(): AnalyticsView {
   if (path.includes('/analytics/returns')) return 'returns';
   if (path.includes('/analytics/heatmap')) return 'heatmap';
   if (path.includes('/analytics/reports')) return 'reports';
+  if (path.includes('/analytics/tax')) return 'tax';
   return 'ai'; // Default to AI Assistant
 }
 
@@ -60,6 +62,8 @@ const AnalyticsPage: React.FC<IAnalyticsPageProps> = ({ appBridge }) => {
         return <ReportAgentView appBridge={appBridge} />;
       case 'faq':
         return <FaqView />;
+      case 'tax':
+        return <TaxAnalyticsView appBridge={appBridge} />;
       default:
         return <AiAssistantView appBridge={appBridge} />;
     }
