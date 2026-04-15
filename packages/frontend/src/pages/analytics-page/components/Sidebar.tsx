@@ -69,7 +69,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
           <Text type="small" weight="bold" style={{ color: '#ffffff' }}>
             Analytics Suite
           </Text>
-          <Text type="xs" style={{ color: '#94a3b8' }}>
+          <Text type="xs" style={{ color: '#ffffff' }}>
             JTL Cloud
           </Text>
         </div>
