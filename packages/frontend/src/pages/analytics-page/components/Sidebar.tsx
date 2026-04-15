@@ -56,12 +56,12 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
       style={{
         width: '260px',
         minWidth: '260px',
-        background: 'linear-gradient(180deg, #1e293b 0%, #0f172a 100%)',
-        borderColor: '#334155',
+        background: 'linear-gradient(180deg, #e5e7eb 0%, #d1d5db 100%)',
+        borderColor: '#9ca3af',
       }}
     >
       {/* Header */}
-      <div className="p-5 border-b flex items-center gap-3" style={{ borderColor: '#334155' }}>
+      <div className="p-5 border-b flex items-center gap-3" style={{ borderColor: '#9ca3af' }}>
         <div
           className="w-10 h-10 rounded-lg flex items-center justify-center"
           style={{ background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)' }}
@@ -69,10 +69,10 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
           <BarChart3 size={22} color="white" />
         </div>
         <div>
-          <Text type="small" weight="bold" className="!text-white" style={{ color: '#ffffff' }}>
+          <Text type="small" weight="bold" style={{ color: '#1f2937' }}>
             Analytics Suite
           </Text>
-          <Text type="xs" style={{ color: '#ffffff' }}>
+          <Text type="xs" style={{ color: '#4b5563' }}>
             JTL Cloud
           </Text>
         </div>
@@ -93,9 +93,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
                 background: isActive
                   ? 'linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)'
                   : isHovered
-                    ? 'rgba(255, 255, 255, 0.08)'
+                    ? 'rgba(0, 0, 0, 0.08)'
                     : 'transparent',
-                color: isActive ? '#ffffff' : isHovered ? '#ffffff' : '#94a3b8',
+                color: isActive ? '#ffffff' : isHovered ? '#1f2937' : '#4b5563',
                 transform: isHovered && !isActive ? 'translateX(4px)' : 'translateX(0)',
                 boxShadow: isActive ? '0 4px 12px rgba(59, 130, 246, 0.4)' : 'none',
               }}
@@ -122,7 +122,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
               {isActive && !item.isNew && (
                 <div
                   className="ml-auto w-2 h-2 rounded-full"
-                  style={{ background: '#ffffff', boxShadow: '0 0 8px rgba(255,255,255,0.6)' }}
+                  style={{ background: '#ffffff', boxShadow: '0 0 8px rgba(255,255,255,0.8)' }}
                 />
               )}
             </div>
@@ -131,12 +131,12 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
       </div>
 
       {/* Footer */}
-      <div className="p-4 border-t" style={{ borderColor: '#334155' }}>
-        <div className="p-3 rounded-lg" style={{ background: 'rgba(59, 130, 246, 0.1)' }}>
-          <Text type="xs" style={{ color: '#60a5fa' }}>
+      <div className="p-4 border-t" style={{ borderColor: '#9ca3af' }}>
+        <div className="p-3 rounded-lg" style={{ background: 'rgba(59, 130, 246, 0.15)' }}>
+          <Text type="xs" style={{ color: '#2563eb' }}>
             Pro Tip
           </Text>
-          <Text type="xs" style={{ color: '#94a3b8', marginTop: '4px' }}>
+          <Text type="xs" style={{ color: '#4b5563', marginTop: '4px' }}>
             Use the heatmap to find your best selling times.
           </Text>
         </div>
