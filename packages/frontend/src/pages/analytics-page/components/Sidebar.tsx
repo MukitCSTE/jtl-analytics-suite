@@ -69,7 +69,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
           <BarChart3 size={22} color="white" />
         </div>
         <div>
-          <Text type="small" weight="bold" style={{ color: '#ffffff' }}>
+          <Text type="small" weight="bold" className="!text-white" style={{ color: '#ffffff' }}>
             Analytics Suite
           </Text>
           <Text type="xs" style={{ color: '#ffffff' }}>
