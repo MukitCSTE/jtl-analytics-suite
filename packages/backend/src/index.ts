@@ -313,7 +313,7 @@ async function callOpenAI(messages: Array<{role: string, content: string}>): Pro
     throw new Error('OpenAI API configuration missing');
   }
 
-  const response = await fetch(\`\${apiUrl}/chat/completions\`, {
+  const response = await fetch(`${apiUrl}/chat/completions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -329,7 +329,7 @@ async function callOpenAI(messages: Array<{role: string, content: string}>): Pro
 
   if (!response.ok) {
     const error = await response.text();
-    throw new Error(\`OpenAI API error: \${response.status} - \${error}\`);
+    throw new Error(`OpenAI API error: ${response.status} - ${error}`);
   }
 
   const data = await response.json();
@@ -376,17 +376,17 @@ app.post('/ai/query', async (req: Request, res: Response) => {
 
     // Clean the query (remove markdown code blocks if present)
     const cleanQuery = graphqlQuery
-      .replace(/\`\`\`graphql?/gi, '')
-      .replace(/\`\`\`/g, '')
+      .replace(/```graphql?/gi, '')
+      .replace(/```/g, '')
       .trim();
 
     // Step 2: Execute GraphQL query
     const jwt = await getJwt();
-    const graphqlResponse = await fetch(\`https://api\${Environment}.jtl-cloud.com/erp/v2/graphql\`, {
+    const graphqlResponse = await fetch(`https://api${Environment}.jtl-cloud.com/erp/v2/graphql`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: \`Bearer \${jwt}\`,
+        Authorization: `Bearer ${jwt}`,
         'X-Tenant-ID': tenantId,
       },
       body: JSON.stringify({ query: cleanQuery }),
@@ -398,7 +398,7 @@ app.post('/ai/query', async (req: Request, res: Response) => {
     // Check for GraphQL errors
     if (graphqlData.errors) {
       res.json({
-        answer: \`I had trouble understanding that query. The system returned: \${graphqlData.errors[0]?.message || 'Unknown error'}. Try rephrasing your question.\`,
+        answer: `I had trouble understanding that query. The system returned: ${graphqlData.errors[0]?.message || 'Unknown error'}. Try rephrasing your question.`,
         query: cleanQuery,
         error: graphqlData.errors,
         data: null
@@ -409,14 +409,14 @@ app.post('/ai/query', async (req: Request, res: Response) => {
     // Step 3: Format response with AI
     const formattedResponse = await callOpenAI([
       { role: 'system', content: RESPONSE_FORMATTER_CONTEXT },
-      { role: 'user', content: \`
-Question: \${question}
+      { role: 'user', content: `
+Question: ${question}
 
 Data from JTL ERP:
-\${JSON.stringify(graphqlData.data, null, 2)}
+${JSON.stringify(graphqlData.data, null, 2)}
 
 Please provide a helpful, concise answer based on this data.
-\` }
+` }
     ]);
 
     res.json({
@@ -459,17 +459,17 @@ app.post('/ai/demo-query', async (req: Request, res: Response) => {
     ]);
 
     const cleanQuery = graphqlQuery
-      .replace(/\`\`\`graphql?/gi, '')
-      .replace(/\`\`\`/g, '')
+      .replace(/```graphql?/gi, '')
+      .replace(/```/g, '')
       .trim();
 
     // Step 2: Execute GraphQL
     const jwt = await getJwt();
-    const graphqlResponse = await fetch(\`https://api\${Environment}.jtl-cloud.com/erp/v2/graphql\`, {
+    const graphqlResponse = await fetch(`https://api${Environment}.jtl-cloud.com/erp/v2/graphql`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: \`Bearer \${jwt}\`,
+        Authorization: `Bearer ${jwt}`,
         'X-Tenant-ID': tenantId,
       },
       body: JSON.stringify({ query: cleanQuery }),
@@ -479,7 +479,7 @@ app.post('/ai/demo-query', async (req: Request, res: Response) => {
 
     if (graphqlData.errors) {
       res.json({
-        answer: \`I couldn't process that query. Error: \${graphqlData.errors[0]?.message}. Please try a different question.\`,
+        answer: `I couldn't process that query. Error: ${graphqlData.errors[0]?.message}. Please try a different question.`,
         query: cleanQuery,
         error: graphqlData.errors,
         data: null
@@ -490,14 +490,14 @@ app.post('/ai/demo-query', async (req: Request, res: Response) => {
     // Step 3: Format response
     const formattedResponse = await callOpenAI([
       { role: 'system', content: RESPONSE_FORMATTER_CONTEXT },
-      { role: 'user', content: \`
-Question: \${question}
+      { role: 'user', content: `
+Question: ${question}
 
 Data:
-\${JSON.stringify(graphqlData.data, null, 2)}
+${JSON.stringify(graphqlData.data, null, 2)}
 
 Provide a helpful answer.
-\` }
+` }
     ]);
 
     res.json({

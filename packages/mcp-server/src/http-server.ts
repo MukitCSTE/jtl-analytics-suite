@@ -122,6 +122,8 @@ async function callOpenAI(messages: Array<{ role: string; content: string }>): P
 const GRAPHQL_SCHEMA = `
 You are a JTL ERP GraphQL expert. Convert natural language to GraphQL queries.
 
+IMPORTANT: Return ONLY the GraphQL query, no markdown, no explanation.
+
 Available Types:
 
 1. QuerySalesOrders - Sales orders
@@ -141,13 +143,27 @@ Available Types:
            defaultSupplier, lastPurchaseDate,
            isActive, createdDate, modifiedDate
 
-Filters: where: { and/or: [{ field: { eq/neq/gt/gte/lt/lte/contains: value } }] }
-Order: order: [{ field: ASC/DESC }]
-Pagination: first: N (default 50)
+Filter Syntax Examples:
+- Date filter: where: { salesOrderDate: { gte: "2026-04-15T00:00:00Z" } }
+- Multiple filters: where: { and: [{ totalGrossAmount: { gte: 500 } }, { billingAddressCountryIso: { eq: "DE" } }] }
+- Text contains: where: { companyName: { contains: "GmbH" } }
 
-Today: ${new Date().toISOString().split('T')[0]}
+Order Syntax: order: [{ salesOrderDate: DESC }]
+Pagination: first: 50 (always include)
 
-Return ONLY valid GraphQL, no explanation.
+Today's date: ${new Date().toISOString().split('T')[0]}
+Today's DateTime: ${new Date().toISOString().split('T')[0]}T00:00:00Z
+
+Example for "sales today":
+query { QuerySalesOrders(first: 50, where: { salesOrderDate: { gte: "${new Date().toISOString().split('T')[0]}T00:00:00Z" } }, order: [{ salesOrderDate: DESC }]) { totalCount nodes { salesOrderNumber salesOrderDate totalGrossAmount currencyIso companyName } } }
+
+Example for "recent orders" or "last N orders":
+query { QuerySalesOrders(first: 10, order: [{ salesOrderDate: DESC }]) { totalCount nodes { salesOrderNumber salesOrderDate totalGrossAmount currencyIso companyName } } }
+
+Example for "top customers":
+query { QuerySalesOrders(first: 100, order: [{ totalGrossAmount: DESC }]) { totalCount nodes { companyName totalGrossAmount currencyIso salesOrderDate } } }
+
+Return ONLY valid GraphQL query.
 `;
 
 const RESPONSE_FORMAT = `
@@ -176,9 +192,11 @@ async function queryJtlData(
   ]);
 
   const cleanQuery = graphqlQuery.replace(/```graphql?/gi, '').replace(/```/g, '').trim();
+  console.log('[GraphQL Query]', cleanQuery);
 
   // Execute query
   const result = await executeGraphQL(cleanQuery, tenantId);
+  console.log('[GraphQL Result]', JSON.stringify(result).substring(0, 500));
 
   if (result.errors) {
     return {
