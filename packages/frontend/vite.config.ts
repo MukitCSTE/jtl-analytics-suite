@@ -1,0 +1,27 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
+import tailwindcss from '@tailwindcss/vite';
+import path from 'path';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+
+// https://vite.dev/config/
+export default defineConfig({
+  server: {
+    port: 50142,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3005',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
+  plugins: [tailwindcss(), react()],
+  resolve: {
+    alias: {
+      '/assets': path.join(path.dirname(require.resolve('@jtl-software/platform-ui-react')), 'assets'),
+    },
+  },
+});

@@ -1,0 +1,136 @@
+{
+  "manifestVersion": "1.0.0",
+  "version": "1.0.0",
+  "name": {
+    "short": "Mugs",
+    "full": "Mugs App"
+  },
+  "description": {
+    "short": "Lorem ipsum.",
+    "full": "Minions ipsum gelatooo uuuhhh para tú bappleees para tú tank yuuu! Gelatooo po kass. Bappleees poopayee tulaliloo pepete belloo! Wiiiii."
+  },
+  "defaultLocale": "de-DE",
+  "locales": {
+    "de-DE": {
+      "key1": "abc"
+    },
+    "en": {
+      "key1": "abc"
+    }
+  },
+  "icon": {
+    "light": "https://cdn-icons-png.flaticon.com/512/4727/4727424.png",
+    "dark": "https://cdn-icons-png.flaticon.com/512/4727/4727424.png"
+  },
+  "communication": {
+    "supportUrl": "https://example.com/support-for-app-xy/__ACTIVE_LOCALE__/",
+    "guideUrl": "https://example.com/guide-for-app-xy?lang=__ACTIVE_LOCALE__"
+  },
+  "legal": {
+    "gdprRequestUrl": "https://example.com/gdpr/request",
+    "gdprDeleteUrl": "https://example.com/gdpr/delete",
+    "privacyUrl": "https://example.com/privacy",
+    "termsOfUseUrl": "https://example.com/terms-of-use"
+  },
+  "lifecycle": {
+    "setupUrl": "http://localhost:50142/setup",
+    "connectUrl": "https://jtl.integrations.example.com/lifecycle/connect",
+    "disconnectUrl": "https://jtl.integrations.example.com/lifecycle/disconnect"
+  },
+  "capabilities": {
+    "hub": {
+      "appLauncher": {
+        "redirectUrl": "https://jtl.integrations.example.com/lifecycle/connect",
+        "closedPreviewUrl": "https://jtl.integrations.example.com/lifecycle/connect"
+      }
+    },
+    "erp": {
+      "headless": {
+        "url": "https://jtl.integrations.example.com/erp"
+      },
+      "menuItems": [
+        {
+          "id": "analytics",
+          "name": "Analytics Suite",
+          "url": "http://localhost:50144/analytics",
+          "children": [
+            {
+              "id": "analytics_dashboard",
+              "name": "Dashboard",
+              "url": "http://localhost:50144/analytics/dashboard"
+            },
+            {
+              "id": "analytics_fraud",
+              "name": "Fraud Detector",
+              "url": "http://localhost:50144/analytics/fraud"
+            },
+            {
+              "id": "analytics_reorder",
+              "name": "Reorder Alerts",
+              "url": "http://localhost:50144/analytics/reorder"
+            },
+            {
+              "id": "analytics_clv",
+              "name": "Customer Value",
+              "url": "http://localhost:50144/analytics/clv"
+            },
+            {
+              "id": "analytics_shipping",
+              "name": "Shipping",
+              "url": "http://localhost:50144/analytics/shipping"
+            },
+            {
+              "id": "analytics_returns",
+              "name": "Return Risk",
+              "url": "http://localhost:50144/analytics/returns"
+            },
+            {
+              "id": "analytics_heatmap",
+              "name": "Sales Heatmap",
+              "url": "http://localhost:50144/analytics/heatmap"
+            },
+            {
+              "id": "analytics_bundles",
+              "name": "Product Bundles",
+              "url": "http://localhost:50144/analytics/bundles"
+            }
+          ]
+        }
+      ],
+      "tabs": [
+        {
+          "context": "productDetail",
+          "name": "Demo data",
+          "url": "https://jtl.integrations.example.com/wawi/tabs/product/detail",
+          "features": [
+            "details:full",
+            "pricing:write"
+          ]
+        },
+        {
+          "context": "customerDetail",
+          "name": "Demo data",
+          "url": "https://jtl.integrations.example.com/wawi/tabs/customer/detail",
+          "features": [
+            "details:write",
+            "address:read"
+          ]
+        }
+      ],
+      "api": {
+        "scopes": [
+          "items.read",
+          "items.write"
+        ]
+      },
+      "pane": [
+        {
+          "context": "$tenantSlug.customers.overview",
+          "matchChildContext": false,
+          "title": "<PANE TITLE>",
+          "url": "https://jtl.integrations.example.com/pane"
+        }
+      ]
+    }
+  }
+}
