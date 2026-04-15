@@ -1,0 +1,29 @@
+{
+  "name": "@jtl-app/mcp-server",
+  "version": "1.0.0",
+  "description": "JTL Analytics AI MCP Server - Natural language queries for JTL ERP",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "jtl-analytics-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "start:http": "tsx src/http-server.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  }
+}

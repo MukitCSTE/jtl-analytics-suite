@@ -248,6 +248,277 @@ app.post('/demo-graphql', async (req: Request, res: Response) => {
   }
 });
 
+// =============================================================================
+// AI-POWERED ANALYTICS ENDPOINT
+// =============================================================================
+
+const GRAPHQL_SCHEMA_CONTEXT = `
+You are a JTL ERP GraphQL expert. Convert natural language questions into GraphQL queries.
+
+Available GraphQL Types:
+
+1. QuerySalesOrders - Sales order data
+   Fields: salesOrderNumber, salesOrderDate, totalGrossAmount, totalNetAmount, currencyIso,
+           companyName, customerNumber, customerId,
+           billingAddressCity, billingAddressCountryIso, billingAddressCountryName,
+           shipmentAddressCity, shipmentAddressCountryIso, shipmentAddressCountryName,
+           deliveryStatus, deliveryCompleteStatus, paymentStatus,
+           shippingMethodName, shippingPriority, estimatedDeliveryDate, lastShippingDate,
+           isPending, isCancelled
+
+   Filters: where: { and/or: [...conditions...] }
+   Conditions: { fieldName: { eq/neq/gt/gte/lt/lte/contains: value } }
+   Ordering: order: [{ fieldName: ASC/DESC }]
+   Pagination: first: N, after: "cursor"
+
+2. QueryItems - Product/inventory data
+   Fields: id, sku, name, description,
+           stockTotal, stockAvailable, stockInOrders, stockIncoming,
+           minimumStock, hasMinimumStock,
+           salesPriceGross, salesPriceNet, profit,
+           defaultSupplier, lastPurchaseDate,
+           isActive, createdDate, modifiedDate
+
+RULES:
+1. Always use "first: N" for pagination (default 50, max 500)
+2. Return ONLY the GraphQL query, no explanation
+3. Use proper field names exactly as listed
+4. For date comparisons, use ISO format: "2026-04-15"
+5. Always include totalCount in response
+6. Today's date is: ${new Date().toISOString().split('T')[0]}
+`;
+
+const RESPONSE_FORMATTER_CONTEXT = `
+You are a helpful business analytics assistant for JTL ERP users.
+Format the data into a clear, actionable response.
+
+Guidelines:
+- Be concise but informative
+- Highlight key insights and trends
+- Use bullet points for lists
+- Include specific numbers and percentages
+- Suggest actionable next steps when relevant
+- Use German number format (1.234,56) for currency
+- Format dates as DD.MM.YYYY
+- If data is empty, explain what that means and suggest alternatives
+`;
+
+// Call Azure OpenAI
+async function callOpenAI(messages: Array<{role: string, content: string}>): Promise<string> {
+  const apiUrl = process.env.OPENAI_API_URL;
+  const apiKey = process.env.OPENAI_API_KEY;
+  const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+
+  if (!apiUrl || !apiKey) {
+    throw new Error('OpenAI API configuration missing');
+  }
+
+  const response = await fetch(\`\${apiUrl}/chat/completions\`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'api-key': apiKey,
+    },
+    body: JSON.stringify({
+      model,
+      messages,
+      temperature: 0.1,
+      max_tokens: 2000,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(\`OpenAI API error: \${response.status} - \${error}\`);
+  }
+
+  const data = await response.json();
+  return data.choices[0]?.message?.content || '';
+}
+
+// AI Query endpoint - natural language to insights
+app.post('/ai/query', async (req: Request, res: Response) => {
+  try {
+    const { question, tenantId: bodyTenantId } = req.body;
+    const sessionToken = req.headers['x-session-token'] as string;
+
+    if (!question) {
+      res.status(400).json({ error: 'Missing question in request body' });
+      return;
+    }
+
+    // Get tenant ID from session token or use demo tenant
+    let tenantId = bodyTenantId || process.env.DEMO_TENANT_ID;
+    if (sessionToken) {
+      try {
+        const payload = await verifySessionTokenAndExtractPayload(sessionToken);
+        tenantId = payload.tenantId;
+      } catch (e) {
+        console.log('Using demo tenant - session token invalid');
+      }
+    }
+
+    if (!tenantId) {
+      res.status(400).json({ error: 'No tenant ID available' });
+      return;
+    }
+
+    console.log('AI Query:', question);
+    console.log('Tenant:', tenantId);
+
+    // Step 1: Generate GraphQL query from natural language
+    const graphqlQuery = await callOpenAI([
+      { role: 'system', content: GRAPHQL_SCHEMA_CONTEXT },
+      { role: 'user', content: question }
+    ]);
+
+    console.log('Generated GraphQL:', graphqlQuery);
+
+    // Clean the query (remove markdown code blocks if present)
+    const cleanQuery = graphqlQuery
+      .replace(/\`\`\`graphql?/gi, '')
+      .replace(/\`\`\`/g, '')
+      .trim();
+
+    // Step 2: Execute GraphQL query
+    const jwt = await getJwt();
+    const graphqlResponse = await fetch(\`https://api\${Environment}.jtl-cloud.com/erp/v2/graphql\`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: \`Bearer \${jwt}\`,
+        'X-Tenant-ID': tenantId,
+      },
+      body: JSON.stringify({ query: cleanQuery }),
+    });
+
+    const graphqlData = await graphqlResponse.json();
+    console.log('GraphQL Response:', JSON.stringify(graphqlData).substring(0, 500));
+
+    // Check for GraphQL errors
+    if (graphqlData.errors) {
+      res.json({
+        answer: \`I had trouble understanding that query. The system returned: \${graphqlData.errors[0]?.message || 'Unknown error'}. Try rephrasing your question.\`,
+        query: cleanQuery,
+        error: graphqlData.errors,
+        data: null
+      });
+      return;
+    }
+
+    // Step 3: Format response with AI
+    const formattedResponse = await callOpenAI([
+      { role: 'system', content: RESPONSE_FORMATTER_CONTEXT },
+      { role: 'user', content: \`
+Question: \${question}
+
+Data from JTL ERP:
+\${JSON.stringify(graphqlData.data, null, 2)}
+
+Please provide a helpful, concise answer based on this data.
+\` }
+    ]);
+
+    res.json({
+      answer: formattedResponse,
+      query: cleanQuery,
+      data: graphqlData.data
+    });
+
+  } catch (error) {
+    console.error('Error in /ai/query:', error);
+    res.status(500).json({
+      error: 'AI query failed',
+      message: error instanceof Error ? error.message : String(error)
+    });
+  }
+});
+
+// AI Demo endpoint - uses DEMO_TENANT_ID, no auth required
+app.post('/ai/demo-query', async (req: Request, res: Response) => {
+  try {
+    const { question } = req.body;
+    const tenantId = process.env.DEMO_TENANT_ID;
+
+    if (!question) {
+      res.status(400).json({ error: 'Missing question in request body' });
+      return;
+    }
+
+    if (!tenantId) {
+      res.status(400).json({ error: 'DEMO_TENANT_ID not configured' });
+      return;
+    }
+
+    console.log('AI Demo Query:', question);
+
+    // Step 1: Generate GraphQL query
+    const graphqlQuery = await callOpenAI([
+      { role: 'system', content: GRAPHQL_SCHEMA_CONTEXT },
+      { role: 'user', content: question }
+    ]);
+
+    const cleanQuery = graphqlQuery
+      .replace(/\`\`\`graphql?/gi, '')
+      .replace(/\`\`\`/g, '')
+      .trim();
+
+    // Step 2: Execute GraphQL
+    const jwt = await getJwt();
+    const graphqlResponse = await fetch(\`https://api\${Environment}.jtl-cloud.com/erp/v2/graphql\`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: \`Bearer \${jwt}\`,
+        'X-Tenant-ID': tenantId,
+      },
+      body: JSON.stringify({ query: cleanQuery }),
+    });
+
+    const graphqlData = await graphqlResponse.json();
+
+    if (graphqlData.errors) {
+      res.json({
+        answer: \`I couldn't process that query. Error: \${graphqlData.errors[0]?.message}. Please try a different question.\`,
+        query: cleanQuery,
+        error: graphqlData.errors,
+        data: null
+      });
+      return;
+    }
+
+    // Step 3: Format response
+    const formattedResponse = await callOpenAI([
+      { role: 'system', content: RESPONSE_FORMATTER_CONTEXT },
+      { role: 'user', content: \`
+Question: \${question}
+
+Data:
+\${JSON.stringify(graphqlData.data, null, 2)}
+
+Provide a helpful answer.
+\` }
+    ]);
+
+    res.json({
+      answer: formattedResponse,
+      query: cleanQuery,
+      data: graphqlData.data
+    });
+
+  } catch (error) {
+    console.error('Error in /ai/demo-query:', error);
+    res.status(500).json({
+      error: 'AI query failed',
+      message: error instanceof Error ? error.message : String(error)
+    });
+  }
+});
+
+// =============================================================================
+// ERP INFO ENDPOINT
+// =============================================================================
+
 app.all('/erp-info/:tenantId/:endpoint', async (req: Request, res: Response) => {
   try {
     // Get parameters from the URL and the body if available

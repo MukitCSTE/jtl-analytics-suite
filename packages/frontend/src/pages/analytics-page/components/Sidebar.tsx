@@ -10,6 +10,8 @@ import {
   Calendar,
   ShoppingBag,
   BarChart3,
+  Sparkles,
+  HelpCircle,
 } from 'lucide-react';
 
 export type AnalyticsView =
@@ -20,14 +22,17 @@ export type AnalyticsView =
   | 'shipping'
   | 'returns'
   | 'heatmap'
-  | 'bundles';
+  | 'bundles'
+  | 'ai'
+  | 'faq';
 
 interface SidebarProps {
   activeView: AnalyticsView;
   onNavigate: (view: AnalyticsView) => void;
 }
 
-const menuItems: { id: AnalyticsView; label: string; icon: React.FC<{ size?: number; className?: string }> }[] = [
+const menuItems: { id: AnalyticsView; label: string; icon: React.FC<{ size?: number; className?: string }>; isNew?: boolean }[] = [
+  { id: 'ai', label: 'AI Assistant', icon: Sparkles, isNew: true },
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'fraud', label: 'Fraud Detector', icon: AlertTriangle },
   { id: 'reorder', label: 'Reorder Alerts', icon: Package },
@@ -36,6 +41,7 @@ const menuItems: { id: AnalyticsView; label: string; icon: React.FC<{ size?: num
   { id: 'returns', label: 'Return Risk', icon: RotateCcw },
   { id: 'heatmap', label: 'Sales Heatmap', icon: Calendar },
   { id: 'bundles', label: 'Product Analysis', icon: ShoppingBag },
+  { id: 'faq', label: 'FAQ & Setup', icon: HelpCircle },
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
@@ -98,7 +104,19 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
               <Text type="small" weight={isActive ? 'semibold' : 'regular'} style={{ color: 'inherit' }}>
                 {item.label}
               </Text>
-              {isActive && (
+              {item.isNew && (
+                <span
+                  className="ml-auto px-2 py-0.5 rounded-full text-xs font-bold"
+                  style={{
+                    background: 'linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)',
+                    color: 'white',
+                    fontSize: '0.65rem',
+                  }}
+                >
+                  NEW
+                </span>
+              )}
+              {isActive && !item.isNew && (
                 <div
                   className="ml-auto w-2 h-2 rounded-full"
                   style={{ background: '#ffffff', boxShadow: '0 0 8px rgba(255,255,255,0.6)' }}

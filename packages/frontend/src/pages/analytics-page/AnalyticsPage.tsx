@@ -10,9 +10,13 @@ import ShippingView from './views/ShippingView';
 import ReturnRiskView from './views/ReturnRiskView';
 import SalesHeatmapView from './views/SalesHeatmapView';
 import ProductBundlerView from './views/ProductBundlerView';
+import AiAssistantView from './views/AiAssistantView';
+import FaqView from './views/FaqView';
 
 function getInitialView(): AnalyticsView {
   const path = location.pathname;
+  if (path.includes('/analytics/ai')) return 'ai';
+  if (path.includes('/analytics/faq')) return 'faq';
   if (path.includes('/analytics/fraud')) return 'fraud';
   if (path.includes('/analytics/reorder')) return 'reorder';
   if (path.includes('/analytics/clv')) return 'clv';
@@ -20,7 +24,7 @@ function getInitialView(): AnalyticsView {
   if (path.includes('/analytics/returns')) return 'returns';
   if (path.includes('/analytics/heatmap')) return 'heatmap';
   if (path.includes('/analytics/bundles')) return 'bundles';
-  return 'dashboard';
+  return 'ai'; // Default to AI Assistant
 }
 
 const AnalyticsPage: React.FC<IAnalyticsPageProps> = ({ appBridge }) => {
@@ -36,6 +40,8 @@ const AnalyticsPage: React.FC<IAnalyticsPageProps> = ({ appBridge }) => {
 
   const renderView = () => {
     switch (activeView) {
+      case 'ai':
+        return <AiAssistantView appBridge={appBridge} />;
       case 'dashboard':
         return <DashboardView appBridge={appBridge} />;
       case 'fraud':
@@ -52,8 +58,10 @@ const AnalyticsPage: React.FC<IAnalyticsPageProps> = ({ appBridge }) => {
         return <SalesHeatmapView appBridge={appBridge} />;
       case 'bundles':
         return <ProductBundlerView appBridge={appBridge} />;
+      case 'faq':
+        return <FaqView />;
       default:
-        return <DashboardView appBridge={appBridge} />;
+        return <AiAssistantView appBridge={appBridge} />;
     }
   };
 
