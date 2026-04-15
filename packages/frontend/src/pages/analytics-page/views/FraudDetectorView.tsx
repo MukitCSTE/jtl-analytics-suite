@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AppBridge } from '@jtl-software/cloud-apps-core';
 import { Card, CardHeader, CardTitle, CardContent, Text, Stack, Box, Button, Badge } from '@jtl-software/platform-ui-react';
-import { AlertTriangle, Shield, ShieldAlert, ShieldCheck, MapPin } from 'lucide-react';
+import { AlertTriangle, Shield, ShieldAlert, ShieldCheck, MapPin, HelpCircle, X, CheckCircle2, ArrowRight } from 'lucide-react';
 import { gql } from 'graphql-request';
 import { StatCard, DataTable } from '../components/shared';
 import { SimpleDonutChart, ProgressBar } from '../components/SimpleChart';
@@ -147,6 +147,7 @@ const FraudDetectorView: React.FC<FraudDetectorViewProps> = ({ appBridge }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [analyses, setAnalyses] = useState<FraudAnalysis[]>([]);
+  const [showHelp, setShowHelp] = useState(false);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -276,16 +277,154 @@ const FraudDetectorView: React.FC<FraudDetectorViewProps> = ({ appBridge }) => {
   return (
     <Stack spacing="6" direction="column">
       <div className="flex items-center justify-between">
-        <div>
-          <Text type="h2" weight="bold">
-            Fraud Detector
-          </Text>
-          <Text type="small" color="muted">
-            AI-powered risk analysis that protects your business from fraudulent orders before they cost you money.
-          </Text>
+        <div className="flex items-center gap-3">
+          <div
+            className="w-12 h-12 rounded-xl flex items-center justify-center"
+            style={{ background: 'linear-gradient(135deg, #dc2626 0%, #f59e0b 100%)' }}
+          >
+            <ShieldAlert size={24} color="white" />
+          </div>
+          <div>
+            <Text type="h2" weight="bold">
+              Fraud Detector
+            </Text>
+            <Text type="small" color="muted">
+              AI-powered risk analysis to protect your business
+            </Text>
+          </div>
         </div>
-        <Button onClick={fetchData} disabled={loading} variant="outline" label={loading ? 'Analyzing...' : 'Refresh'} />
+        <div className="flex gap-2">
+          <Button
+            onClick={() => setShowHelp(!showHelp)}
+            variant="outline"
+            label="How It Works"
+            icon={<HelpCircle size={16} />}
+          />
+          <Button onClick={fetchData} disabled={loading} variant="outline" label={loading ? 'Analyzing...' : 'Refresh'} />
+        </div>
       </div>
+
+      {/* How It Works Panel */}
+      {showHelp && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <HelpCircle size={20} className="text-blue-500" />
+                <CardTitle>How Fraud Detection Works</CardTitle>
+              </div>
+              <button onClick={() => setShowHelp(false)} className="p-1 hover:bg-gray-100 rounded">
+                <X size={20} />
+              </button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {/* Workflow Steps */}
+              <div className="flex flex-wrap gap-4 items-center justify-center p-4 rounded-lg" style={{ background: '#f8fafc' }}>
+                <div className="flex flex-col items-center gap-2 text-center">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                    <span className="text-blue-600 font-bold">1</span>
+                  </div>
+                  <Text type="xs" weight="semibold">Fetch Orders</Text>
+                  <Text type="xs" color="muted">Load recent orders</Text>
+                </div>
+                <ArrowRight size={20} className="text-gray-300" />
+                <div className="flex flex-col items-center gap-2 text-center">
+                  <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                    <span className="text-purple-600 font-bold">2</span>
+                  </div>
+                  <Text type="xs" weight="semibold">Analyze Risks</Text>
+                  <Text type="xs" color="muted">Check fraud signals</Text>
+                </div>
+                <ArrowRight size={20} className="text-gray-300" />
+                <div className="flex flex-col items-center gap-2 text-center">
+                  <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                    <span className="text-orange-600 font-bold">3</span>
+                  </div>
+                  <Text type="xs" weight="semibold">Score & Flag</Text>
+                  <Text type="xs" color="muted">Calculate risk score</Text>
+                </div>
+                <ArrowRight size={20} className="text-gray-300" />
+                <div className="flex flex-col items-center gap-2 text-center">
+                  <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                    <span className="text-red-600 font-bold">4</span>
+                  </div>
+                  <Text type="xs" weight="semibold">Review</Text>
+                  <Text type="xs" color="muted">Take action</Text>
+                </div>
+              </div>
+
+              {/* Risk Factors Explained */}
+              <div>
+                <Text type="small" weight="bold" style={{ marginBottom: '12px', display: 'block' }}>
+                  Risk Factors We Check:
+                </Text>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="flex items-start gap-2 p-3 rounded-lg border" style={{ borderColor: '#fee2e2', background: '#fef2f2' }}>
+                    <CheckCircle2 size={16} className="text-red-500 mt-0.5" />
+                    <div>
+                      <Text type="xs" weight="semibold">Address Mismatch (+35 pts)</Text>
+                      <Text type="xs" color="muted">Billing country differs from shipping country - strongest fraud signal</Text>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2 p-3 rounded-lg border" style={{ borderColor: '#fef3c7', background: '#fffbeb' }}>
+                    <CheckCircle2 size={16} className="text-orange-500 mt-0.5" />
+                    <div>
+                      <Text type="xs" weight="semibold">High Value Orders (+25 pts)</Text>
+                      <Text type="xs" color="muted">Orders over 500 EUR are higher risk targets</Text>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2 p-3 rounded-lg border" style={{ borderColor: '#dbeafe', background: '#eff6ff' }}>
+                    <CheckCircle2 size={16} className="text-blue-500 mt-0.5" />
+                    <div>
+                      <Text type="xs" weight="semibold">First-Time Customer (+15 pts)</Text>
+                      <Text type="xs" color="muted">New customers with no order history</Text>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2 p-3 rounded-lg border" style={{ borderColor: '#e9d5ff', background: '#faf5ff' }}>
+                    <CheckCircle2 size={16} className="text-purple-500 mt-0.5" />
+                    <div>
+                      <Text type="xs" weight="semibold">Unusual Timing (+12 pts)</Text>
+                      <Text type="xs" color="muted">Late night (00:00-06:00) or weekend orders</Text>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2 p-3 rounded-lg border" style={{ borderColor: '#d1fae5', background: '#ecfdf5' }}>
+                    <CheckCircle2 size={16} className="text-green-500 mt-0.5" />
+                    <div>
+                      <Text type="xs" weight="semibold">International Shipping (+10 pts)</Text>
+                      <Text type="xs" color="muted">Shipping outside Germany</Text>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2 p-3 rounded-lg border" style={{ borderColor: '#e5e7eb', background: '#f9fafb' }}>
+                    <CheckCircle2 size={16} className="text-gray-500 mt-0.5" />
+                    <div>
+                      <Text type="xs" weight="semibold">Above Average (+15 pts)</Text>
+                      <Text type="xs" color="muted">Order value 2x higher than your average</Text>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Risk Levels */}
+              <div className="flex gap-4 justify-center">
+                <div className="flex items-center gap-2">
+                  <Badge variant="destructive" label="HIGH" />
+                  <Text type="xs" color="muted">Score 45+</Text>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="warning" label="MEDIUM" />
+                  <Text type="xs" color="muted">Score 25-44</Text>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="success" label="LOW" />
+                  <Text type="xs" color="muted">Score 0-24</Text>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Value Proposition */}
       <div className="p-4 rounded-lg border-l-4" style={{ background: 'linear-gradient(90deg, rgba(220,38,38,0.1) 0%, transparent 100%)', borderColor: '#dc2626' }}>

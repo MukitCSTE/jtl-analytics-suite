@@ -20,6 +20,8 @@ import {
   MicOff,
   Volume2,
   VolumeX,
+  Download,
+  Mail,
 } from 'lucide-react';
 
 interface ReportAgentViewProps {
@@ -41,10 +43,11 @@ type AgentState =
   | 'querying'
   | 'showing_results'
   | 'asking_satisfied'
+  | 'asking_delivery'
   | 'asking_email'
   | 'asking_format'
-  | 'sending'
-  | 'sent';
+  | 'processing'
+  | 'done';
 
 const AI_SERVER_URL = 'http://localhost:3006';
 
@@ -65,6 +68,7 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
   const [input, setInput] = useState('');
   const [agentState, setAgentState] = useState<AgentState>('idle');
   const [currentReport, setCurrentReport] = useState<{ query: string; data: any; answer: string } | null>(null);
+  const [deliveryMethod, setDeliveryMethod] = useState<'download' | 'email'>('download');
   const [email, setEmail] = useState('');
   const [selectedModel, setSelectedModel] = useState('gpt-4o-mini');
   const [showSettings, setShowSettings] = useState(false);
@@ -191,7 +195,7 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
         content: data.answer + '\n\n---\n\n**Are you satisfied with this report?**',
         data: data.data,
         options: [
-          { label: 'Yes, send it!', value: 'yes' },
+          { label: 'Yes, looks good!', value: 'yes', icon: <Download size={16} /> },
           { label: 'No, let me refine', value: 'no' },
         ],
         inputType: 'choice',
@@ -209,15 +213,19 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
   };
 
   const handleSatisfied = (satisfied: boolean) => {
-    addMessage({ role: 'user', content: satisfied ? 'Yes, send it!' : 'No, let me refine' });
+    addMessage({ role: 'user', content: satisfied ? 'Yes, looks good!' : 'No, let me refine' });
 
     if (satisfied) {
       addMessage({
         role: 'agent',
-        content: 'Great! Where should I send this report?\n\nPlease enter your email address:',
-        inputType: 'email',
+        content: 'How would you like to receive the report?',
+        options: [
+          { label: 'Download', value: 'download', icon: <Download size={16} /> },
+          { label: 'Send via Email', value: 'email', icon: <Mail size={16} /> },
+        ],
+        inputType: 'choice',
       });
-      setAgentState('asking_email');
+      setAgentState('asking_delivery');
     } else {
       addMessage({
         role: 'agent',
@@ -228,41 +236,139 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
     }
   };
 
+  const handleDeliveryMethod = (method: 'download' | 'email') => {
+    setDeliveryMethod(method);
+    addMessage({ role: 'user', content: method === 'download' ? 'Download' : 'Send via Email' });
+
+    if (method === 'email') {
+      addMessage({
+        role: 'agent',
+        content: 'Please enter the email address to send the report to:',
+        inputType: 'text',
+      });
+      setAgentState('asking_email');
+    } else {
+      addMessage({
+        role: 'agent',
+        content: 'What format would you like?',
+        options: [
+          { label: 'CSV Spreadsheet', value: 'csv', icon: <FileSpreadsheet size={16} /> },
+          { label: 'JSON Data', value: 'json', icon: <File size={16} /> },
+        ],
+        inputType: 'choice',
+      });
+      setAgentState('asking_format');
+    }
+  };
+
   const handleEmail = (emailAddress: string) => {
     setEmail(emailAddress);
     addMessage({ role: 'user', content: emailAddress });
 
     addMessage({
       role: 'agent',
-      content: 'Perfect! What format would you like the report in?',
+      content: 'What format would you like the report in?',
       options: [
-        { label: 'PDF Document', value: 'pdf', icon: <File size={16} /> },
-        { label: 'Excel Spreadsheet', value: 'excel', icon: <FileSpreadsheet size={16} /> },
+        { label: 'CSV Spreadsheet', value: 'csv', icon: <FileSpreadsheet size={16} /> },
+        { label: 'JSON Data', value: 'json', icon: <File size={16} /> },
       ],
       inputType: 'choice',
     });
     setAgentState('asking_format');
   };
 
+  const generateReportContent = (format: string): { content: string; filename: string; mimeType: string } => {
+    const timestamp = new Date().toISOString().split('T')[0];
+    const filename = `report-${timestamp}`;
+    const data = currentReport?.data;
+
+    if (format === 'csv') {
+      let csvContent = '';
+      const dataArray = data?.QuerySalesOrders?.nodes || data?.QueryItems?.nodes ||
+                       (Array.isArray(data) ? data : [data]);
+
+      if (dataArray && dataArray.length > 0) {
+        const headers = Object.keys(dataArray[0]);
+        csvContent = headers.join(',') + '\n';
+
+        dataArray.forEach((item: any) => {
+          const row = headers.map(h => {
+            const val = item[h];
+            if (typeof val === 'string' && (val.includes(',') || val.includes('"'))) {
+              return `"${val.replace(/"/g, '""')}"`;
+            }
+            return val ?? '';
+          });
+          csvContent += row.join(',') + '\n';
+        });
+      } else {
+        csvContent = 'No data available';
+      }
+
+      return { content: csvContent, filename: `${filename}.csv`, mimeType: 'text/csv' };
+    } else {
+      const jsonContent = JSON.stringify(data, null, 2);
+      return { content: jsonContent, filename: `${filename}.json`, mimeType: 'application/json' };
+    }
+  };
+
   const handleFormat = async (format: string) => {
-    addMessage({ role: 'user', content: format === 'pdf' ? 'PDF Document' : 'Excel Spreadsheet' });
+    addMessage({ role: 'user', content: format === 'csv' ? 'CSV Spreadsheet' : 'JSON Data' });
 
     addMessage({ role: 'agent', content: '', isLoading: true });
-    setAgentState('sending');
+    setAgentState('processing');
 
-    // Simulate sending (in real app, call backend to send email)
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
+    await new Promise(resolve => setTimeout(resolve, 500));
     removeLoadingMessages();
 
-    addMessage({
-      role: 'agent',
-      content: `✅ **Report sent successfully!**\n\n📧 Sent to: ${email}\n📄 Format: ${format.toUpperCase()}\n📊 Report: ${currentReport?.query}\n\n---\n\nWould you like to generate another report?`,
-    });
+    try {
+      const { content, filename, mimeType } = generateReportContent(format);
+
+      // Download the file
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      if (deliveryMethod === 'email') {
+        // Open email client with mailto
+        const subject = encodeURIComponent(`JTL Report: ${currentReport?.query}`);
+        const body = encodeURIComponent(
+          `Hi,\n\nPlease find the attached report.\n\n` +
+          `Report: ${currentReport?.query}\n` +
+          `Format: ${format.toUpperCase()}\n` +
+          `Generated: ${new Date().toLocaleString()}\n\n` +
+          `Summary:\n${currentReport?.answer?.substring(0, 500) || 'See attached file.'}\n\n` +
+          `---\nGenerated by JTL Analytics Suite`
+        );
+
+        // Open mailto link
+        window.open(`mailto:${email}?subject=${subject}&body=${body}`, '_blank');
+
+        addMessage({
+          role: 'agent',
+          content: `✅ **Report ready!**\n\n📥 File downloaded: **${filename}**\n📧 Email draft opened for: **${email}**\n\n💡 **Attach the downloaded file** to your email and send!\n\n---\n\nWould you like to generate another report?`,
+        });
+      } else {
+        addMessage({
+          role: 'agent',
+          content: `✅ **Report downloaded!**\n\n📄 File: **${filename}**\n📊 Report: ${currentReport?.query}\n\n---\n\nWould you like to generate another report?`,
+        });
+      }
+    } catch (error) {
+      addMessage({
+        role: 'agent',
+        content: '❌ Failed to generate report. Please try again.',
+      });
+    }
 
     setAgentState('idle');
     setCurrentReport(null);
     setEmail('');
+    setDeliveryMethod('download');
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -293,6 +399,9 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
     switch (agentState) {
       case 'asking_satisfied':
         handleSatisfied(value === 'yes');
+        break;
+      case 'asking_delivery':
+        handleDeliveryMethod(value as 'download' | 'email');
         break;
       case 'asking_format':
         handleFormat(value);
@@ -410,7 +519,7 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
                         <div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
                       </div>
                       <Text type="small" color="muted">
-                        {agentState === 'querying' ? 'Generating report...' : 'Sending report...'}
+                        {agentState === 'querying' ? 'Generating report...' : 'Preparing download...'}
                       </Text>
                     </div>
                   ) : (
@@ -459,7 +568,7 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
             <button
               type="button"
               onClick={toggleListening}
-              disabled={agentState === 'querying' || agentState === 'sending'}
+              disabled={agentState === 'querying' || agentState === 'processing'}
               className={`p-3 rounded-xl border transition-all ${
                 isListening
                   ? 'bg-red-500 border-red-500 text-white animate-pulse'
@@ -472,29 +581,29 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
 
             <input
               ref={inputRef}
-              type={agentState === 'asking_email' ? 'email' : 'text'}
+              type="text"
               value={input}
               onChange={e => setInput(e.target.value)}
               placeholder={
                 isListening
                   ? 'Listening...'
                   : agentState === 'asking_email'
-                    ? 'Enter your email address...'
-                    : agentState === 'asking_satisfied' || agentState === 'asking_format'
+                    ? 'Enter email address...'
+                    : agentState === 'asking_satisfied' || agentState === 'asking_format' || agentState === 'asking_delivery'
                       ? 'Or type your response...'
                       : 'Ask for a report... (e.g., "Show me sales this week")'
               }
-              disabled={agentState === 'querying' || agentState === 'sending' || isListening}
+              disabled={agentState === 'querying' || agentState === 'downloading' || isListening}
               className="flex-1 px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               style={{ borderColor: isListening ? '#ef4444' : '#e5e7eb' }}
             />
             <Button
               type="submit"
               variant="default"
-              disabled={!input.trim() || agentState === 'querying' || agentState === 'sending'}
+              disabled={!input.trim() || agentState === 'querying' || agentState === 'downloading'}
               label=""
               icon={
-                agentState === 'querying' || agentState === 'sending' ? (
+                agentState === 'querying' || agentState === 'downloading' ? (
                   <Loader2 size={20} className="animate-spin" />
                 ) : (
                   <Send size={20} />
