@@ -8,7 +8,7 @@ import {
   Truck,
   RotateCcw,
   Calendar,
-  ShoppingBag,
+  FileText,
   BarChart3,
   Sparkles,
   HelpCircle,
@@ -22,7 +22,7 @@ export type AnalyticsView =
   | 'shipping'
   | 'returns'
   | 'heatmap'
-  | 'bundles'
+  | 'reports'
   | 'ai'
   | 'faq';
 
@@ -33,6 +33,7 @@ interface SidebarProps {
 
 const menuItems: { id: AnalyticsView; label: string; icon: React.FC<{ size?: number; className?: string }>; isNew?: boolean }[] = [
   { id: 'ai', label: 'AI Assistant', icon: Sparkles, isNew: true },
+  { id: 'reports', label: 'Report Agent', icon: FileText, isNew: true },
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'fraud', label: 'Fraud Detector', icon: AlertTriangle },
   { id: 'reorder', label: 'Reorder Alerts', icon: Package },
@@ -40,7 +41,6 @@ const menuItems: { id: AnalyticsView; label: string; icon: React.FC<{ size?: num
   { id: 'shipping', label: 'Fulfillment', icon: Truck },
   { id: 'returns', label: 'Return Risk', icon: RotateCcw },
   { id: 'heatmap', label: 'Sales Heatmap', icon: Calendar },
-  { id: 'bundles', label: 'Product Analysis', icon: ShoppingBag },
   { id: 'faq', label: 'FAQ & Setup', icon: HelpCircle },
 ];
 

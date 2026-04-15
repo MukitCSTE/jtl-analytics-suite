@@ -9,7 +9,7 @@ import CustomerValueView from './views/CustomerValueView';
 import ShippingView from './views/ShippingView';
 import ReturnRiskView from './views/ReturnRiskView';
 import SalesHeatmapView from './views/SalesHeatmapView';
-import ProductBundlerView from './views/ProductBundlerView';
+import ReportAgentView from './views/ReportAgentView';
 import AiAssistantView from './views/AiAssistantView';
 import FaqView from './views/FaqView';
 
@@ -23,7 +23,7 @@ function getInitialView(): AnalyticsView {
   if (path.includes('/analytics/shipping')) return 'shipping';
   if (path.includes('/analytics/returns')) return 'returns';
   if (path.includes('/analytics/heatmap')) return 'heatmap';
-  if (path.includes('/analytics/bundles')) return 'bundles';
+  if (path.includes('/analytics/reports')) return 'reports';
   return 'ai'; // Default to AI Assistant
 }
 
@@ -56,8 +56,8 @@ const AnalyticsPage: React.FC<IAnalyticsPageProps> = ({ appBridge }) => {
         return <ReturnRiskView appBridge={appBridge} />;
       case 'heatmap':
         return <SalesHeatmapView appBridge={appBridge} />;
-      case 'bundles':
-        return <ProductBundlerView appBridge={appBridge} />;
+      case 'reports':
+        return <ReportAgentView appBridge={appBridge} />;
       case 'faq':
         return <FaqView />;
       default:
