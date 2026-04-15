@@ -319,6 +319,23 @@ const FaqView: React.FC = () => {
         </div>
       </div>
 
+      {/* Value Proposition */}
+      <div
+        className="p-4 rounded-lg border-l-4"
+        style={{
+          background: 'linear-gradient(90deg, rgba(59,130,246,0.1) 0%, transparent 100%)',
+          borderColor: '#3b82f6',
+        }}
+      >
+        <div className="text-blue-500 font-semibold text-sm">
+          Connect AI to your ERP data
+        </div>
+        <Text type="small" color="muted">
+          The MCP (Model Context Protocol) server lets you use Claude Code or Claude Desktop to query your JTL data with natural language.
+          Follow these steps to set it up in minutes.
+        </Text>
+      </div>
+
       {/* Quick Start Card */}
       <Card>
         <CardHeader>

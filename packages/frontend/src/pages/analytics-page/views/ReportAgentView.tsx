@@ -437,6 +437,23 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
         />
       </div>
 
+      {/* Value Proposition */}
+      <div
+        className="p-4 rounded-lg border-l-4"
+        style={{
+          background: 'linear-gradient(90deg, rgba(245,158,11,0.1) 0%, transparent 100%)',
+          borderColor: '#f59e0b',
+        }}
+      >
+        <div className="text-orange-500 font-semibold text-sm">
+          Reports made easy with voice and chat
+        </div>
+        <Text type="small" color="muted">
+          Just describe the report you need - "sales from last week" or "top customers this month".
+          I'll generate it, show you the results, and deliver it via download or email. You can even speak your request using the microphone.
+        </Text>
+      </div>
+
       {/* Settings Panel */}
       {showSettings && (
         <Card>
