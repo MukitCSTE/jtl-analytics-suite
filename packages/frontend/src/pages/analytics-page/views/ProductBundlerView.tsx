@@ -172,9 +172,12 @@ const ProductBundlerView: React.FC<ProductBundlerViewProps> = ({ appBridge }) =>
       </div>
 
       {error && (
-        <Box className="p-4 rounded-lg bg-red-50 border border-red-200">
-          <Text type="small" color="danger">
-            {error}
+        <Box className="p-4 rounded-lg bg-yellow-50 border border-yellow-200">
+          <Text type="small" weight="semibold" style={{ color: '#ca8a04' }}>
+            No product data available
+          </Text>
+          <Text type="small" color="muted" className="mt-1">
+            This tenant doesn't have inventory data yet. Product analysis requires items in your catalog with stock information.
           </Text>
         </Box>
       )}

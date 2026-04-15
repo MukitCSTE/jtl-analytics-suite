@@ -265,9 +265,12 @@ const ReorderAlertsView: React.FC<ReorderAlertsViewProps> = ({ appBridge }) => {
       </div>
 
       {error && (
-        <Box className="p-4 rounded-lg bg-red-50 border border-red-200">
-          <Text type="small" color="danger">
-            {error}
+        <Box className="p-4 rounded-lg bg-yellow-50 border border-yellow-200">
+          <Text type="small" weight="semibold" style={{ color: '#ca8a04' }}>
+            No inventory data available
+          </Text>
+          <Text type="small" color="muted" className="mt-1">
+            This tenant doesn't have product/inventory data yet. Add items to your catalog to see reorder alerts. Error: {error}
           </Text>
         </Box>
       )}
