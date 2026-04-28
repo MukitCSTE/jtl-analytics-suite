@@ -336,14 +336,19 @@ query { QuerySalesOrders(first: 10, order: [{ salesOrderDate: DESC }]) {
   totalCount nodes { salesOrderNumber salesOrderDate totalGrossAmount companyName }
 }}
 
-# Low stock items
-query { QueryItems(first: 50, where: { hasMinimumStock: { eq: true }, stockAvailable: { lt: 10 } }) {
+# Low stock / restocking needed - query items with minimum stock defined, then check which are below
+query { QueryItems(first: 100, where: { hasMinimumStock: { eq: true } }) {
   totalCount nodes { sku name stockAvailable minimumStock }
 }}
 
 # Customers by country
 query { QueryCustomers(first: 50, where: { countryIso: { eq: "DE" } }) {
-  totalCount nodes { customerNumber companyName city }
+  totalCount nodes { customerNumber firstName lastName city }
+}
+
+# Top customers (by sales orders) - use sales orders to find best customers
+query { QuerySalesOrders(first: 100, order: [{ totalGrossAmount: DESC }]) {
+  nodes { companyName customerNumber totalGrossAmount salesOrderNumber }
 }}
 
 # Unpaid invoices
@@ -351,9 +356,14 @@ query { QuerySalesInvoices(first: 50, where: { isCompletelyPaid: { eq: false } }
   totalCount nodes { salesInvoiceNumber customerNumber totalGrossAmount stillToPay paymentDueDate }
 }}
 
-# Stock by warehouse
-query { QueryStock(first: 100) {
-  nodes { articleId availableQuantity reservedQuantity warehouseId }
+# List all warehouses
+query { QueryWarehouses(first: 50) {
+  totalCount nodes { id name active }
+}
+
+# Stock items with quantities (use this for stock overview)
+query { QueryStockItem(first: 100) {
+  totalCount nodes { itemId sku name stockTotal stockAvailable stockReserved warehouseId }
 }}
 
 # Production orders
@@ -378,14 +388,23 @@ query { QuerySuppliers(first: 50) {
 3. Use proper field names exactly as listed
 4. For date comparisons, use ISO format
 5. Always include totalCount in response
+6. For "top customers" or "best customers", query QuerySalesOrders ordered by totalGrossAmount DESC to find customers with highest sales
+7. CustomerListItem does NOT have totalGrossAmount - use SalesOrders or SalesInvoices for customer revenue
+8. Filter values must be LITERALS (numbers, strings), NOT field names. You cannot do { lt: minimumStock } - use a literal like { lt: 10 }
+9. For "restocking" or "low stock", query items with hasMinimumStock: true, then identify items where stockAvailable < minimumStock in the response
+10. QueryStock REQUIRES warehouseId argument - use QueryWarehouses to list warehouses, or QueryStockItem for stock overview
+11. For "warehouse with most stock", use QueryWarehouses to list warehouses (no direct stock totals available)
 `;
 
 const RESPONSE_FORMAT = `
 You are a helpful JTL ERP analytics assistant.
+
+CRITICAL RULE: You MUST respond in ENGLISH when the user asks in English. Do NOT use German for headings, labels, or recommendations - use English only. The data values (product names, company names) can stay in their original language, but all your text must be in English.
+
 Format data clearly with:
 - Key insights highlighted
 - Bullet points for lists
-- German number format (1.234,56 EUR)
+- Number format: 1.234,56 EUR
 - Dates as DD.MM.YYYY
 - Actionable recommendations
 - Be concise but thorough

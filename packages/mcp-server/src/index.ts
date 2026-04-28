@@ -28,7 +28,7 @@ const CONFIG = {
     model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
   },
   jtl: {
-    apiUrl: process.env.JTL_API_URL || 'https://api.beta.jtl-cloud.com',
+    apiUrl: process.env.JTL_API_URL || 'https://api.jtl-cloud.com',
     clientId: process.env.CLIENT_ID || '',
     clientSecret: process.env.CLIENT_SECRET || '',
     demoTenantId: process.env.DEMO_TENANT_ID || '',
@@ -122,40 +122,45 @@ async function callOpenAI(messages: Array<{ role: string; content: string }>): P
 const GRAPHQL_SCHEMA = `
 You are a JTL ERP GraphQL expert. Convert natural language to GraphQL queries.
 
-Available Types:
+CRITICAL RULES:
+1. DO NOT use date filters (gte, lte, gt, lt on dates). The database has historical data from 2018.
+2. For "recent", "last week", "this month", "last 7 months" - just order by date DESC and use first: N
+3. Return ONLY the GraphQL query, no markdown, no explanation
+4. Always include totalCount in your query
 
-1. QuerySalesOrders - Sales orders
-   Fields: salesOrderNumber, salesOrderDate, totalGrossAmount, totalNetAmount, currencyIso,
-           companyName, customerNumber, customerId,
-           billingAddressCity, billingAddressCountryIso, billingAddressCountryName,
-           shipmentAddressCity, shipmentAddressCountryIso, shipmentAddressCountryName,
-           deliveryStatus, deliveryCompleteStatus, paymentStatus,
-           shippingMethodName, shippingPriority, estimatedDeliveryDate, lastShippingDate,
-           isPending, isCancelled
+Available Queries:
+- QuerySalesOrders: salesOrderNumber, salesOrderDate, totalGrossAmount, companyName, customerNumber
+- QueryItems: sku, name, stockAvailable, minimumStock, hasMinimumStock, salesPriceGross
+- QueryCustomers: customerNumber, firstName, lastName, city, countryIso
+- QuerySalesInvoices: salesInvoiceNumber, totalGrossAmount, stillToPay, isCompletelyPaid
+- QueryWarehouses: id, name, active
+- QueryCategories: id, name, parentId
+- QuerySuppliers: id, name
+- QueryShippingMethods: id, name, isActive
 
-2. QueryItems - Products/Inventory
-   Fields: id, sku, name, description,
-           stockTotal, stockAvailable, stockInOrders, stockIncoming,
-           minimumStock, hasMinimumStock,
-           salesPriceGross, salesPriceNet, profit,
-           defaultSupplier, lastPurchaseDate,
-           isActive, createdDate, modifiedDate
+EXAMPLES:
+# Sales data (works for any timeframe question)
+query { QuerySalesOrders(first: 50, order: [{ salesOrderDate: DESC }]) {
+  totalCount nodes { salesOrderNumber salesOrderDate totalGrossAmount companyName }
+}}
 
-Filters: where: { and/or: [{ field: { eq/neq/gt/gte/lt/lte/contains: value } }] }
-Order: order: [{ field: ASC/DESC }]
-Pagination: first: N (default 50)
-
-Today: ${new Date().toISOString().split('T')[0]}
+# Top customers (by sales amount)
+query { QuerySalesOrders(first: 100, order: [{ totalGrossAmount: DESC }]) {
+  nodes { companyName customerNumber totalGrossAmount }
+}}
 
 Return ONLY valid GraphQL, no explanation.
 `;
 
 const RESPONSE_FORMAT = `
 You are a helpful JTL ERP analytics assistant.
+
+CRITICAL: Respond in ENGLISH when user asks in English. Use English for all headings, labels, and recommendations.
+
 Format data clearly with:
 - Key insights first
 - Bullet points for lists
-- German number format (1.234,56 EUR)
+- Number format: 1.234,56 EUR
 - Dates as DD.MM.YYYY
 - Actionable recommendations when relevant
 `;

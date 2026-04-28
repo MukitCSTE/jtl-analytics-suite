@@ -4,12 +4,9 @@ import {
   Card,
   CardContent,
   Text,
-  Stack,
-  Box,
-  Button,
-  Badge,
 } from '@jtl-software/platform-ui-react';
 import { Send, Sparkles, Loader2, Bot, User, Code, RefreshCw } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 interface AiAssistantViewProps {
   appBridge: AppBridge;
@@ -29,7 +26,7 @@ interface Suggestion {
   text: string;
 }
 
-const AI_SERVER_URL = 'http://localhost:3006';
+const AI_SERVER_URL = 'http://localhost:3006/mcp';
 
 const AiAssistantView: React.FC<AiAssistantViewProps> = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -48,10 +45,18 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = () => {
   // Default suggestions (static list)
   useEffect(() => {
     setSuggestions([
-      { icon: '📊', text: "How are sales today?" },
+      { icon: '📊', text: "Show me recent sales orders" },
       { icon: '🚨', text: "Any suspicious orders?" },
       { icon: '📦', text: "Which products need restocking?" },
       { icon: '👑', text: "Who are my top customers?" },
+      { icon: '🧾', text: "Show me unpaid invoices" },
+      { icon: '🏭', text: "Show production orders" },
+      { icon: '🏬', text: "List all warehouses" },
+      { icon: '🚚', text: "List all shipping methods" },
+      { icon: '📈', text: "What are my best selling products?" },
+      { icon: '💰', text: "Show highest value orders" },
+      { icon: '🏷️', text: "List all product categories" },
+      { icon: '📦', text: "Show items with low stock" },
     ]);
   }, []);
 
@@ -131,7 +136,7 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = () => {
   };
 
   return (
-    <Stack spacing="4" direction="column" style={{ height: 'calc(100vh - 200px)' }}>
+    <div className="flex flex-col gap-4" style={{ height: 'calc(100vh - 200px)' }}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -153,12 +158,13 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = () => {
           </div>
         </div>
         {messages.length > 0 && (
-          <Button
-            variant="outline"
-            label="Clear Chat"
+          <button
             onClick={clearChat}
-            icon={<RefreshCw size={16} />}
-          />
+            className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm"
+          >
+            <RefreshCw size={16} />
+            Clear Chat
+          </button>
         )}
       </div>
 
@@ -170,9 +176,9 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = () => {
           borderColor: '#8b5cf6',
         }}
       >
-        <Text type="small" weight="semibold" style={{ color: '#8b5cf6' }}>
+        <div className="text-sm font-semibold" style={{ color: '#8b5cf6' }}>
           Talk to your ERP like never before
-        </Text>
+        </div>
         <Text type="small" color="muted">
           No more clicking through menus. Just ask questions like "Who are my top customers?" or
           "Which products need restocking?" and get instant AI-powered insights from your JTL data.
@@ -195,7 +201,7 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = () => {
               </div>
 
               {/* Suggestions Grid */}
-              <div className="grid grid-cols-2 gap-2 w-full max-w-lg">
+              <div className="grid grid-cols-3 gap-2 w-full max-w-2xl">
                 {suggestions.map((suggestion, i) => (
                   <button
                     key={i}
@@ -255,11 +261,69 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = () => {
                       </div>
                     ) : (
                       <>
-                        <div
-                          className="whitespace-pre-wrap text-sm"
-                          style={{ lineHeight: 1.6 }}
-                        >
-                          {message.content}
+                        <div className="prose prose-sm max-w-none">
+                          <ReactMarkdown
+                            components={{
+                              table: ({ children }) => (
+                                <table className="min-w-full border-collapse border border-gray-300 my-2 text-sm">
+                                  {children}
+                                </table>
+                              ),
+                              thead: ({ children }) => (
+                                <thead className="bg-purple-100">{children}</thead>
+                              ),
+                              th: ({ children }) => (
+                                <th className="border border-gray-300 px-3 py-2 text-left font-semibold text-purple-800">
+                                  {children}
+                                </th>
+                              ),
+                              td: ({ children }) => (
+                                <td className="border border-gray-300 px-3 py-2">{children}</td>
+                              ),
+                              h1: ({ children }) => (
+                                <h1 className="text-xl font-bold text-gray-800 mt-3 mb-2">{children}</h1>
+                              ),
+                              h2: ({ children }) => (
+                                <h2 className="text-lg font-bold text-gray-800 mt-3 mb-2">{children}</h2>
+                              ),
+                              h3: ({ children }) => (
+                                <h3 className="text-base font-semibold text-gray-700 mt-2 mb-1">{children}</h3>
+                              ),
+                              h4: ({ children }) => (
+                                <h4 className="text-sm font-semibold text-gray-700 mt-2 mb-1">{children}</h4>
+                              ),
+                              ul: ({ children }) => (
+                                <ul className="list-disc list-inside my-2 space-y-1">{children}</ul>
+                              ),
+                              ol: ({ children }) => (
+                                <ol className="list-decimal list-inside my-2 space-y-1">{children}</ol>
+                              ),
+                              li: ({ children }) => (
+                                <li className="text-sm">{children}</li>
+                              ),
+                              strong: ({ children }) => {
+                                // Check if it's a label (ends with :) or a value
+                                const text = String(children);
+                                const isLabel = text.endsWith(':');
+                                return (
+                                  <strong className={`font-semibold ${isLabel ? 'text-gray-700' : 'text-purple-600'}`}>
+                                    {children}
+                                  </strong>
+                                );
+                              },
+                              p: ({ children }) => (
+                                <p className="my-1 text-sm leading-relaxed">{children}</p>
+                              ),
+                              a: ({ children, href }) => (
+                                <a href={href} className="text-purple-600 hover:text-purple-800 font-medium">{children}</a>
+                              ),
+                              code: ({ children }) => (
+                                <code className="bg-gray-200 px-1 py-0.5 rounded text-purple-700 text-xs">{children}</code>
+                              ),
+                            }}
+                          >
+                            {message.content}
+                          </ReactMarkdown>
                         </div>
                         {message.query && (
                           <div className="mt-2 pt-2 border-t border-gray-200">
@@ -311,58 +375,48 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = () => {
               className="flex-1 px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               style={{ borderColor: '#e5e7eb' }}
             />
-            <Button
+            <button
               type="submit"
-              variant="default"
               disabled={!input.trim() || isLoading}
-              label=""
-              icon={
-                isLoading ? (
-                  <Loader2 size={20} className="animate-spin" />
-                ) : (
-                  <Send size={20} />
-                )
-              }
+              className="flex items-center justify-center px-4 py-3 rounded-xl text-white disabled:opacity-50"
               style={{
                 background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)',
-                borderRadius: '0.75rem',
-                padding: '0.75rem 1rem',
               }}
-            />
+            >
+              {isLoading ? (
+                <Loader2 size={20} className="animate-spin" />
+              ) : (
+                <Send size={20} />
+              )}
+            </button>
           </form>
 
           {/* Quick Actions */}
           {messages.length > 0 && (
             <div className="flex gap-2 mt-3 flex-wrap">
-              <Badge
-                variant="outline"
-                label="📊 Sales today"
-                onClick={() => sendMessage("How are sales today?")}
-                style={{ cursor: 'pointer' }}
-              />
-              <Badge
-                variant="outline"
-                label="🚨 Fraud check"
-                onClick={() => sendMessage("Any suspicious orders?")}
-                style={{ cursor: 'pointer' }}
-              />
-              <Badge
-                variant="outline"
-                label="📦 Low stock"
-                onClick={() => sendMessage("Products running low?")}
-                style={{ cursor: 'pointer' }}
-              />
-              <Badge
-                variant="outline"
-                label="👑 Top customers"
-                onClick={() => sendMessage("Who are my best customers?")}
-                style={{ cursor: 'pointer' }}
-              />
+              {[
+                { icon: '📊', label: 'Recent sales', query: 'Show me recent sales orders' },
+                { icon: '🚨', label: 'Fraud check', query: 'Any suspicious orders?' },
+                { icon: '📦', label: 'Low stock', query: 'Show items with low stock' },
+                { icon: '👑', label: 'Top customers', query: 'Who are my top customers?' },
+                { icon: '🧾', label: 'Unpaid invoices', query: 'Show me unpaid invoices' },
+                { icon: '📈', label: 'Best sellers', query: 'What are my best selling products?' },
+                { icon: '🏭', label: 'Production', query: 'Show production orders' },
+                { icon: '🏷️', label: 'Categories', query: 'List all product categories' },
+              ].map((item, i) => (
+                <button
+                  key={i}
+                  onClick={() => sendMessage(item.query)}
+                  className="px-3 py-1 text-xs rounded-full border border-gray-300 hover:border-purple-400 hover:bg-purple-50 transition-colors"
+                >
+                  {item.icon} {item.label}
+                </button>
+              ))}
             </div>
           )}
         </div>
       </Card>
-    </Stack>
+    </div>
   );
 };
 

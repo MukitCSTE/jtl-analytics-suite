@@ -52,7 +52,7 @@ interface AIInsight {
   riskPatterns: string[];
 }
 
-const AI_SERVER_URL = 'http://localhost:3006';
+const AI_SERVER_URL = 'http://localhost:3006/mcp';
 
 // Query is now built dynamically in fetchData with date filter
 

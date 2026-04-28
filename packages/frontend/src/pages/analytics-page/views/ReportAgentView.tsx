@@ -49,7 +49,7 @@ type AgentState =
   | 'processing'
   | 'done';
 
-const AI_SERVER_URL = 'http://localhost:3006';
+const AI_SERVER_URL = 'http://localhost:3006/mcp';
 
 const MODELS = [
   { id: 'gpt-4o-mini', name: 'GPT-4o Mini (Fast)' },
@@ -92,6 +92,8 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
         const transcript = event.results[0][0].transcript;
         setInput(transcript);
         setIsListening(false);
+        // Focus input so user can edit before sending
+        setTimeout(() => inputRef.current?.focus(), 100);
       };
 
       recognitionRef.current.onerror = () => {
@@ -121,8 +123,8 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
       .substring(0, 500); // Limit length
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.rate = 1;
-    utterance.pitch = 1;
+    utterance.rate = 0.85; // Slower, more natural
+    utterance.pitch = 1.05; // Slightly higher for friendlier tone
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
     utterance.onerror = () => setIsSpeaking(false);
@@ -154,13 +156,13 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const addMessage = (message: Omit<Message, 'id'>) => {
+  const addMessage = (message: Omit<Message, 'id'>, speakText?: string) => {
     const newMessage = { ...message, id: Date.now().toString() };
     setMessages(prev => [...prev, newMessage]);
 
-    // Speak agent messages
-    if (message.role === 'agent' && message.content && !message.isLoading) {
-      setTimeout(() => speak(message.content), 100);
+    // Only speak short conversational messages, not report data
+    if (speakText && message.role === 'agent' && !message.isLoading) {
+      setTimeout(() => speak(speakText), 100);
     }
   };
 
@@ -168,7 +170,22 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
     setMessages(prev => prev.filter(m => !m.isLoading));
   };
 
+  // Parse query for auto-send instructions (email and format)
+  const parseAutoSendInstructions = (query: string) => {
+    const emailMatch = query.match(/[\w.-]+@[\w.-]+\.\w+/);
+    const wantsEmail = /\b(email|send|mail)\b/i.test(query);
+    const format = /\bjson\b/i.test(query) ? 'json' : 'csv'; // Default to CSV
+    return {
+      email: emailMatch ? emailMatch[0] : null,
+      wantsEmail,
+      format,
+    };
+  };
+
   const handleQuery = async (query: string) => {
+    // Check if user wants auto-send (includes email address in query)
+    const autoSend = parseAutoSendInstructions(query);
+
     // Add user message
     addMessage({ role: 'user', content: query });
 
@@ -189,7 +206,25 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
       // Store report data
       setCurrentReport({ query, data: data.data, answer: data.answer });
 
-      // Show results and ask if satisfied
+      // If user included email in query, auto-send without confirmation
+      if (autoSend.email && autoSend.wantsEmail) {
+        setEmail(autoSend.email);
+        setDeliveryMethod('email');
+
+        const reportData = { query, data: data.data, answer: data.answer };
+
+        addMessage({
+          role: 'agent',
+          content: data.answer + `\n\n---\n\n📧 **Auto-sending to ${autoSend.email}...**`,
+          data: data.data,
+        }, `Got it! Sending report to ${autoSend.email}`);
+
+        // Auto-process with detected format - pass report data directly
+        setTimeout(() => handleFormatAuto(autoSend.format, autoSend.email!, reportData), 500);
+        return;
+      }
+
+      // Show results and ask if satisfied (normal flow)
       addMessage({
         role: 'agent',
         content: data.answer + '\n\n---\n\n**Are you satisfied with this report?**',
@@ -199,7 +234,7 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
           { label: 'No, let me refine', value: 'no' },
         ],
         inputType: 'choice',
-      });
+      }, 'Here is your report. Are you satisfied with this?');
 
       setAgentState('asking_satisfied');
     } catch (error) {
@@ -224,13 +259,13 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
           { label: 'Send via Email', value: 'email', icon: <Mail size={16} /> },
         ],
         inputType: 'choice',
-      });
+      }, 'How would you like to receive the report? Download or email?');
       setAgentState('asking_delivery');
     } else {
       addMessage({
         role: 'agent',
         content: 'No problem! What changes would you like? Or ask for a different report:',
-      });
+      }, 'No problem! What changes would you like?');
       setAgentState('idle');
       setCurrentReport(null);
     }
@@ -245,7 +280,7 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
         role: 'agent',
         content: 'Please enter the email address to send the report to:',
         inputType: 'text',
-      });
+      }, 'Please enter the email address.');
       setAgentState('asking_email');
     } else {
       addMessage({
@@ -256,7 +291,7 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
           { label: 'JSON Data', value: 'json', icon: <File size={16} /> },
         ],
         inputType: 'choice',
-      });
+      }, 'What format would you like? CSV or JSON?');
       setAgentState('asking_format');
     }
   };
@@ -273,7 +308,7 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
         { label: 'JSON Data', value: 'json', icon: <File size={16} /> },
       ],
       inputType: 'choice',
-    });
+    }, 'What format? CSV or JSON?');
     setAgentState('asking_format');
   };
 
@@ -310,6 +345,89 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
       const jsonContent = JSON.stringify(data, null, 2);
       return { content: jsonContent, filename: `${filename}.json`, mimeType: 'application/json' };
     }
+  };
+
+  // Auto-send handler (skips confirmations) - takes report data directly
+  const handleFormatAuto = async (format: string, emailAddr: string, reportData: { query: string; data: any; answer: string }) => {
+    addMessage({ role: 'agent', content: '', isLoading: true });
+    setAgentState('processing');
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+    removeLoadingMessages();
+
+    try {
+      // Generate content from passed data (not from state)
+      const timestamp = new Date().toISOString().split('T')[0];
+      const filename = `report-${timestamp}.${format}`;
+      let content = '';
+      let mimeType = '';
+
+      if (format === 'csv') {
+        const dataArray = reportData.data?.QuerySalesOrders?.nodes ||
+                         reportData.data?.QueryItems?.nodes ||
+                         reportData.data?.QueryCustomers?.nodes ||
+                         reportData.data?.QuerySalesInvoices?.nodes ||
+                         (Array.isArray(reportData.data) ? reportData.data : [reportData.data]);
+
+        if (dataArray && dataArray.length > 0 && dataArray[0]) {
+          const headers = Object.keys(dataArray[0]);
+          content = headers.join(',') + '\n';
+          dataArray.forEach((item: any) => {
+            const row = headers.map(h => {
+              const val = item[h];
+              if (typeof val === 'string' && (val.includes(',') || val.includes('"'))) {
+                return `"${val.replace(/"/g, '""')}"`;
+              }
+              return val ?? '';
+            });
+            content += row.join(',') + '\n';
+          });
+        } else {
+          content = 'No data available';
+        }
+        mimeType = 'text/csv';
+      } else {
+        content = JSON.stringify(reportData.data, null, 2);
+        mimeType = 'application/json';
+      }
+
+      // Download the file
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      // Open email client with mailto
+      const subject = encodeURIComponent(`JTL Report: ${reportData.query}`);
+      const body = encodeURIComponent(
+        `Hi,\n\nPlease find the attached report.\n\n` +
+        `Report: ${reportData.query}\n` +
+        `Format: ${format.toUpperCase()}\n` +
+        `Generated: ${new Date().toLocaleString()}\n\n` +
+        `Summary:\n${reportData.answer?.substring(0, 500) || 'See attached file.'}\n\n` +
+        `---\nGenerated by JTL Analytics Suite`
+      );
+
+      window.open(`mailto:${emailAddr}?subject=${subject}&body=${body}`, '_blank');
+
+      addMessage({
+        role: 'agent',
+        content: `✅ **Report sent!**\n\n📥 File downloaded: **${filename}**\n📧 Email draft opened for: **${emailAddr}**\n\n💡 **Attach the downloaded file** to your email and send!\n\n---\n\nWould you like to generate another report?`,
+      }, `Done! Report downloaded and email opened for ${emailAddr}.`);
+    } catch (error) {
+      addMessage({
+        role: 'agent',
+        content: '❌ Failed to generate report. Please try again.',
+      });
+    }
+
+    setAgentState('idle');
+    setCurrentReport(null);
+    setEmail('');
+    setDeliveryMethod('download');
   };
 
   const handleFormat = async (format: string) => {
@@ -351,12 +469,12 @@ const ReportAgentView: React.FC<ReportAgentViewProps> = () => {
         addMessage({
           role: 'agent',
           content: `✅ **Report ready!**\n\n📥 File downloaded: **${filename}**\n📧 Email draft opened for: **${email}**\n\n💡 **Attach the downloaded file** to your email and send!\n\n---\n\nWould you like to generate another report?`,
-        });
+        }, `Report ready! File downloaded and email draft opened for ${email}.`);
       } else {
         addMessage({
           role: 'agent',
           content: `✅ **Report downloaded!**\n\n📄 File: **${filename}**\n📊 Report: ${currentReport?.query}\n\n---\n\nWould you like to generate another report?`,
-        });
+        }, 'Report downloaded! Would you like to generate another report?');
       }
     } catch (error) {
       addMessage({
