@@ -1,0 +1,243 @@
+{
+  "info": {
+    "name": "Mukit JTL MCP Server API",
+    "description": "## MCP Server Endpoints\n\nLocal AI-powered analytics server that converts natural language to GraphQL.\n\n**Base URL:** `http://localhost:3006`\n\n**Tenant:** Sportbedarf Sommer GmbH\n\n---\n*JTL Hackathon 2026*",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Server Info",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3006/",
+          "host": ["http://localhost:3006/"]
+        },
+        "description": "Get server status and available endpoints"
+      }
+    },
+    {
+      "name": "2. Natural Language Query",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"Show me the top 5 customers by revenue\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3006/query",
+          "host": ["http://localhost:3006/query"]
+        },
+        "description": "Ask any question in natural language. AI converts it to GraphQL."
+      }
+    },
+    {
+      "name": "3. Sales Analysis",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"Analyze sales trends for July 2018\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3006/analyze-sales",
+          "host": ["http://localhost:3006/analyze-sales"]
+        },
+        "description": "Sales-specific analysis"
+      }
+    },
+    {
+      "name": "4. Inventory Analysis",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"Which products are low on stock?\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3006/analyze-inventory",
+          "host": ["http://localhost:3006/analyze-inventory"]
+        },
+        "description": "Inventory and stock analysis"
+      }
+    },
+    {
+      "name": "5. Customer Analysis",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"Who are my VIP customers?\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3006/analyze-customers",
+          "host": ["http://localhost:3006/analyze-customers"]
+        },
+        "description": "Customer behavior analysis"
+      }
+    },
+    {
+      "name": "6. Invoice Analysis",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"Show unpaid invoices\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3006/analyze-invoices",
+          "host": ["http://localhost:3006/analyze-invoices"]
+        },
+        "description": "Invoice and payment analysis"
+      }
+    },
+    {
+      "name": "7. Fraud Detection",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"Detect suspicious orders\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3006/detect-fraud",
+          "host": ["http://localhost:3006/detect-fraud"]
+        },
+        "description": "AI-powered fraud detection"
+      }
+    },
+    {
+      "name": "8. Reorder Predictions",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"What products need reordering?\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3006/predict-reorder",
+          "host": ["http://localhost:3006/predict-reorder"]
+        },
+        "description": "Stock reorder predictions"
+      }
+    },
+    {
+      "name": "9. AI Direct Analysis",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"prompt\": \"Analyze this order for fraud risk\",\n  \"data\": {\n    \"orderId\": \"SO-001\",\n    \"amount\": 5000,\n    \"customer\": \"New Customer\",\n    \"billingCountry\": \"DE\",\n    \"shippingCountry\": \"RO\"\n  }\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3006/ai-analyze",
+          "host": ["http://localhost:3006/ai-analyze"]
+        },
+        "description": "Direct AI analysis without GraphQL (pass your own data)"
+      }
+    },
+    {
+      "name": "10. Query Suggestions",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3006/suggestions",
+          "host": ["http://localhost:3006/suggestions"]
+        },
+        "description": "Get example queries you can ask"
+      }
+    },
+    {
+      "name": "11. GraphQL Schema",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3006/schema",
+          "host": ["http://localhost:3006/schema"]
+        },
+        "description": "View available GraphQL types and fields"
+      }
+    },
+    {
+      "name": "12. Company Info",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"Get company information\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3006/query",
+          "host": ["http://localhost:3006/query"]
+        },
+        "description": "Get tenant company details"
+      }
+    },
+    {
+      "name": "13. Recent Orders",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"Show me the 10 most recent orders\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3006/query",
+          "host": ["http://localhost:3006/query"]
+        },
+        "description": "Get recent sales orders"
+      }
+    },
+    {
+      "name": "14. Products List",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"List all products with their prices\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3006/query",
+          "host": ["http://localhost:3006/query"]
+        },
+        "description": "Get product catalog"
+      }
+    }
+  ]
+}

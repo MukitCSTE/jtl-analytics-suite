@@ -95,8 +95,8 @@ function analyzeReturnRisk(order: SalesOrder, allOrders: SalesOrder[]): ReturnRi
     riskScore += 10;
   }
 
-  // Very recent order (impulse buy risk)
-  const now = new Date();
+  // Very recent order (impulse buy risk) - use demo data reference date
+  const now = new Date('2018-07-24');
   const daysSinceOrder = (now.getTime() - orderDate.getTime()) / (1000 * 60 * 60 * 24);
   if (daysSinceOrder < 3) {
     riskFactors.push('Recent order (<3 days)');
@@ -211,9 +211,9 @@ const ReturnRiskView: React.FC<ReturnRiskViewProps> = ({ appBridge }) => {
 
       {/* Value Proposition */}
       <div className="p-4 rounded-lg border-l-4" style={{ background: 'linear-gradient(90deg, rgba(139,92,246,0.1) 0%, transparent 100%)', borderColor: '#8b5cf6' }}>
-        <Text type="small" weight="semibold" style={{ color: '#8b5cf6' }}>
+        <div style={{ color: '#8b5cf6', fontWeight: 600, fontSize: '0.875rem' }}>
           Reduce costly returns proactively
-        </Text>
+        </div>
         <Text type="small" color="muted">
           Every return costs you shipping, restocking, and often a lost customer. Our algorithm analyzes order patterns - first-time buyers, high-value items, weekend orders, and more - to predict which orders are most likely to come back. Reach out to high-risk orders proactively with better support or confirmation.
         </Text>

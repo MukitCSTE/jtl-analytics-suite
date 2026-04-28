@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Box, Text, Button, Badge } from '@jtl-software/platform-ui-react';
+import { Text } from '@jtl-software/platform-ui-react';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search, Download, ArrowUpDown, ArrowUp, ArrowDown, Calendar, X } from 'lucide-react';
 
 interface Column<T> {
@@ -22,6 +22,8 @@ interface DataTableProps<T> {
   showExport?: boolean;
   pageSize?: number;
   dateField?: string;
+  defaultStartDate?: string;
+  defaultEndDate?: string;
 }
 
 function DataTable<T>({
@@ -34,14 +36,16 @@ function DataTable<T>({
   showExport = true,
   pageSize: defaultPageSize = 10,
   dateField = 'salesOrderDate',
+  defaultStartDate = '2018-07-01',
+  defaultEndDate = '2018-07-31',
 }: DataTableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(defaultPageSize);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [startDate, setStartDate] = useState(defaultStartDate);
+  const [endDate, setEndDate] = useState(defaultEndDate);
 
   // Filter and sort data
   const filteredData = useMemo(() => {
@@ -123,8 +127,8 @@ function DataTable<T>({
 
   const clearFilters = () => {
     setSearchTerm('');
-    setStartDate('');
-    setEndDate('');
+    setStartDate(defaultStartDate);
+    setEndDate(defaultEndDate);
     setCurrentPage(1);
   };
 
@@ -154,9 +158,9 @@ function DataTable<T>({
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-3">
         {title && (
-          <Text type="small" weight="semibold" style={{ marginRight: 'auto' }}>
+          <div style={{ marginRight: 'auto', fontWeight: 600, fontSize: '0.875rem' }}>
             {title}
-          </Text>
+          </div>
         )}
 
         {/* Search */}
@@ -263,13 +267,13 @@ function DataTable<T>({
 
       {/* Table */}
       {paginatedData.length === 0 ? (
-        <Box className="p-8 text-center rounded-lg" style={{ background: 'var(--base-muted)' }}>
+        <div className="p-8 text-center rounded-lg" style={{ background: 'var(--base-muted)' }}>
           <Text type="small" color="muted">
             {hasFilters ? 'No results match your filters' : emptyMessage}
           </Text>
-        </Box>
+        </div>
       ) : (
-        <Box className="w-full overflow-x-auto rounded-lg border" style={{ borderColor: 'var(--base-border)' }}>
+        <div className="w-full overflow-x-auto rounded-lg border" style={{ borderColor: 'var(--base-border)' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
             <thead>
               <tr style={{ background: 'var(--base-muted)' }}>
@@ -333,7 +337,7 @@ function DataTable<T>({
               ))}
             </tbody>
           </table>
-        </Box>
+        </div>
       )}
 
       {/* Pagination */}

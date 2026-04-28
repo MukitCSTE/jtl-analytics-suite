@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AppBridge } from '@jtl-software/cloud-apps-core';
 import { Card, CardHeader, CardTitle, CardContent, Text, Stack, Box, Button, Badge } from '@jtl-software/platform-ui-react';
-import { AlertTriangle, Shield, ShieldAlert, ShieldCheck, MapPin, HelpCircle, X, CheckCircle2, ArrowRight } from 'lucide-react';
+import { AlertTriangle, Shield, ShieldAlert, ShieldCheck, MapPin, HelpCircle, X, CheckCircle2, ArrowRight, Sparkles, Loader2 } from 'lucide-react';
 import { StatCard, DataTable } from '../components/shared';
 import { SimpleDonutChart, ProgressBar } from '../components/SimpleChart';
 import { executeQuery } from '../utils/graphqlClient';
@@ -42,7 +42,17 @@ interface FraudAnalysis extends SalesOrder {
   riskScore: number;
   riskLevel: 'low' | 'medium' | 'high';
   flags: string[];
+  aiAnalysis?: string;
+  aiLoading?: boolean;
 }
+
+interface AIInsight {
+  summary: string;
+  recommendations: string[];
+  riskPatterns: string[];
+}
+
+const AI_SERVER_URL = 'http://localhost:3006';
 
 // Query is now built dynamically in fetchData with date filter
 
@@ -134,14 +144,13 @@ const FraudDetectorView: React.FC<FraudDetectorViewProps> = ({ appBridge }) => {
   const [error, setError] = useState<string | null>(null);
   const [analyses, setAnalyses] = useState<FraudAnalysis[]>([]);
   const [showHelp, setShowHelp] = useState(false);
+  const [aiInsight, setAiInsight] = useState<AIInsight | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [selectedOrderForAI, setSelectedOrderForAI] = useState<string | null>(null);
 
-  // Date filter state - default to last 30 days
-  const [startDate, setStartDate] = useState<string>(() => {
-    const date = new Date();
-    date.setDate(date.getDate() - 30);
-    return formatDateForInput(date);
-  });
-  const [endDate, setEndDate] = useState<string>(() => formatDateForInput(new Date()));
+  // Date filter state - default to July 2018 (when demo data exists)
+  const [startDate, setStartDate] = useState<string>('2018-07-01');
+  const [endDate, setEndDate] = useState<string>('2018-07-31');
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -204,13 +213,118 @@ const FraudDetectorView: React.FC<FraudDetectorViewProps> = ({ appBridge }) => {
     fetchData();
   }, [fetchData]);
 
-  // Quick date presets
+  // AI-powered analysis for all high-risk orders
+  const runAIAnalysis = async () => {
+    setAiLoading(true);
+    try {
+      const highRiskOrders = analyses.filter(a => a.riskLevel === 'high' || a.riskLevel === 'medium');
+      const orderList = highRiskOrders.slice(0, 10).map(o => ({
+        order: o.salesOrderNumber,
+        amount: `${o.totalGrossAmount} EUR`,
+        billing: o.billingAddressCity || 'Unknown',
+        shipping: o.shipmentAddressCity || 'Unknown',
+        score: `${o.riskScore}%`,
+        flags: o.flags,
+      }));
+
+      const totalOrders = analyses.length;
+      const highCount = analyses.filter(a => a.riskLevel === 'high').length;
+      const mediumCount = analyses.filter(a => a.riskLevel === 'medium').length;
+
+      const response = await fetch(`${AI_SERVER_URL}/ai-analyze`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: `Analyze these flagged orders for fraud risk.
+
+Summary: ${totalOrders} total orders, ${highCount} high risk, ${mediumCount} medium risk
+
+Provide:
+1. Overall risk assessment (1-2 sentences)
+2. Patterns noticed across these orders
+3. Top 3 actionable recommendations
+4. Which orders need immediate attention
+
+Be concise and use bullet points.`,
+          data: orderList,
+        }),
+      });
+
+      const data = await response.json();
+
+      setAiInsight({
+        summary: data.answer || 'Analysis complete',
+        recommendations: [],
+        riskPatterns: [],
+      });
+    } catch (err) {
+      console.error('AI Analysis failed:', err);
+      setAiInsight({
+        summary: 'AI analysis failed. Please try again.',
+        recommendations: [],
+        riskPatterns: [],
+      });
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  // AI analysis for a single order
+  const analyzeOrderWithAI = async (order: FraudAnalysis) => {
+    setSelectedOrderForAI(order.salesOrderNumber);
+    setAnalyses(prev => prev.map(a =>
+      a.salesOrderNumber === order.salesOrderNumber
+        ? { ...a, aiLoading: true }
+        : a
+    ));
+
+    try {
+      const response = await fetch(`${AI_SERVER_URL}/ai-analyze`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: `Analyze this single order for fraud risk and recommend: APPROVE, VERIFY, or BLOCK.
+Keep response to 2-3 sentences max.`,
+          data: {
+            order: order.salesOrderNumber,
+            amount: `${order.totalGrossAmount} ${order.currencyIso}`,
+            customer: order.companyName || 'Unknown',
+            billingCity: order.billingAddressCity,
+            billingCountry: order.billingAddressCountryIso,
+            shippingCity: order.shipmentAddressCity,
+            shippingCountry: order.shipmentAddressCountryIso,
+            ruleScore: `${order.riskScore}%`,
+            flags: order.flags,
+          },
+        }),
+      });
+
+      const data = await response.json();
+
+      setAnalyses(prev => prev.map(a =>
+        a.salesOrderNumber === order.salesOrderNumber
+          ? { ...a, aiAnalysis: data.answer, aiLoading: false }
+          : a
+      ));
+    } catch (err) {
+      setAnalyses(prev => prev.map(a =>
+        a.salesOrderNumber === order.salesOrderNumber
+          ? { ...a, aiAnalysis: 'AI analysis failed', aiLoading: false }
+          : a
+      ));
+    } finally {
+      setSelectedOrderForAI(null);
+    }
+  };
+
+  // Quick date presets - based on demo data (July 2018)
   const setDatePreset = (days: number) => {
-    const end = new Date();
-    const start = new Date();
+    // Demo data is from July 2018, so use that as reference
+    const baseDate = new Date('2018-07-24');
+    const start = new Date(baseDate);
     start.setDate(start.getDate() - days);
     setStartDate(formatDateForInput(start));
-    setEndDate(formatDateForInput(end));
+    setEndDate(formatDateForInput(baseDate));
   };
 
   const highRisk = analyses.filter(a => a.riskLevel === 'high');
@@ -316,6 +430,36 @@ const FraudDetectorView: React.FC<FraudDetectorViewProps> = ({ appBridge }) => {
         );
       },
     },
+    {
+      key: 'salesOrderNumber' as const,
+      header: 'AI',
+      align: 'center' as const,
+      render: (_: unknown, row: FraudAnalysis) => {
+        if (row.aiLoading) {
+          return <Loader2 size={16} className="animate-spin text-purple-500" />;
+        }
+        if (row.aiAnalysis) {
+          return (
+            <div className="relative group">
+              <CheckCircle2 size={16} className="text-green-500 cursor-pointer" />
+              <div className="absolute z-50 right-0 top-6 w-72 p-3 bg-white border rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                <div style={{ color: '#8b5cf6', fontWeight: 600, fontSize: '0.75rem', marginBottom: '4px' }}>AI Analysis:</div>
+                <div style={{ whiteSpace: 'pre-wrap', fontSize: '0.75rem', color: '#6b7280' }}>{row.aiAnalysis}</div>
+              </div>
+            </div>
+          );
+        }
+        return (
+          <button
+            onClick={() => analyzeOrderWithAI(row)}
+            className="p-1 rounded hover:bg-purple-100 text-purple-500"
+            title="Analyze with AI"
+          >
+            <Sparkles size={16} />
+          </button>
+        );
+      },
+    },
   ];
 
   return (
@@ -383,6 +527,13 @@ const FraudDetectorView: React.FC<FraudDetectorViewProps> = ({ appBridge }) => {
             label="How It Works"
             icon={<HelpCircle size={16} />}
           />
+          <Button
+            onClick={runAIAnalysis}
+            disabled={aiLoading || analyses.length === 0}
+            variant="default"
+            label={aiLoading ? 'AI Analyzing...' : 'AI Analysis'}
+            icon={aiLoading ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
+          />
           <Button onClick={fetchData} disabled={loading} variant="outline" label={loading ? 'Analyzing...' : 'Refresh'} />
         </div>
       </div>
@@ -410,23 +561,23 @@ const FraudDetectorView: React.FC<FraudDetectorViewProps> = ({ appBridge }) => {
                     <span className="text-blue-600 font-bold">1</span>
                   </div>
                   <Text type="xs" weight="semibold">Fetch Orders</Text>
-                  <Text type="xs" color="muted">Load recent orders</Text>
-                </div>
-                <ArrowRight size={20} className="text-gray-300" />
-                <div className="flex flex-col items-center gap-2 text-center">
-                  <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
-                    <span className="text-purple-600 font-bold">2</span>
-                  </div>
-                  <Text type="xs" weight="semibold">Analyze Risks</Text>
-                  <Text type="xs" color="muted">Check fraud signals</Text>
+                  <Text type="xs" color="muted">Load from JTL ERP</Text>
                 </div>
                 <ArrowRight size={20} className="text-gray-300" />
                 <div className="flex flex-col items-center gap-2 text-center">
                   <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
-                    <span className="text-orange-600 font-bold">3</span>
+                    <span className="text-orange-600 font-bold">2</span>
                   </div>
-                  <Text type="xs" weight="semibold">Score & Flag</Text>
-                  <Text type="xs" color="muted">Calculate risk score</Text>
+                  <Text type="xs" weight="semibold">Rule Scoring</Text>
+                  <Text type="xs" color="muted">Apply fraud rules</Text>
+                </div>
+                <ArrowRight size={20} className="text-gray-300" />
+                <div className="flex flex-col items-center gap-2 text-center">
+                  <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                    <Sparkles size={16} className="text-purple-600" />
+                  </div>
+                  <Text type="xs" weight="semibold">AI Analysis</Text>
+                  <Text type="xs" color="muted">Deep pattern check</Text>
                 </div>
                 <ArrowRight size={20} className="text-gray-300" />
                 <div className="flex flex-col items-center gap-2 text-center">
@@ -435,6 +586,28 @@ const FraudDetectorView: React.FC<FraudDetectorViewProps> = ({ appBridge }) => {
                   </div>
                   <Text type="xs" weight="semibold">Review</Text>
                   <Text type="xs" color="muted">Take action</Text>
+                </div>
+              </div>
+
+              {/* AI vs Rule-based */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 rounded-lg border" style={{ borderColor: '#e5e7eb', background: '#f9fafb' }}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Shield size={16} className="text-blue-500" />
+                    <Text type="xs" weight="bold">Rule-Based Scoring (Instant)</Text>
+                  </div>
+                  <Text type="xs" color="muted">
+                    Fixed rules check address mismatches, order values, timing, and customer history. Runs instantly on every order.
+                  </Text>
+                </div>
+                <div className="p-4 rounded-lg border" style={{ borderColor: '#e9d5ff', background: '#faf5ff' }}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Sparkles size={16} className="text-purple-500" />
+                    <Text type="xs" weight="bold">AI Analysis (On-Demand)</Text>
+                  </div>
+                  <Text type="xs" color="muted">
+                    AI finds hidden patterns, explains risks in plain language, and recommends APPROVE, VERIFY, or BLOCK actions.
+                  </Text>
                 </div>
               </div>
 
@@ -529,6 +702,109 @@ const FraudDetectorView: React.FC<FraudDetectorViewProps> = ({ appBridge }) => {
             {error}
           </Text>
         </Box>
+      )}
+
+      {/* AI Insights Panel */}
+      {aiInsight && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)' }}>
+                  <Sparkles size={16} color="white" />
+                </div>
+                <div>
+                  <CardTitle>AI Fraud Analysis</CardTitle>
+                  <Text type="xs" color="muted">Powered by GPT-4</Text>
+                </div>
+              </div>
+              <button onClick={() => setAiInsight(null)} className="p-1 hover:bg-gray-100 rounded">
+                <X size={20} />
+              </button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {/* Parse and display AI response in structured format */}
+              {(() => {
+                const sections = aiInsight.summary.split('###').filter(s => s.trim());
+                return sections.map((section, idx) => {
+                  const lines = section.trim().split('\n');
+                  const title = lines[0]?.trim();
+                  const content = lines.slice(1).join('\n').trim();
+
+                  // Determine icon and color based on title
+                  let icon = <CheckCircle2 size={16} />;
+                  let bgColor = '#f0fdf4';
+                  let borderColor = '#86efac';
+                  let iconColor = '#22c55e';
+
+                  if (title?.toLowerCase().includes('risk') && title?.toLowerCase().includes('assessment')) {
+                    icon = <Shield size={16} />;
+                    bgColor = '#eff6ff';
+                    borderColor = '#93c5fd';
+                    iconColor = '#3b82f6';
+                  } else if (title?.toLowerCase().includes('pattern')) {
+                    icon = <AlertTriangle size={16} />;
+                    bgColor = '#fffbeb';
+                    borderColor = '#fcd34d';
+                    iconColor = '#f59e0b';
+                  } else if (title?.toLowerCase().includes('recommendation')) {
+                    icon = <CheckCircle2 size={16} />;
+                    bgColor = '#f0fdf4';
+                    borderColor = '#86efac';
+                    iconColor = '#22c55e';
+                  } else if (title?.toLowerCase().includes('attention') || title?.toLowerCase().includes('immediate')) {
+                    icon = <ShieldAlert size={16} />;
+                    bgColor = '#fef2f2';
+                    borderColor = '#fca5a5';
+                    iconColor = '#dc2626';
+                  }
+
+                  return (
+                    <div
+                      key={idx}
+                      className="p-4 rounded-lg border"
+                      style={{ background: bgColor, borderColor }}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <span style={{ color: iconColor }}>{icon}</span>
+                        <Text type="small" weight="bold">{title}</Text>
+                      </div>
+                      <div style={{ fontSize: '0.8125rem', lineHeight: 1.6, color: '#374151' }}>
+                        {content.split('\n').map((line, i) => {
+                          const trimmed = line.trim();
+                          if (!trimmed) return null;
+
+                          // Format bullet points
+                          if (trimmed.startsWith('-') || trimmed.startsWith('•')) {
+                            const text = trimmed.replace(/^[-•]\s*/, '').replace(/\*\*/g, '');
+                            const parts = text.split(':');
+                            if (parts.length > 1) {
+                              return (
+                                <div key={i} className="flex gap-2 py-1">
+                                  <span style={{ color: iconColor }}>•</span>
+                                  <span><strong>{parts[0]}:</strong>{parts.slice(1).join(':')}</span>
+                                </div>
+                              );
+                            }
+                            return (
+                              <div key={i} className="flex gap-2 py-1">
+                                <span style={{ color: iconColor }}>•</span>
+                                <span>{text}</span>
+                              </div>
+                            );
+                          }
+                          return <div key={i} className="py-1">{trimmed.replace(/\*\*/g, '')}</div>;
+                        })}
+                      </div>
+                    </div>
+                  );
+                });
+              })()}
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* Stat Cards */}

@@ -64,7 +64,8 @@ function analyzeCustomers(orders: SalesOrder[]): CustomerAnalysis[] {
   });
 
   const analyses: CustomerAnalysis[] = [];
-  const now = new Date();
+  // Use demo data reference date (July 2018)
+  const now = new Date('2018-07-24');
 
   customerMap.forEach((customerOrders, key) => {
     const totalSpend = customerOrders.reduce((sum, o) => sum + o.totalGrossAmount, 0);
@@ -238,9 +239,9 @@ const CustomerValueView: React.FC<CustomerValueViewProps> = ({ appBridge }) => {
 
       {/* Value Proposition */}
       <div className="p-4 rounded-lg border-l-4" style={{ background: 'linear-gradient(90deg, rgba(234,179,8,0.1) 0%, transparent 100%)', borderColor: '#eab308' }}>
-        <Text type="small" weight="semibold" style={{ color: '#eab308' }}>
+        <div style={{ color: '#eab308', fontWeight: 600, fontSize: '0.875rem' }}>
           Focus on customers that matter most
-        </Text>
+        </div>
         <Text type="small" color="muted">
           Not all customers are equal. Our RFM (Recency, Frequency, Monetary) analysis scores each customer based on how recently they bought, how often they buy, and how much they spend. Identify your VIPs for special treatment, spot at-risk customers before they churn, and find new customers worth nurturing.
         </Text>

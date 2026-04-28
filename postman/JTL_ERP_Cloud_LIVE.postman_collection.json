@@ -1,0 +1,305 @@
+{
+  "info": {
+    "name": "JTL ERP Cloud API - LIVE Production",
+    "description": "## LIVE Production API - Real Data\n\n**This collection queries the REAL JTL ERP Cloud GraphQL API.**\n\n### API Endpoints\n- **Auth:** `https://auth.jtl-cloud.com/oauth2/token`\n- **GraphQL:** `https://api.jtl-cloud.com/erp/v2/graphql`\n\n### Tenant\n- **Company:** Sportbedarf Sommer GmbH\n- **Tenant ID:** `16eff290-3d20-4d32-8387-39e6e5c27506`\n\n### Data Summary\n- 164 Sales Orders\n- 110 Customers\n- 661 Products\n- 70 Invoices\n\n### Authentication\nOAuth 2.0 Client Credentials flow with JWT Bearer token.\n\n---\n*JTL Hackathon 2026*",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Get Access Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();",
+              "pm.environment.set(\"access_token\", jsonData.access_token);",
+              "console.log(\"Token saved!\");"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "grant_type",
+              "value": "client_credentials",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{auth_url}}",
+          "host": ["{{auth_url}}"]
+        },
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "{{client_id}}",
+              "type": "string"
+            },
+            {
+              "key": "password",
+              "value": "{{client_secret}}",
+              "type": "string"
+            }
+          ]
+        },
+        "description": "## LIVE Production Auth\n\nAuthenticates against **https://auth.jtl-cloud.com** (REAL JTL Cloud).\n\nToken is automatically saved to environment variable `access_token`."
+      },
+      "response": []
+    },
+    {
+      "name": "2. Get Tenant Info (Company)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          },
+          {
+            "key": "X-Tenant-ID",
+            "value": "{{tenant_id}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"query { QueryCompanies(first: 5) { totalCount nodes { id companyName owner street postalCode city country phone emailAddress taxId } } }\"\n}"
+        },
+        "url": {
+          "raw": "{{api_url}}",
+          "host": ["{{api_url}}"]
+        },
+        "description": "## LIVE Production Data\n\nQueries **https://api.jtl-cloud.com/erp/v2/graphql** (REAL JTL ERP API).\n\nReturns company info for tenant: **Sportbedarf Sommer GmbH**\n\nThis proves the API connection is to REAL production data."
+      },
+      "response": []
+    },
+    {
+      "name": "3. Sales Orders (Recent)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          },
+          {
+            "key": "X-Tenant-ID",
+            "value": "{{tenant_id}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"query { QuerySalesOrders(first: 10, order: [{ salesOrderDate: DESC }]) { totalCount nodes { salesOrderNumber salesOrderDate companyName totalGrossAmount currencyIso paymentStatus deliveryStatus } } }\"\n}"
+        },
+        "url": {
+          "raw": "{{api_url}}",
+          "host": ["{{api_url}}"]
+        },
+        "description": "Get 10 most recent sales orders"
+      },
+      "response": []
+    },
+    {
+      "name": "4. Customers",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          },
+          {
+            "key": "X-Tenant-ID",
+            "value": "{{tenant_id}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"query { QueryCustomers(first: 10) { totalCount nodes { id customerNumber firstName lastName city countryIso emailAddress } } }\"\n}"
+        },
+        "url": {
+          "raw": "{{api_url}}",
+          "host": ["{{api_url}}"]
+        },
+        "description": "Get customers"
+      },
+      "response": []
+    },
+    {
+      "name": "5. Items/Products",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          },
+          {
+            "key": "X-Tenant-ID",
+            "value": "{{tenant_id}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"query { QueryItems(first: 10) { totalCount nodes { id sku name stockAvailable minimumStock salesPriceGross } } }\"\n}"
+        },
+        "url": {
+          "raw": "{{api_url}}",
+          "host": ["{{api_url}}"]
+        },
+        "description": "Get products/items"
+      },
+      "response": []
+    },
+    {
+      "name": "6. Invoices",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          },
+          {
+            "key": "X-Tenant-ID",
+            "value": "{{tenant_id}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"query { QuerySalesInvoices(first: 10, order: [{ salesInvoiceDate: DESC }]) { totalCount nodes { salesInvoiceId salesInvoiceNumber salesInvoiceDate totalGrossAmount isCompletelyPaid stillToPay } } }\"\n}"
+        },
+        "url": {
+          "raw": "{{api_url}}",
+          "host": ["{{api_url}}"]
+        },
+        "description": "Get invoices"
+      },
+      "response": []
+    },
+    {
+      "name": "7. Low Stock Items",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          },
+          {
+            "key": "X-Tenant-ID",
+            "value": "{{tenant_id}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"query { QueryItems(first: 20, where: { hasMinimumStock: { eq: true } }) { totalCount nodes { sku name stockAvailable minimumStock } } }\"\n}"
+        },
+        "url": {
+          "raw": "{{api_url}}",
+          "host": ["{{api_url}}"]
+        },
+        "description": "Get items with minimum stock defined"
+      },
+      "response": []
+    },
+    {
+      "name": "8. Warehouses",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          },
+          {
+            "key": "X-Tenant-ID",
+            "value": "{{tenant_id}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"query { QueryWarehouses(first: 10) { totalCount nodes { id name active } } }\"\n}"
+        },
+        "url": {
+          "raw": "{{api_url}}",
+          "host": ["{{api_url}}"]
+        },
+        "description": "Get warehouses"
+      },
+      "response": []
+    },
+    {
+      "name": "9. Categories",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          },
+          {
+            "key": "X-Tenant-ID",
+            "value": "{{tenant_id}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"query { QueryCategories(first: 20) { totalCount nodes { id parentId name sortNumber } } }\"\n}"
+        },
+        "url": {
+          "raw": "{{api_url}}",
+          "host": ["{{api_url}}"]
+        },
+        "description": "Get product categories"
+      },
+      "response": []
+    }
+  ]
+}

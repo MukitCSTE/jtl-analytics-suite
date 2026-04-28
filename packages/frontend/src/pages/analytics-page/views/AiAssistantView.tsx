@@ -45,20 +45,14 @@ const AiAssistantView: React.FC<AiAssistantViewProps> = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Load suggestions
+  // Default suggestions (static list)
   useEffect(() => {
-    fetch(`${AI_SERVER_URL}/suggestions`)
-      .then(res => res.json())
-      .then(data => setSuggestions(data.suggestions || []))
-      .catch(() => {
-        // Default suggestions if server not available
-        setSuggestions([
-          { icon: '📊', text: "How are sales today?" },
-          { icon: '🚨', text: "Any suspicious orders?" },
-          { icon: '📦', text: "Which products need restocking?" },
-          { icon: '👑', text: "Who are my top customers?" },
-        ]);
-      });
+    setSuggestions([
+      { icon: '📊', text: "How are sales today?" },
+      { icon: '🚨', text: "Any suspicious orders?" },
+      { icon: '📦', text: "Which products need restocking?" },
+      { icon: '👑', text: "Who are my top customers?" },
+    ]);
   }, []);
 
   const sendMessage = useCallback(async (text: string) => {

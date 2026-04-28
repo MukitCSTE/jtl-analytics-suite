@@ -256,9 +256,9 @@ const ReorderAlertsView: React.FC<ReorderAlertsViewProps> = ({ appBridge }) => {
 
       {/* Value Proposition */}
       <div className="p-4 rounded-lg border-l-4" style={{ background: 'linear-gradient(90deg, rgba(249,115,22,0.1) 0%, transparent 100%)', borderColor: '#f97316' }}>
-        <Text type="small" weight="semibold" style={{ color: '#f97316' }}>
+        <div style={{ color: '#f97316', fontWeight: 600, fontSize: '0.875rem' }}>
           Stop losing sales to stockouts
-        </Text>
+        </div>
         <Text type="small" color="muted">
           Out-of-stock products mean lost revenue and frustrated customers who may never return. We analyze your sales velocity, current stock levels, and incoming orders to calculate exactly how many days of coverage you have. Get alerts before you run out, with precise reorder quantities for each supplier.
         </Text>
@@ -266,12 +266,14 @@ const ReorderAlertsView: React.FC<ReorderAlertsViewProps> = ({ appBridge }) => {
 
       {error && (
         <Box className="p-4 rounded-lg bg-yellow-50 border border-yellow-200">
-          <Text type="small" weight="semibold" style={{ color: '#ca8a04' }}>
+          <div style={{ color: '#ca8a04', fontWeight: 600, fontSize: '0.875rem' }}>
             No inventory data available
-          </Text>
-          <Text type="small" color="muted" className="mt-1">
-            This tenant doesn't have product/inventory data yet. Add items to your catalog to see reorder alerts. Error: {error}
-          </Text>
+          </div>
+          <div style={{ marginTop: '0.25rem' }}>
+            <Text type="small" color="muted">
+              This tenant doesn't have product/inventory data yet. Add items to your catalog to see reorder alerts. Error: {error}
+            </Text>
+          </div>
         </Box>
       )}
 
@@ -314,7 +316,7 @@ const ReorderAlertsView: React.FC<ReorderAlertsViewProps> = ({ appBridge }) => {
           </CardHeader>
           <CardContent>
             <div className="flex flex-col gap-3">
-              {critical.concat(low).slice(0, 5).map((item, i) => (
+              {critical.concat(low).slice(0, 5).map((item) => (
                 <ProgressBar
                   key={item.id}
                   label={item.name?.substring(0, 20) || item.sku}

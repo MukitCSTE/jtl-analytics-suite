@@ -68,18 +68,19 @@ const DashboardView: React.FC<DashboardViewProps> = ({ appBridge }) => {
   const orders = data?.QuerySalesOrders?.nodes || [];
   const totalOrders = data?.QuerySalesOrders?.totalCount || 0;
 
-  // Calculate stats
-  const today = new Date().toISOString().split('T')[0];
+  // Calculate stats - use demo data reference date (July 2018)
+  const demoBaseDate = new Date('2018-07-24');
+  const today = demoBaseDate.toISOString().split('T')[0];
   const todayOrders = orders.filter(o => o.salesOrderDate.startsWith(today));
   const todayRevenue = todayOrders.reduce((sum, o) => sum + o.totalGrossAmount, 0);
   const totalRevenue = orders.reduce((sum, o) => sum + o.totalGrossAmount, 0);
   const avgOrderValue = orders.length > 0 ? totalRevenue / orders.length : 0;
 
-  // Calculate weekly data for line chart
+  // Calculate weekly data for line chart - use demo data reference date
   const weeklyData: { label: string; value: number }[] = [];
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   for (let i = 6; i >= 0; i--) {
-    const date = new Date();
+    const date = new Date('2018-07-24');
     date.setDate(date.getDate() - i);
     const dateStr = date.toISOString().split('T')[0];
     const dayOrders = orders.filter(o => o.salesOrderDate.startsWith(dateStr));
@@ -166,9 +167,9 @@ const DashboardView: React.FC<DashboardViewProps> = ({ appBridge }) => {
 
       {/* Value Proposition */}
       <div className="p-4 rounded-lg border-l-4" style={{ background: 'linear-gradient(90deg, rgba(59,130,246,0.1) 0%, transparent 100%)', borderColor: '#3b82f6' }}>
-        <Text type="small" weight="semibold" style={{ color: '#3b82f6' }}>
+        <div style={{ color: '#3b82f6', fontWeight: 600, fontSize: '0.875rem' }}>
           How this helps you
-        </Text>
+        </div>
         <Text type="small" color="muted">
           See your business pulse in real-time. Spot daily sales patterns, track average order values, and understand which customers drive the most revenue. Use these insights to make faster, data-driven decisions.
         </Text>

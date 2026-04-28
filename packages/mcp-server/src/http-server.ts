@@ -122,7 +122,12 @@ async function callOpenAI(messages: Array<{ role: string; content: string }>): P
 
 const GRAPHQL_SCHEMA = `
 You are a JTL ERP GraphQL expert. Convert natural language to GraphQL queries.
-Today's date is: ${new Date().toISOString().split('T')[0]}
+
+CRITICAL: When users ask for "recent", "last week", "this month", "today", or any relative time period,
+DO NOT use date filters. Instead, order by date DESC and use "first: N" to get the most recent records.
+The database may contain historical data, so date filters with today's date would return empty results.
+
+Only use date filters if the user specifies an EXACT date like "July 2018" or "2018-07-24".
 
 IMPORTANT: Return ONLY the GraphQL query, no markdown, no explanation.
 
@@ -168,9 +173,8 @@ SalesOrder / SalesOrderListItem:
   id, salesOrderNumber, salesOrderDate, customerId, customerNumber, companyName,
   totalGrossAmount, totalNetAmount, currencyIso, paymentStatus, deliveryStatus,
   isPending, isCancelled, shippingMethodName, shippingMethodId, paymentMethodId,
-  billingAddress { companyName, firstName, lastName, street, postalCode, city, countryIso },
-  shipmentAddress { companyName, firstName, lastName, street, postalCode, city, countryIso },
-  lineItems { id, sku, name, quantity, salesPriceNet, totalSalesPriceGross }
+  billingAddressFirstName, billingAddressLastName, billingAddressStreet, billingAddressCity, billingAddressCountryIso,
+  shipmentAddressFirstName, shipmentAddressLastName, shipmentAddressStreet, shipmentAddressCity, shipmentAddressCountryIso
 
 SalesOrderLineItem:
   id, salesOrderId, itemId, sku, isReserved, name, fnSku, type, quantity,
@@ -207,9 +211,10 @@ CategoryDetails:
 == CUSTOMERS ==
 
 Customer / CustomerListItem:
-  customerId, customerNumber, customerGroupId, customerGroupName,
-  companyName, firstName, lastName, street, postalCode, city,
+  id, customerNumber, customerGroupId, customerGroupName,
+  firstName, lastName, street, postalCode, city,
   countryName, countryIso, emailAddress, phoneNumber, createdDate
+  NOTE: Do NOT use companyName field - it causes errors for some records
 
 CustomerAddress:
   id, customerId, addressType, companyName, firstName, lastName,
@@ -787,6 +792,40 @@ app.get('/schema', (_req, res) => {
       },
     },
   });
+});
+
+// AI Text Analysis - analyze provided data without GraphQL
+app.post('/ai-analyze', async (req, res) => {
+  try {
+    const { prompt, data } = req.body;
+
+    if (!prompt) {
+      return res.status(400).json({ error: 'Missing prompt' });
+    }
+
+    console.log('[AI Analyze]', prompt.substring(0, 100));
+
+    const response = await callOpenAI([
+      {
+        role: 'system',
+        content: `You are a fraud detection expert. Analyze the provided data and give actionable insights.
+Be concise and use bullet points. Format with markdown.
+Focus on: risk patterns, recommendations, and which items need immediate attention.`,
+      },
+      {
+        role: 'user',
+        content: data ? `${prompt}\n\nData:\n${JSON.stringify(data, null, 2)}` : prompt,
+      },
+    ]);
+
+    res.json({ answer: response });
+  } catch (error) {
+    console.error('AI Analyze error:', error);
+    res.status(500).json({
+      error: 'AI analysis failed',
+      message: error instanceof Error ? error.message : String(error),
+    });
+  }
 });
 
 // Start server
