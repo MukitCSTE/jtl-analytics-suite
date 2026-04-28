@@ -6,7 +6,6 @@ import {
   CardContent,
   Text,
   Stack,
-  Box,
 } from '@jtl-software/platform-ui-react';
 import { HelpCircle, Terminal, Code, Copy, Check, ExternalLink, Sparkles } from 'lucide-react';
 
@@ -27,15 +26,17 @@ const FaqView: React.FC = () => {
 
   const mcpConfig = `{
   "mcpServers": {
-    "jtl-analytics": {
+    "jtl-ai-analytics": {
       "command": "node",
-      "args": ["/path/to/mukit-jtl-app/packages/mcp-server/dist/index.js"],
+      "args": ["/Users/mukit.khan/mukit-jtl-app/packages/mcp-server/dist/index.js"],
       "env": {
         "OPENAI_API_URL": "https://apim-ai-hub-jtlpltf-beta.azure-api.net/openai/v1",
-        "OPENAI_API_KEY": "your-api-key",
-        "CLIENT_ID": "your-jtl-client-id",
-        "CLIENT_SECRET": "your-jtl-client-secret",
-        "DEMO_TENANT_ID": "your-tenant-id"
+        "OPENAI_API_KEY": "c663de94fc7f44ec82b8d9e32f90a274",
+        "OPENAI_MODEL": "gpt-4o-mini",
+        "CLIENT_ID": "2a63d65b-0dc0-4f3c-98b6-28b0f8d5dec3",
+        "CLIENT_SECRET": "xgWroYMndi11mmnhZlBMt6yZ1M",
+        "DEMO_TENANT_ID": "16eff290-3d20-4d32-8387-39e6e5c27506",
+        "API_ENVIRONMENT": "prod"
       }
     }
   }
@@ -197,16 +198,17 @@ const FaqView: React.FC = () => {
           </Text>
 
           <div className="mt-3 p-3 bg-blue-50 rounded-lg">
-            <Text type="small" weight="semibold" style={{ color: '#3b82f6' }}>
-              Available Endpoints:
-            </Text>
+            <div style={{ color: '#3b82f6', fontWeight: 600, fontSize: '0.875rem' }}>
+              Available Endpoints (base: /mcp):
+            </div>
             <ul className="mt-2 space-y-1 text-sm text-gray-600">
-              <li>• <code>POST /query</code> - Natural language queries</li>
-              <li>• <code>POST /analyze-sales</code> - Sales analysis</li>
-              <li>• <code>POST /detect-fraud</code> - Fraud detection</li>
-              <li>• <code>POST /predict-reorder</code> - Inventory predictions</li>
-              <li>• <code>POST /customer-insights</code> - Customer analysis</li>
-              <li>• <code>GET /suggestions</code> - Quick query suggestions</li>
+              <li>• <code>POST /mcp/query</code> - Natural language queries</li>
+              <li>• <code>POST /mcp/analyze-sales</code> - Sales analysis</li>
+              <li>• <code>POST /mcp/detect-fraud</code> - Fraud detection</li>
+              <li>• <code>POST /mcp/predict-reorder</code> - Inventory predictions</li>
+              <li>• <code>POST /mcp/ai-analyze</code> - Direct AI analysis</li>
+              <li>• <code>GET /mcp/suggestions</code> - Query suggestions</li>
+              <li>• <code>GET /mcp/schema</code> - GraphQL schema info</li>
             </ul>
           </div>
         </div>
@@ -222,22 +224,22 @@ const FaqView: React.FC = () => {
 
           <div className="p-3 rounded-lg bg-gray-50">
             <Text type="small" weight="semibold">Sales Orders (QuerySalesOrders)</Text>
-            <Text type="xs" color="muted" className="mt-1">
+            <Text type="xs" color="muted" >
               Order details, amounts, customer info, billing/shipping addresses, delivery status, payment status, shipping methods
             </Text>
           </div>
 
           <div className="p-3 rounded-lg bg-gray-50">
             <Text type="small" weight="semibold">Products/Inventory (QueryItems)</Text>
-            <Text type="xs" color="muted" className="mt-1">
+            <Text type="xs" color="muted" >
               SKU, name, stock levels (total, available, in orders, incoming), minimum stock, prices, supplier info
             </Text>
           </div>
 
           <div className="mt-3 p-3 bg-purple-50 rounded-lg">
-            <Text type="small" weight="semibold" style={{ color: '#8b5cf6' }}>
+            <div style={{ color: '#8b5cf6', fontWeight: 600, fontSize: '0.875rem' }}>
               Example Questions:
-            </Text>
+            </div>
             <ul className="mt-2 space-y-1 text-sm text-gray-600">
               <li>• "What's my revenue this week vs last week?"</li>
               <li>• "Which products are running low on stock?"</li>
@@ -348,7 +350,7 @@ const FaqView: React.FC = () => {
                 <Terminal size={24} className="text-purple-600" />
               </div>
               <Text type="small" weight="semibold">1. Build MCP Server</Text>
-              <Text type="xs" color="muted" className="mt-1">
+              <Text type="xs" color="muted" >
                 npm install && npm run build
               </Text>
             </div>
@@ -358,7 +360,7 @@ const FaqView: React.FC = () => {
                 <Code size={24} className="text-blue-600" />
               </div>
               <Text type="small" weight="semibold">2. Configure Claude Code</Text>
-              <Text type="xs" color="muted" className="mt-1">
+              <Text type="xs" color="muted" >
                 Add to settings.json
               </Text>
             </div>
@@ -368,7 +370,7 @@ const FaqView: React.FC = () => {
                 <Sparkles size={24} className="text-green-600" />
               </div>
               <Text type="small" weight="semibold">3. Start Asking</Text>
-              <Text type="xs" color="muted" className="mt-1">
+              <Text type="xs" color="muted" >
                 "Show my sales today"
               </Text>
             </div>

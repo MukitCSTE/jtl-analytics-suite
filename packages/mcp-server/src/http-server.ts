@@ -6,7 +6,7 @@
  * Supports ALL 338 GraphQL types from JTL ERP API.
  */
 
-import express from 'express';
+import express, { Router } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
@@ -435,15 +435,18 @@ async function queryJtlData(
 }
 
 // =============================================================================
-// HTTP ENDPOINTS
+// HTTP ENDPOINTS - All under /mcp/ prefix
 // =============================================================================
 
-// Health check
+const mcpRouter = Router();
+
+// Health check at root
 app.get('/', (_req, res) => {
   res.json({
-    service: 'JTL Analytics AI Server',
+    service: 'JTL AI Analytics MCP Server',
     version: '2.0.0',
     status: 'running',
+    baseUrl: '/mcp',
     supportedTypes: 338,
     categories: [
       'Sales/Orders', 'Items/Products', 'Categories', 'Customers',
@@ -452,22 +455,23 @@ app.get('/', (_req, res) => {
       'Companies', 'Suppliers'
     ],
     endpoints: [
-      'POST /query - Natural language query (all types)',
-      'POST /analyze-sales - Sales analysis',
-      'POST /analyze-inventory - Inventory analysis',
-      'POST /analyze-customers - Customer analysis',
-      'POST /analyze-invoices - Invoice analysis',
-      'POST /analyze-production - Production analysis',
-      'POST /detect-fraud - Fraud detection',
-      'POST /predict-reorder - Reorder predictions',
-      'GET /suggestions - Query suggestions',
-      'GET /schema - Available types and fields',
+      'POST /mcp/query - Natural language query (all types)',
+      'POST /mcp/analyze-sales - Sales analysis',
+      'POST /mcp/analyze-inventory - Inventory analysis',
+      'POST /mcp/analyze-customers - Customer analysis',
+      'POST /mcp/analyze-invoices - Invoice analysis',
+      'POST /mcp/analyze-production - Production analysis',
+      'POST /mcp/detect-fraud - Fraud detection',
+      'POST /mcp/predict-reorder - Reorder predictions',
+      'POST /mcp/ai-analyze - Direct AI analysis',
+      'GET /mcp/suggestions - Query suggestions',
+      'GET /mcp/schema - Available types and fields',
     ],
   });
 });
 
 // Main query endpoint - handles ALL types
-app.post('/query', async (req, res) => {
+mcpRouter.post('/query', async (req, res) => {
   try {
     const { question, tenantId } = req.body;
 
@@ -488,7 +492,7 @@ app.post('/query', async (req, res) => {
 });
 
 // Sales analysis
-app.post('/analyze-sales', async (req, res) => {
+mcpRouter.post('/analyze-sales', async (req, res) => {
   try {
     const { timeframe = 'this_month', focus = 'all', tenantId } = req.body;
     const question = `Analyze sales orders for ${timeframe}. Focus on ${focus}.
@@ -505,7 +509,7 @@ app.post('/analyze-sales', async (req, res) => {
 });
 
 // Inventory analysis
-app.post('/analyze-inventory', async (req, res) => {
+mcpRouter.post('/analyze-inventory', async (req, res) => {
   try {
     const { focus = 'low_stock', tenantId } = req.body;
     let question = '';
@@ -534,7 +538,7 @@ app.post('/analyze-inventory', async (req, res) => {
 });
 
 // Customer analysis
-app.post('/analyze-customers', async (req, res) => {
+mcpRouter.post('/analyze-customers', async (req, res) => {
   try {
     const { segment = 'all', tenantId } = req.body;
     const question = `Analyze ${segment} customers. Show: customer count by country,
@@ -550,7 +554,7 @@ app.post('/analyze-customers', async (req, res) => {
 });
 
 // Invoice analysis
-app.post('/analyze-invoices', async (req, res) => {
+mcpRouter.post('/analyze-invoices', async (req, res) => {
   try {
     const { focus = 'unpaid', tenantId } = req.body;
     let question = '';
@@ -579,7 +583,7 @@ app.post('/analyze-invoices', async (req, res) => {
 });
 
 // Production analysis
-app.post('/analyze-production', async (req, res) => {
+mcpRouter.post('/analyze-production', async (req, res) => {
   try {
     const { focus = 'active', tenantId } = req.body;
     let question = '';
@@ -608,7 +612,7 @@ app.post('/analyze-production', async (req, res) => {
 });
 
 // Fraud detection
-app.post('/detect-fraud', async (req, res) => {
+mcpRouter.post('/detect-fraud', async (req, res) => {
   try {
     const { lookbackDays = 7, tenantId } = req.body;
     const question = `Find potentially suspicious orders from the last ${lookbackDays} days.
@@ -625,7 +629,7 @@ app.post('/detect-fraud', async (req, res) => {
 });
 
 // Reorder predictions
-app.post('/predict-reorder', async (req, res) => {
+mcpRouter.post('/predict-reorder', async (req, res) => {
   try {
     const { urgency = 'all', tenantId } = req.body;
     const question = `Show products that need reordering. Focus on ${urgency} priority items.
@@ -642,7 +646,7 @@ app.post('/predict-reorder', async (req, res) => {
 });
 
 // Category analysis
-app.post('/analyze-categories', async (req, res) => {
+mcpRouter.post('/analyze-categories', async (req, res) => {
   try {
     const { tenantId } = req.body;
     const question = 'Show all product categories with hierarchy. Include id, parent, name, sort order.';
@@ -657,7 +661,7 @@ app.post('/analyze-categories', async (req, res) => {
 });
 
 // Warehouse analysis
-app.post('/analyze-warehouses', async (req, res) => {
+mcpRouter.post('/analyze-warehouses', async (req, res) => {
   try {
     const { tenantId } = req.body;
     const question = 'Show all warehouses and their bin locations. Include warehouse name, active status, bin location counts.';
@@ -672,7 +676,7 @@ app.post('/analyze-warehouses', async (req, res) => {
 });
 
 // Supplier analysis
-app.post('/analyze-suppliers', async (req, res) => {
+mcpRouter.post('/analyze-suppliers', async (req, res) => {
   try {
     const { tenantId } = req.body;
     const question = 'Show all suppliers. Include name, dropship capability, currency.';
@@ -687,7 +691,7 @@ app.post('/analyze-suppliers', async (req, res) => {
 });
 
 // Quick suggestions for UI
-app.get('/suggestions', (_req, res) => {
+mcpRouter.get('/suggestions', (_req, res) => {
   res.json({
     suggestions: [
       // Sales
@@ -734,7 +738,7 @@ app.get('/suggestions', (_req, res) => {
 });
 
 // Schema endpoint - show available types
-app.get('/schema', (_req, res) => {
+mcpRouter.get('/schema', (_req, res) => {
   res.json({
     totalTypes: 338,
     categories: {
@@ -795,7 +799,7 @@ app.get('/schema', (_req, res) => {
 });
 
 // AI Text Analysis - analyze provided data without GraphQL
-app.post('/ai-analyze', async (req, res) => {
+mcpRouter.post('/ai-analyze', async (req, res) => {
   try {
     const { prompt, data } = req.body;
 
@@ -828,23 +832,27 @@ Focus on: risk patterns, recommendations, and which items need immediate attenti
   }
 });
 
+// Mount MCP router at /mcp
+app.use('/mcp', mcpRouter);
+
 // Start server
 app.listen(PORT, () => {
-  console.log(`JTL Analytics AI Server v2.0 running on http://localhost:${PORT}`);
+  console.log(`JTL AI Analytics MCP Server v2.0 running on http://localhost:${PORT}`);
   console.log('Supporting 338 GraphQL types across 13 categories');
   console.log('');
-  console.log('Available endpoints:');
-  console.log('  POST /query              - Natural language query (all types)');
-  console.log('  POST /analyze-sales      - Sales analysis');
-  console.log('  POST /analyze-inventory  - Inventory analysis');
-  console.log('  POST /analyze-customers  - Customer analysis');
-  console.log('  POST /analyze-invoices   - Invoice analysis');
-  console.log('  POST /analyze-production - Production analysis');
-  console.log('  POST /analyze-categories - Category analysis');
-  console.log('  POST /analyze-warehouses - Warehouse analysis');
-  console.log('  POST /analyze-suppliers  - Supplier analysis');
-  console.log('  POST /detect-fraud       - Fraud detection');
-  console.log('  POST /predict-reorder    - Reorder predictions');
-  console.log('  GET  /suggestions        - Query suggestions');
-  console.log('  GET  /schema             - Available types and fields');
+  console.log('Available endpoints (base: /mcp):');
+  console.log('  POST /mcp/query              - Natural language query (all types)');
+  console.log('  POST /mcp/analyze-sales      - Sales analysis');
+  console.log('  POST /mcp/analyze-inventory  - Inventory analysis');
+  console.log('  POST /mcp/analyze-customers  - Customer analysis');
+  console.log('  POST /mcp/analyze-invoices   - Invoice analysis');
+  console.log('  POST /mcp/analyze-production - Production analysis');
+  console.log('  POST /mcp/analyze-categories - Category analysis');
+  console.log('  POST /mcp/analyze-warehouses - Warehouse analysis');
+  console.log('  POST /mcp/analyze-suppliers  - Supplier analysis');
+  console.log('  POST /mcp/detect-fraud       - Fraud detection');
+  console.log('  POST /mcp/predict-reorder    - Reorder predictions');
+  console.log('  POST /mcp/ai-analyze         - Direct AI analysis');
+  console.log('  GET  /mcp/suggestions        - Query suggestions');
+  console.log('  GET  /mcp/schema             - Available types and fields');
 });

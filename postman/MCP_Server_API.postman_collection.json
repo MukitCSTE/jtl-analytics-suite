@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "Mukit JTL MCP Server API",
-    "description": "## MCP Server Endpoints\n\nLocal AI-powered analytics server that converts natural language to GraphQL.\n\n**Base URL:** `http://localhost:3006`\n\n**Tenant:** Sportbedarf Sommer GmbH\n\n---\n*JTL Hackathon 2026*",
+    "name": "JTL AI Analytics MCP Server API",
+    "description": "## MCP Server Endpoints\n\nAI-powered analytics server using Model Context Protocol.\n\n**Base URL:** `http://localhost:3006/mcp`\n\n**Tenant:** Sportbedarf Sommer GmbH\n\n---\n*JTL Hackathon 2026*",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -12,7 +12,10 @@
         "header": [],
         "url": {
           "raw": "http://localhost:3006/",
-          "host": ["http://localhost:3006/"]
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3006",
+          "path": [""]
         },
         "description": "Get server status and available endpoints"
       }
@@ -29,8 +32,11 @@
           "raw": "{\n  \"question\": \"Show me the top 5 customers by revenue\"\n}"
         },
         "url": {
-          "raw": "http://localhost:3006/query",
-          "host": ["http://localhost:3006/query"]
+          "raw": "http://localhost:3006/mcp/query",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3006",
+          "path": ["mcp", "query"]
         },
         "description": "Ask any question in natural language. AI converts it to GraphQL."
       }
@@ -47,8 +53,11 @@
           "raw": "{\n  \"question\": \"Analyze sales trends for July 2018\"\n}"
         },
         "url": {
-          "raw": "http://localhost:3006/analyze-sales",
-          "host": ["http://localhost:3006/analyze-sales"]
+          "raw": "http://localhost:3006/mcp/analyze-sales",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3006",
+          "path": ["mcp", "analyze-sales"]
         },
         "description": "Sales-specific analysis"
       }
@@ -65,8 +74,11 @@
           "raw": "{\n  \"question\": \"Which products are low on stock?\"\n}"
         },
         "url": {
-          "raw": "http://localhost:3006/analyze-inventory",
-          "host": ["http://localhost:3006/analyze-inventory"]
+          "raw": "http://localhost:3006/mcp/analyze-inventory",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3006",
+          "path": ["mcp", "analyze-inventory"]
         },
         "description": "Inventory and stock analysis"
       }
@@ -83,8 +95,11 @@
           "raw": "{\n  \"question\": \"Who are my VIP customers?\"\n}"
         },
         "url": {
-          "raw": "http://localhost:3006/analyze-customers",
-          "host": ["http://localhost:3006/analyze-customers"]
+          "raw": "http://localhost:3006/mcp/analyze-customers",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3006",
+          "path": ["mcp", "analyze-customers"]
         },
         "description": "Customer behavior analysis"
       }
@@ -101,8 +116,11 @@
           "raw": "{\n  \"question\": \"Show unpaid invoices\"\n}"
         },
         "url": {
-          "raw": "http://localhost:3006/analyze-invoices",
-          "host": ["http://localhost:3006/analyze-invoices"]
+          "raw": "http://localhost:3006/mcp/analyze-invoices",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3006",
+          "path": ["mcp", "analyze-invoices"]
         },
         "description": "Invoice and payment analysis"
       }
@@ -119,8 +137,11 @@
           "raw": "{\n  \"question\": \"Detect suspicious orders\"\n}"
         },
         "url": {
-          "raw": "http://localhost:3006/detect-fraud",
-          "host": ["http://localhost:3006/detect-fraud"]
+          "raw": "http://localhost:3006/mcp/detect-fraud",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3006",
+          "path": ["mcp", "detect-fraud"]
         },
         "description": "AI-powered fraud detection"
       }
@@ -137,8 +158,11 @@
           "raw": "{\n  \"question\": \"What products need reordering?\"\n}"
         },
         "url": {
-          "raw": "http://localhost:3006/predict-reorder",
-          "host": ["http://localhost:3006/predict-reorder"]
+          "raw": "http://localhost:3006/mcp/predict-reorder",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3006",
+          "path": ["mcp", "predict-reorder"]
         },
         "description": "Stock reorder predictions"
       }
@@ -155,8 +179,11 @@
           "raw": "{\n  \"prompt\": \"Analyze this order for fraud risk\",\n  \"data\": {\n    \"orderId\": \"SO-001\",\n    \"amount\": 5000,\n    \"customer\": \"New Customer\",\n    \"billingCountry\": \"DE\",\n    \"shippingCountry\": \"RO\"\n  }\n}"
         },
         "url": {
-          "raw": "http://localhost:3006/ai-analyze",
-          "host": ["http://localhost:3006/ai-analyze"]
+          "raw": "http://localhost:3006/mcp/ai-analyze",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3006",
+          "path": ["mcp", "ai-analyze"]
         },
         "description": "Direct AI analysis without GraphQL (pass your own data)"
       }
@@ -167,8 +194,11 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:3006/suggestions",
-          "host": ["http://localhost:3006/suggestions"]
+          "raw": "http://localhost:3006/mcp/suggestions",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3006",
+          "path": ["mcp", "suggestions"]
         },
         "description": "Get example queries you can ask"
       }
@@ -179,8 +209,11 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:3006/schema",
-          "host": ["http://localhost:3006/schema"]
+          "raw": "http://localhost:3006/mcp/schema",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3006",
+          "path": ["mcp", "schema"]
         },
         "description": "View available GraphQL types and fields"
       }
@@ -197,8 +230,11 @@
           "raw": "{\n  \"question\": \"Get company information\"\n}"
         },
         "url": {
-          "raw": "http://localhost:3006/query",
-          "host": ["http://localhost:3006/query"]
+          "raw": "http://localhost:3006/mcp/query",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3006",
+          "path": ["mcp", "query"]
         },
         "description": "Get tenant company details"
       }
@@ -215,8 +251,11 @@
           "raw": "{\n  \"question\": \"Show me the 10 most recent orders\"\n}"
         },
         "url": {
-          "raw": "http://localhost:3006/query",
-          "host": ["http://localhost:3006/query"]
+          "raw": "http://localhost:3006/mcp/query",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3006",
+          "path": ["mcp", "query"]
         },
         "description": "Get recent sales orders"
       }
@@ -233,8 +272,11 @@
           "raw": "{\n  \"question\": \"List all products with their prices\"\n}"
         },
         "url": {
-          "raw": "http://localhost:3006/query",
-          "host": ["http://localhost:3006/query"]
+          "raw": "http://localhost:3006/mcp/query",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3006",
+          "path": ["mcp", "query"]
         },
         "description": "Get product catalog"
       }
