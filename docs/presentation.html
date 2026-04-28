@@ -225,45 +225,122 @@
   </ul>
 </div>
 
-<!-- Slide 10: MCP Integration -->
+<!-- Slide 10: MCP Architecture -->
 <div class="slide">
-  <h2>MCP Integration</h2>
-  <h3>Claude Desktop Integration</h3>
+  <h2>Server Architecture</h2>
+  <h3>Two Servers, One AI Core</h3>
+  <div class="architecture">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+      <div class="arch-box" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
+        <strong>MCP Server</strong><br>
+        <code>dist/index.js</code><br><br>
+        Protocol: <span class="highlight">stdio</span><br>
+        Used by: Claude Desktop
+      </div>
+      <div class="arch-box" style="background: linear-gradient(135deg, #3b82f6, #0ea5e9);">
+        <strong>HTTP REST Server</strong><br>
+        <code>dist/http-server.js</code><br><br>
+        Protocol: <span class="highlight">HTTP :3006</span><br>
+        Used by: Web App, Postman
+      </div>
+    </div>
+    <div class="arch-arrow">▼</div>
+    <div class="arch-box" style="background: linear-gradient(135deg, #10b981, #14b8a6);">
+      <strong>Shared AI Core</strong><br>
+      OpenAI GPT-4o-mini + JTL ERP GraphQL API
+    </div>
+  </div>
+</div>
+
+<!-- Slide 11: MCP Tools -->
+<div class="slide">
+  <h2>MCP Tools</h2>
+  <h3>Available Tools for Claude Desktop</h3>
+  <table>
+    <tr><th>Tool Name</th><th>Description</th><th>Parameters</th></tr>
+    <tr><td><code>query_jtl_data</code></td><td>Natural language query</td><td>question, tenant_id</td></tr>
+    <tr><td><code>analyze_sales</code></td><td>Sales analysis & trends</td><td>timeframe, focus</td></tr>
+    <tr><td><code>detect_fraud</code></td><td>Fraud detection</td><td>lookback_days</td></tr>
+    <tr><td><code>predict_reorder</code></td><td>Inventory predictions</td><td>urgency</td></tr>
+    <tr><td><code>customer_insights</code></td><td>Customer behavior</td><td>segment</td></tr>
+  </table>
+  <p style="margin-top: 20px; color: #94a3b8;">Example: "Use query_jtl_data to show my top 5 customers"</p>
+</div>
+
+<!-- Slide 12: Claude Desktop Config -->
+<div class="slide">
+  <h2>Claude Desktop Setup</h2>
+  <h3>Configuration File</h3>
   <pre><code>{
   "mcpServers": {
-    "jtl-analytics": {
+    "jtl-ai-analytics": {
       "command": "node",
-      "args": [".../mcp-server/dist/index.js"],
+      "args": ["/path/to/mcp-server/dist/index.js"],
       "env": {
-        "OPENAI_API_KEY": "...",
-        "CLIENT_ID": "...",
-        "DEMO_TENANT_ID": "..."
+        "OPENAI_API_URL": "https://apim-ai-hub-jtlpltf-beta.azure-api.net/openai/v1",
+        "OPENAI_API_KEY": "your-api-key",
+        "CLIENT_ID": "your-client-id",
+        "CLIENT_SECRET": "your-client-secret",
+        "DEMO_TENANT_ID": "your-tenant-id"
       }
     }
   }
 }</code></pre>
-  <p style="margin-top: 30px; font-size: 1.5rem;">Use <span class="highlight">Claude Desktop</span> to query JTL ERP directly!</p>
+  <p style="margin-top: 20px;">File: <code>~/Library/Application Support/Claude/claude_desktop_config.json</code></p>
 </div>
 
-<!-- Slide 11: API Endpoints -->
+<!-- Slide 13: HTTP REST Endpoints -->
 <div class="slide">
-  <h2>API Endpoints</h2>
-  <h3>MCP Server REST API</h3>
+  <h2>HTTP REST API</h2>
+  <h3>Endpoints for Web App & Postman (localhost:3006)</h3>
   <table>
     <tr><th>Endpoint</th><th>Purpose</th></tr>
-    <tr><td>POST /query</td><td>Natural language → GraphQL</td></tr>
-    <tr><td>POST /ai-analyze</td><td>Direct AI analysis</td></tr>
-    <tr><td>POST /detect-fraud</td><td>Fraud detection</td></tr>
-    <tr><td>POST /analyze-sales</td><td>Sales analytics</td></tr>
-    <tr><td>POST /analyze-customers</td><td>Customer insights</td></tr>
-    <tr><td>POST /predict-reorder</td><td>Stock predictions</td></tr>
+    <tr><td><code>POST /api/query</code></td><td>Natural language → GraphQL</td></tr>
+    <tr><td><code>POST /api/ai-analyze</code></td><td>Direct AI analysis</td></tr>
+    <tr><td><code>POST /api/detect-fraud</code></td><td>Fraud detection</td></tr>
+    <tr><td><code>POST /api/analyze-sales</code></td><td>Sales analytics</td></tr>
+    <tr><td><code>POST /api/analyze-customers</code></td><td>Customer insights</td></tr>
+    <tr><td><code>POST /api/predict-reorder</code></td><td>Stock predictions</td></tr>
+    <tr><td><code>GET /api/suggestions</code></td><td>Query examples</td></tr>
+    <tr><td><code>GET /api/schema</code></td><td>GraphQL schema info</td></tr>
   </table>
 </div>
 
-<!-- Slide 12: Data Flow -->
+<!-- Slide 14: MCP vs HTTP -->
 <div class="slide">
-  <h2>How It Works</h2>
-  <h3>Data Flow</h3>
+  <h2>Why Two Servers?</h2>
+  <h3>MCP Protocol vs HTTP REST</h3>
+  <div class="grid">
+    <div class="card">
+      <h4 style="color: #8b5cf6;">MCP Server (stdio)</h4>
+      <ul style="margin-left: 20px; margin-top: 15px;">
+        <li>Uses stdin/stdout pipes</li>
+        <li>Claude Desktop spawns as child process</li>
+        <li>Direct AI tool integration</li>
+        <li>JSON-RPC protocol</li>
+        <li><span class="highlight">Only for CLI/Desktop apps</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4 style="color: #3b82f6;">HTTP Server (REST)</h4>
+      <ul style="margin-left: 20px; margin-top: 15px;">
+        <li>Uses HTTP requests</li>
+        <li>Runs on port 3006</li>
+        <li>Standard REST API</li>
+        <li>JSON responses</li>
+        <li><span class="highlight">For browsers & web apps</span></li>
+      </ul>
+    </div>
+  </div>
+  <p style="margin-top: 30px; text-align: center; color: #94a3b8;">
+    Browsers cannot use stdio → That's why we need HTTP REST for the web app
+  </p>
+</div>
+
+<!-- Slide 15: Data Flow -->
+<div class="slide">
+  <h2>Complete Data Flow</h2>
+  <h3>From Question to Answer</h3>
   <div class="architecture">
     <div class="arch-box">1. User asks: <span class="highlight">"Show me suspicious orders"</span></div>
     <div class="arch-arrow">▼</div>
