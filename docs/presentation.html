@@ -1,409 +1,266 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>JTL AI Analytics MCP Server - Hackathon 2026</title>
+  <title>JTL AI Analytics - Hackathon 2026</title>
   <meta charset="UTF-8">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: white; }
-    .slide { min-height: 100vh; padding: 60px; display: flex; flex-direction: column; justify-content: center; border-bottom: 1px solid #334155; }
-    .slide:nth-child(even) { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
-    .slide:nth-child(odd) { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
-    h1 { font-size: 3.5rem; margin-bottom: 20px; background: linear-gradient(90deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    h2 { font-size: 2.5rem; margin-bottom: 30px; color: #f1f5f9; }
-    h3 { font-size: 1.5rem; color: #94a3b8; margin-bottom: 20px; }
-    p, li { font-size: 1.4rem; line-height: 1.8; color: #cbd5e1; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff; color: #1a1a2e; }
+    .slide { min-height: 100vh; padding: 60px 80px; display: flex; flex-direction: column; justify-content: center; border-bottom: 2px solid #eee; position: relative; background: #ffffff; }
+    h1 { font-size: 3.5rem; margin-bottom: 20px; color: #1a1a2e; }
+    h2 { font-size: 2.8rem; margin-bottom: 30px; color: #1a1a2e; }
+    h3 { font-size: 1.8rem; color: #666; margin-bottom: 30px; }
+    p, li { font-size: 1.4rem; line-height: 1.8; color: #333; }
     ul { margin-left: 40px; margin-top: 20px; }
     li { margin-bottom: 15px; }
     .title-slide { text-align: center; }
-    .title-slide h1 { font-size: 4.5rem; }
-    .title-slide h3 { font-size: 2rem; margin-top: 20px; }
-    .badge { display: inline-block; background: #3b82f6; padding: 8px 20px; border-radius: 20px; font-size: 1rem; margin-top: 30px; }
+    .title-slide h1 { font-size: 4rem; background: linear-gradient(90deg, #ff6b35, #f7931e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .badge { display: inline-block; background: #ff6b35; color: white; padding: 10px 25px; border-radius: 25px; font-size: 1.1rem; margin-top: 30px; }
     table { width: 100%; border-collapse: collapse; margin-top: 30px; }
-    th, td { padding: 15px 20px; text-align: left; border-bottom: 1px solid #334155; }
-    th { background: #1e293b; color: #3b82f6; font-weight: 600; }
-    td { color: #cbd5e1; }
-    pre { background: #1e293b; padding: 30px; border-radius: 12px; overflow-x: auto; margin-top: 30px; font-size: 0.9rem; line-height: 1.6; }
-    code { color: #67e8f9; font-family: 'Monaco', 'Menlo', monospace; }
-    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 30px; }
-    .card { background: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #334155; }
-    .card h4 { color: #3b82f6; margin-bottom: 15px; font-size: 1.3rem; }
-    .highlight { color: #fbbf24; }
-    .architecture { background: #1e293b; padding: 40px; border-radius: 12px; margin-top: 30px; }
-    .arch-box { border: 2px solid #3b82f6; border-radius: 8px; padding: 20px; margin: 10px 0; text-align: center; }
-    .arch-arrow { text-align: center; font-size: 2rem; color: #3b82f6; }
-    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 30px; }
-    .feature { background: linear-gradient(135deg, #1e293b, #334155); padding: 25px; border-radius: 12px; text-align: center; }
-    .feature-icon { font-size: 3rem; margin-bottom: 15px; }
-    .slide-number { position: fixed; bottom: 20px; right: 30px; color: #64748b; font-size: 0.9rem; }
-    .thank-you { text-align: center; }
-    .thank-you h1 { font-size: 5rem; }
+    th, td { padding: 15px 20px; text-align: left; border: 1px solid #ddd; }
+    th { background: #f7931e; color: white; font-weight: 600; }
+    td { color: #333; }
+    tr:nth-child(even) { background: #f9f9f9; }
+    .arch-box { border: 3px solid #ff6b35; border-radius: 12px; padding: 25px; margin: 15px 0; text-align: center; background: #fff; font-size: 1.2rem; }
+    .arch-arrow { text-align: center; font-size: 2.5rem; color: #ff6b35; margin: 10px 0; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 30px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 30px; }
+    .category-card { background: linear-gradient(135deg, #ff6b35, #f7931e); color: white; padding: 25px; border-radius: 12px; text-align: center; font-weight: 600; font-size: 1.1rem; }
+    .team-name { font-size: 1.5rem; color: #ff6b35; font-weight: bold; margin-top: 20px; }
+    .highlight { color: #ff6b35; font-weight: bold; }
+    .flow-container { display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 40px; }
+    .flow-box { background: linear-gradient(135deg, #1a1a2e, #2d2d44); color: white; padding: 20px 30px; border-radius: 12px; text-align: center; min-width: 150px; }
+    .flow-arrow { font-size: 2rem; color: #ff6b35; }
+    code { background: #f5f5f5; padding: 3px 8px; border-radius: 4px; font-family: monospace; }
+    .tiger-svg { width: 60px; height: 60px; }
   </style>
 </head>
 <body>
 
-<!-- Slide 1: Title -->
+
+<!-- Slide 1: Intro -->
 <div class="slide title-slide">
-  <h1>JTL AI Analytics MCP Server</h1>
-  <h3>Intelligent E-Commerce Insights</h3>
-  <p style="margin-top: 40px; font-size: 1.5rem;">Mukit Khan</p>
+  <h1>JTL AI Analytics</h1>
+  <h3>Intelligent E-Commerce Insights with MCP</h3>
+  <!-- Tiger Logo above Team name -->
+  <img src="tiger-logo.png" alt="Tiger AI" style="width: 150px; height: 150px; object-fit: contain; margin-top: 40px; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;">
+  <p class="team-name">Team: TIGER AI</p>
   <span class="badge">JTL Hackathon 2026</span>
 </div>
 
-<!-- Slide 2: Problem -->
+<!-- Slide 2: What is JTL Cloud ERP -->
 <div class="slide">
-  <h2>The Problem</h2>
-  <h3>Challenges E-Commerce Merchants Face</h3>
-  <ul>
-    <li><strong class="highlight">Data Overload</strong> - Too much data, not enough insights</li>
-    <li><strong class="highlight">Manual Analysis</strong> - Hours spent on reports and spreadsheets</li>
-    <li><strong class="highlight">Fraud Risk</strong> - Difficult to detect suspicious orders quickly</li>
-    <li><strong class="highlight">Stock Issues</strong> - Stockouts and overstock problems</li>
-    <li><strong class="highlight">Customer Blindness</strong> - No clear view of customer value</li>
-  </ul>
-</div>
+  <h2>What is JTL Cloud ERP?</h2>
+  <h3>Complete E-Commerce Management Platform</h3>
 
-<!-- Slide 3: Solution -->
-<div class="slide">
-  <h2>Our Solution</h2>
-  <h3>AI-Powered Analytics for JTL ERP</h3>
-  <p style="font-size: 1.8rem; margin-bottom: 30px;">One Platform. Real-Time Insights. <span class="highlight">Powered by AI.</span></p>
-  <div class="features-grid">
-    <div class="feature">
-      <div class="feature-icon">🗣️</div>
-      <h4>Natural Language</h4>
-      <p>Just ask questions</p>
+  <div class="grid-3">
+    <div style="padding: 30px; border: 2px solid #eee; border-radius: 12px;">
+      <h3 style="color: #ff6b35; margin-bottom: 15px;">Orders & Sales</h3>
+      <p>Manage sales orders, quotations, invoices, and delivery tracking</p>
     </div>
-    <div class="feature">
-      <div class="feature-icon">🛡️</div>
-      <h4>Fraud Detection</h4>
-      <p>AI-powered scoring</p>
+    <div style="padding: 30px; border: 2px solid #eee; border-radius: 12px;">
+      <h3 style="color: #ff6b35; margin-bottom: 15px;">Inventory</h3>
+      <p>Track stock levels, warehouses, bin locations, and reorder points</p>
     </div>
-    <div class="feature">
-      <div class="feature-icon">📦</div>
-      <h4>Smart Reorder</h4>
-      <p>Stock predictions</p>
+    <div style="padding: 30px; border: 2px solid #eee; border-radius: 12px;">
+      <h3 style="color: #ff6b35; margin-bottom: 15px;">Customers</h3>
+      <p>Customer management, addresses, groups, and purchase history</p>
     </div>
-    <div class="feature">
-      <div class="feature-icon">👥</div>
-      <h4>Customer CLV</h4>
-      <p>Value analysis</p>
-    </div>
-    <div class="feature">
-      <div class="feature-icon">📊</div>
-      <h4>Dashboards</h4>
-      <p>Real-time insights</p>
-    </div>
-    <div class="feature">
-      <div class="feature-icon">🤖</div>
-      <h4>MCP Integration</h4>
-      <p>Claude Desktop</p>
-    </div>
+  </div>
+
+  <div style="margin-top: 40px; padding: 20px; background: #f9f9f9; border-radius: 12px;">
+    <p><strong>API:</strong> GraphQL endpoint at <code>https://api.jtl-cloud.com/erp/v2/graphql</code></p>
+    <p style="margin-top: 10px;"><strong>Auth:</strong> OAuth 2.0 with Client Credentials</p>
   </div>
 </div>
 
-<!-- Slide 4: Architecture -->
+<!-- Slide 3: Postman Demo -->
 <div class="slide">
-  <h2>Architecture Overview</h2>
-  <div class="architecture">
-    <div class="arch-box" style="background: linear-gradient(90deg, #3b82f6, #8b5cf6);">
-      <strong>FRONTEND</strong><br>React + TypeScript + JTL Platform UI
-    </div>
-    <div class="arch-arrow">▼</div>
-    <div class="arch-box" style="background: linear-gradient(90deg, #10b981, #3b82f6);">
-      <strong>MCP AI SERVER</strong><br>Node.js + Express + GPT-4o-mini<br>
-      Natural Language → GraphQL
-    </div>
-    <div class="arch-arrow">▼</div>
-    <div class="arch-box" style="background: linear-gradient(90deg, #f59e0b, #ef4444);">
-      <strong>JTL ERP CLOUD API</strong><br>GraphQL Gateway<br>
-      Orders | Customers | Products | Invoices
-    </div>
+  <h2>Live Demo: Postman</h2>
+  <h3>Testing the JTL ERP GraphQL API</h3>
+
+  <div style="background: #1a1a2e; color: #00ff00; padding: 30px; border-radius: 12px; font-family: monospace; margin-top: 20px;">
+    <p style="color: #888;">// Example Query</p>
+    <p>POST https://api.jtl-cloud.com/erp/v2/graphql</p>
+    <p style="margin-top: 15px; color: #888;">// Headers</p>
+    <p>Authorization: Bearer {token}</p>
+    <p>X-Tenant-ID: {tenant_id}</p>
+    <p style="margin-top: 15px; color: #888;">// Body</p>
+    <p>{</p>
+    <p>&nbsp;&nbsp;"query": "{ QuerySalesOrders(first: 10) { nodes { salesOrderNumber totalGrossAmount } } }"</p>
+    <p>}</p>
   </div>
-</div>
 
-<!-- Slide 5: Tech Stack -->
-<div class="slide">
-  <h2>Technology Stack</h2>
-  <table>
-    <tr><th>Layer</th><th>Technology</th></tr>
-    <tr><td>Frontend</td><td>React + TypeScript + Vite</td></tr>
-    <tr><td>UI Components</td><td>JTL Platform UI React</td></tr>
-    <tr><td>AI Server</td><td>Node.js + Express</td></tr>
-    <tr><td>AI Model</td><td>Azure OpenAI (GPT-4o-mini)</td></tr>
-    <tr><td>API</td><td>JTL ERP Cloud GraphQL</td></tr>
-    <tr><td>Auth</td><td>OAuth 2.0 Client Credentials</td></tr>
-    <tr><td>Protocol</td><td>MCP (Model Context Protocol)</td></tr>
-  </table>
-</div>
-
-<!-- Slide 6: Report Agent -->
-<div class="slide">
-  <h2>Feature 1: AI Report Agent</h2>
-  <h3>Ask questions in plain English</h3>
-  <div class="grid">
-    <div class="card">
-      <h4>Example Questions</h4>
-      <ul style="margin-left: 20px;">
-        <li>"Show me top 10 customers by revenue"</li>
-        <li>"Which products are low on stock?"</li>
-        <li>"Analyze sales for July 2018"</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h4>AI Automatically</h4>
-      <ul style="margin-left: 20px;">
-        <li>Converts to GraphQL query</li>
-        <li>Fetches real data from JTL ERP</li>
-        <li>Generates human-readable insights</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<!-- Slide 7: Fraud Detection -->
-<div class="slide">
-  <h2>Feature 2: Fraud Detection</h2>
-  <h3>Hybrid Approach: Rules + AI</h3>
-  <div class="grid">
-    <div class="card">
-      <h4>Rule-Based Scoring</h4>
-      <ul style="margin-left: 20px;">
-        <li>High value orders (>500 EUR)</li>
-        <li>Billing ≠ Shipping address</li>
-        <li>Multiple orders same day</li>
-        <li>Country mismatch</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h4>AI Analysis</h4>
-      <ul style="margin-left: 20px;">
-        <li>Pattern recognition</li>
-        <li>Anomaly detection</li>
-        <li>Risk recommendations</li>
-        <li>Per-order investigation</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<!-- Slide 8: Customer CLV -->
-<div class="slide">
-  <h2>Feature 3: Customer Lifetime Value</h2>
-  <h3>RFM Analysis (Recency, Frequency, Monetary)</h3>
-  <div class="grid">
-    <div class="card">
-      <h4>RFM Metrics</h4>
-      <ul style="margin-left: 20px;">
-        <li><strong>Recency</strong>: How recently did they buy?</li>
-        <li><strong>Frequency</strong>: How often do they buy?</li>
-        <li><strong>Monetary</strong>: How much do they spend?</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h4>Customer Segments</h4>
-      <ul style="margin-left: 20px;">
-        <li>👑 VIP Customers</li>
-        <li>⭐ Regular Customers</li>
-        <li>🆕 New Customers</li>
-        <li>⚠️ At-Risk Customers</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<!-- Slide 9: Stock Alerts -->
-<div class="slide">
-  <h2>Feature 4: Stock Alerts & Reorder</h2>
-  <h3>Smart Inventory Management</h3>
-  <ul>
-    <li>Real-time stock level monitoring</li>
-    <li>Automatic reorder quantity calculation</li>
-    <li>Days of coverage prediction</li>
-    <li>Critical / Low / OK / Overstock status</li>
-    <li>Supplier recommendations</li>
-  </ul>
-</div>
-
-<!-- Slide 10: MCP Architecture -->
-<div class="slide">
-  <h2>Server Architecture</h2>
-  <h3>Two Servers, One AI Core</h3>
-  <div class="architecture">
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-      <div class="arch-box" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
-        <strong>MCP Server</strong><br>
-        <code>dist/index.js</code><br><br>
-        Protocol: <span class="highlight">stdio</span><br>
-        Used by: Claude Desktop
-      </div>
-      <div class="arch-box" style="background: linear-gradient(135deg, #3b82f6, #0ea5e9);">
-        <strong>HTTP REST Server</strong><br>
-        <code>dist/http-server.js</code><br><br>
-        Protocol: <span class="highlight">HTTP :3006</span><br>
-        Used by: Web App, Postman
-      </div>
-    </div>
-    <div class="arch-arrow">▼</div>
-    <div class="arch-box" style="background: linear-gradient(135deg, #10b981, #14b8a6);">
-      <strong>Shared AI Core</strong><br>
-      OpenAI GPT-4o-mini + JTL ERP GraphQL API
-    </div>
-  </div>
-</div>
-
-<!-- Slide 11: MCP Tools -->
-<div class="slide">
-  <h2>MCP Tools</h2>
-  <h3>Available Tools for Claude Desktop</h3>
-  <table>
-    <tr><th>Tool Name</th><th>Description</th><th>Parameters</th></tr>
-    <tr><td><code>query_jtl_data</code></td><td>Natural language query</td><td>question, tenant_id</td></tr>
-    <tr><td><code>analyze_sales</code></td><td>Sales analysis & trends</td><td>timeframe, focus</td></tr>
-    <tr><td><code>detect_fraud</code></td><td>Fraud detection</td><td>lookback_days</td></tr>
-    <tr><td><code>predict_reorder</code></td><td>Inventory predictions</td><td>urgency</td></tr>
-    <tr><td><code>customer_insights</code></td><td>Customer behavior</td><td>segment</td></tr>
-  </table>
-  <p style="margin-top: 20px; color: #94a3b8;">Example: "Use query_jtl_data to show my top 5 customers"</p>
-</div>
-
-<!-- Slide 12: Claude Desktop Config -->
-<div class="slide">
-  <h2>Claude Desktop Setup</h2>
-  <h3>Configuration File</h3>
-  <pre><code>{
-  "mcpServers": {
-    "jtl-ai-analytics": {
-      "command": "node",
-      "args": ["/path/to/mcp-server/dist/index.js"],
-      "env": {
-        "OPENAI_API_URL": "https://apim-ai-hub-jtlpltf-beta.azure-api.net/openai/v1",
-        "OPENAI_API_KEY": "your-api-key",
-        "CLIENT_ID": "your-client-id",
-        "CLIENT_SECRET": "your-client-secret",
-        "DEMO_TENANT_ID": "your-tenant-id"
-      }
-    }
-  }
-}</code></pre>
-  <p style="margin-top: 20px;">File: <code>~/Library/Application Support/Claude/claude_desktop_config.json</code></p>
-</div>
-
-<!-- Slide 13: HTTP REST Endpoints -->
-<div class="slide">
-  <h2>HTTP REST API</h2>
-  <h3>Endpoints for Web App & Postman (localhost:3006)</h3>
-  <table>
-    <tr><th>Endpoint</th><th>Purpose</th></tr>
-    <tr><td><code>POST /api/query</code></td><td>Natural language → GraphQL</td></tr>
-    <tr><td><code>POST /api/ai-analyze</code></td><td>Direct AI analysis</td></tr>
-    <tr><td><code>POST /api/detect-fraud</code></td><td>Fraud detection</td></tr>
-    <tr><td><code>POST /api/analyze-sales</code></td><td>Sales analytics</td></tr>
-    <tr><td><code>POST /api/analyze-customers</code></td><td>Customer insights</td></tr>
-    <tr><td><code>POST /api/predict-reorder</code></td><td>Stock predictions</td></tr>
-    <tr><td><code>GET /api/suggestions</code></td><td>Query examples</td></tr>
-    <tr><td><code>GET /api/schema</code></td><td>GraphQL schema info</td></tr>
-  </table>
-</div>
-
-<!-- Slide 14: MCP vs HTTP -->
-<div class="slide">
-  <h2>Why Two Servers?</h2>
-  <h3>MCP Protocol vs HTTP REST</h3>
-  <div class="grid">
-    <div class="card">
-      <h4 style="color: #8b5cf6;">MCP Server (stdio)</h4>
-      <ul style="margin-left: 20px; margin-top: 15px;">
-        <li>Uses stdin/stdout pipes</li>
-        <li>Claude Desktop spawns as child process</li>
-        <li>Direct AI tool integration</li>
-        <li>JSON-RPC protocol</li>
-        <li><span class="highlight">Only for CLI/Desktop apps</span></li>
-      </ul>
-    </div>
-    <div class="card">
-      <h4 style="color: #3b82f6;">HTTP Server (REST)</h4>
-      <ul style="margin-left: 20px; margin-top: 15px;">
-        <li>Uses HTTP requests</li>
-        <li>Runs on port 3006</li>
-        <li>Standard REST API</li>
-        <li>JSON responses</li>
-        <li><span class="highlight">For browsers & web apps</span></li>
-      </ul>
-    </div>
-  </div>
-  <p style="margin-top: 30px; text-align: center; color: #94a3b8;">
-    Browsers cannot use stdio → That's why we need HTTP REST for the web app
+  <p style="margin-top: 30px; font-size: 1.5rem; text-align: center;">
+    <span class="highlight">Let's see it in action...</span>
   </p>
 </div>
 
-<!-- Slide 15: Data Flow -->
+<!-- Slide 4: GraphQL Categories We Work With -->
 <div class="slide">
-  <h2>Complete Data Flow</h2>
-  <h3>From Question to Answer</h3>
-  <div class="architecture">
-    <div class="arch-box">1. User asks: <span class="highlight">"Show me suspicious orders"</span></div>
-    <div class="arch-arrow">▼</div>
-    <div class="arch-box">2. AI converts to GraphQL query</div>
-    <div class="arch-arrow">▼</div>
-    <div class="arch-box">3. Fetch data from JTL ERP Cloud API</div>
-    <div class="arch-arrow">▼</div>
-    <div class="arch-box">4. Apply fraud detection algorithms</div>
-    <div class="arch-arrow">▼</div>
-    <div class="arch-box">5. AI generates insights & recommendations</div>
-    <div class="arch-arrow">▼</div>
-    <div class="arch-box">6. Display results in beautiful UI</div>
+  <h2>GraphQL Categories We Target</h2>
+  <h3>12 Key Data Categories from JTL ERP</h3>
+
+  <div class="grid-4">
+    <div class="category-card">Sales Orders</div>
+    <div class="category-card">Items / Products</div>
+    <div class="category-card">Customers</div>
+    <div class="category-card">Invoices</div>
+    <div class="category-card">Stock / Inventory</div>
+    <div class="category-card">Warehouses</div>
+    <div class="category-card">Categories</div>
+    <div class="category-card">Suppliers</div>
+    <div class="category-card">Shipping</div>
+    <div class="category-card">Production</div>
+    <div class="category-card">Companies</div>
+    <div class="category-card">Tax / VAT</div>
+  </div>
+
+  <p style="margin-top: 40px; text-align: center; font-size: 1.3rem;">
+    Supporting <span class="highlight">338 GraphQL types</span> across all categories
+  </p>
+</div>
+
+<!-- Slide 5: Complete Architecture -->
+<div class="slide">
+  <h2>System Architecture</h2>
+  <h3>Complete Data Flow</h3>
+
+  <div class="flow-container">
+    <div class="flow-box" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+      <strong>User</strong><br>
+      <small>Natural Language Query</small>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
+      <strong>MCP Server</strong><br>
+      <small>Claude Desktop / HTTP API</small>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="background: linear-gradient(135deg, #10b981, #059669);">
+      <strong>Azure OpenAI</strong><br>
+      <small>GPT-4o-mini Gateway</small>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+      <strong>JTL GraphQL</strong><br>
+      <small>ERP Cloud API</small>
+    </div>
+  </div>
+
+  <div style="margin-top: 50px;">
+    <table>
+      <tr>
+        <th>Component</th>
+        <th>Technology</th>
+        <th>Purpose</th>
+      </tr>
+      <tr>
+        <td>MCP Server</td>
+        <td>Node.js + TypeScript</td>
+        <td>Claude Desktop integration (stdio)</td>
+      </tr>
+      <tr>
+        <td>HTTP Server</td>
+        <td>Express.js</td>
+        <td>Web App & Postman (REST API)</td>
+      </tr>
+      <tr>
+        <td>AI Gateway</td>
+        <td>Azure OpenAI</td>
+        <td>Natural Language → GraphQL</td>
+      </tr>
+      <tr>
+        <td>ERP API</td>
+        <td>JTL Cloud GraphQL</td>
+        <td>Real business data</td>
+      </tr>
+    </table>
   </div>
 </div>
 
-<!-- Slide 13: Demo -->
+<!-- Slide 6: Features -->
 <div class="slide">
-  <h2>Live Demo</h2>
-  <h3>http://localhost:5004</h3>
-  <div class="features-grid" style="grid-template-columns: repeat(2, 1fr);">
-    <div class="feature">
-      <div class="feature-icon">📊</div>
-      <h4>Dashboard</h4>
-      <p>Overview & KPIs</p>
+  <h2>Key Features</h2>
+  <h3>What Our AI Analytics Can Do</h3>
+
+  <div class="grid-3">
+    <div style="padding: 30px; border-left: 4px solid #ff6b35; background: #f9f9f9;">
+      <h3 style="color: #1a1a2e; margin-bottom: 10px;">Natural Language Query</h3>
+      <p>Ask questions in plain English, get GraphQL results</p>
     </div>
-    <div class="feature">
-      <div class="feature-icon">🤖</div>
-      <h4>Report Agent</h4>
-      <p>Ask any question</p>
+    <div style="padding: 30px; border-left: 4px solid #ff6b35; background: #f9f9f9;">
+      <h3 style="color: #1a1a2e; margin-bottom: 10px;">Fraud Detection</h3>
+      <p>AI-powered analysis of suspicious orders</p>
     </div>
-    <div class="feature">
-      <div class="feature-icon">🛡️</div>
-      <h4>Fraud Detector</h4>
-      <p>Analyze orders</p>
+    <div style="padding: 30px; border-left: 4px solid #ff6b35; background: #f9f9f9;">
+      <h3 style="color: #1a1a2e; margin-bottom: 10px;">Sales Analytics</h3>
+      <p>Revenue trends, top customers, order analysis</p>
     </div>
-    <div class="feature">
-      <div class="feature-icon">👥</div>
-      <h4>Customer CLV</h4>
-      <p>See segments</p>
+    <div style="padding: 30px; border-left: 4px solid #ff6b35; background: #f9f9f9;">
+      <h3 style="color: #1a1a2e; margin-bottom: 10px;">Inventory Alerts</h3>
+      <p>Stock predictions and reorder recommendations</p>
+    </div>
+    <div style="padding: 30px; border-left: 4px solid #ff6b35; background: #f9f9f9;">
+      <h3 style="color: #1a1a2e; margin-bottom: 10px;">Customer CLV</h3>
+      <p>RFM analysis and customer segmentation</p>
+    </div>
+    <div style="padding: 30px; border-left: 4px solid #ff6b35; background: #f9f9f9;">
+      <h3 style="color: #1a1a2e; margin-bottom: 10px;">MCP Integration</h3>
+      <p>Works with Claude Desktop directly</p>
     </div>
   </div>
 </div>
 
-<!-- Slide 14: Future -->
+<!-- Slide 7: MCP Tools -->
 <div class="slide">
-  <h2>Future Roadmap</h2>
-  <h3>What's Next?</h3>
-  <ul>
-    <li>📧 Email Alerts - Automated fraud notifications</li>
-    <li>📈 Predictive Analytics - Sales forecasting</li>
-    <li>🌍 Multi-language - German, English, French</li>
-    <li>📱 Mobile App - React Native version</li>
-    <li>🔗 Webhook Integration - Real-time events</li>
-    <li>🎨 Custom Dashboards - Drag & drop builder</li>
-  </ul>
+  <h2>MCP Tools Available</h2>
+  <h3>For Claude Desktop Integration</h3>
+
+  <table>
+    <tr>
+      <th>Tool Name</th>
+      <th>Description</th>
+      <th>Example Usage</th>
+    </tr>
+    <tr>
+      <td><code>query_jtl_data</code></td>
+      <td>Natural language query</td>
+      <td>"Show top 5 customers by revenue"</td>
+    </tr>
+    <tr>
+      <td><code>analyze_sales</code></td>
+      <td>Sales trends & analysis</td>
+      <td>timeframe: this_month, focus: revenue</td>
+    </tr>
+    <tr>
+      <td><code>detect_fraud</code></td>
+      <td>Find suspicious orders</td>
+      <td>lookback_days: 7</td>
+    </tr>
+    <tr>
+      <td><code>predict_reorder</code></td>
+      <td>Inventory predictions</td>
+      <td>urgency: critical</td>
+    </tr>
+    <tr>
+      <td><code>customer_insights</code></td>
+      <td>Customer behavior</td>
+      <td>segment: vip</td>
+    </tr>
+  </table>
 </div>
 
-<!-- Slide 15: Thank You -->
-<div class="slide thank-you">
+<!-- Slide 8: Thank You -->
+<div class="slide title-slide">
   <h1>Thank You!</h1>
-  <h3 style="margin-top: 40px;">Questions?</h3>
-  <p style="margin-top: 60px; font-size: 1.8rem;">Mukit Khan</p>
-  <p style="margin-top: 10px;">Tenant: Sportbedarf Sommer GmbH</p>
+  <h3>Questions?</h3>
+
+  <div style="margin-top: 50px;">
+    <p class="team-name">Team TIGER AI</p>
+    <p style="margin-top: 20px;">Tenant: Sportbedarf Sommer GmbH</p>
+  </div>
+
   <span class="badge">JTL Hackathon 2026</span>
 </div>
 
