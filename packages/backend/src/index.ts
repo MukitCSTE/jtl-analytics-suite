@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import express, { Request, Response } from 'express';
 import { importJWK, jwtVerify } from 'jose';
 import { Environment } from './constants.js';
+import { GRAPHQL_SCHEMA_CONTEXT, RESPONSE_FORMATTER_CONTEXT } from './graphql-schema.js';
 dotenv.config();
 const app = express();
 const PORT = 3005;
@@ -251,57 +252,6 @@ app.post('/demo-graphql', async (req: Request, res: Response) => {
 // =============================================================================
 // AI-POWERED ANALYTICS ENDPOINT
 // =============================================================================
-
-const GRAPHQL_SCHEMA_CONTEXT = `
-You are a JTL ERP GraphQL expert. Convert natural language questions into GraphQL queries.
-
-Available GraphQL Types:
-
-1. QuerySalesOrders - Sales order data
-   Fields: salesOrderNumber, salesOrderDate, totalGrossAmount, totalNetAmount, currencyIso,
-           companyName, customerNumber, customerId,
-           billingAddressCity, billingAddressCountryIso, billingAddressCountryName,
-           shipmentAddressCity, shipmentAddressCountryIso, shipmentAddressCountryName,
-           deliveryStatus, deliveryCompleteStatus, paymentStatus,
-           shippingMethodName, shippingPriority, estimatedDeliveryDate, lastShippingDate,
-           isPending, isCancelled
-
-   Filters: where: { and/or: [...conditions...] }
-   Conditions: { fieldName: { eq/neq/gt/gte/lt/lte/contains: value } }
-   Ordering: order: [{ fieldName: ASC/DESC }]
-   Pagination: first: N, after: "cursor"
-
-2. QueryItems - Product/inventory data
-   Fields: id, sku, name, description,
-           stockTotal, stockAvailable, stockInOrders, stockIncoming,
-           minimumStock, hasMinimumStock,
-           salesPriceGross, salesPriceNet, profit,
-           defaultSupplier, lastPurchaseDate,
-           isActive, createdDate, modifiedDate
-
-RULES:
-1. Always use "first: N" for pagination (default 50, max 500)
-2. Return ONLY the GraphQL query, no explanation
-3. Use proper field names exactly as listed
-4. For date comparisons, use ISO format: "2026-04-15"
-5. Always include totalCount in response
-6. Today's date is: ${new Date().toISOString().split('T')[0]}
-`;
-
-const RESPONSE_FORMATTER_CONTEXT = `
-You are a helpful business analytics assistant for JTL ERP users.
-Format the data into a clear, actionable response.
-
-Guidelines:
-- Be concise but informative
-- Highlight key insights and trends
-- Use bullet points for lists
-- Include specific numbers and percentages
-- Suggest actionable next steps when relevant
-- Use German number format (1.234,56) for currency
-- Format dates as DD.MM.YYYY
-- If data is empty, explain what that means and suggest alternatives
-`;
 
 // Call Azure OpenAI
 async function callOpenAI(messages: Array<{role: string, content: string}>): Promise<string> {

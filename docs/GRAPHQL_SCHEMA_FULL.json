@@ -1,0 +1,4310 @@
+[
+  {
+    "name": "AddItemSupplierCommandResponse",
+    "fields": [
+      "itemId"
+    ]
+  },
+  {
+    "name": "AddItemVariationCommandResponse",
+    "fields": [
+      "variationId"
+    ]
+  },
+  {
+    "name": "AddItemVariationValueCommandResponse",
+    "fields": [
+      "variationValueId"
+    ]
+  },
+  {
+    "name": "AttributeSalesChannelValues",
+    "fields": [
+      "salesChannelId",
+      "values"
+    ]
+  },
+  {
+    "name": "AttributeValue",
+    "fields": [
+      "languageIso",
+      "value"
+    ]
+  },
+  {
+    "name": "AttributeValues",
+    "fields": [
+      "attributeId",
+      "defaultValues",
+      "salesChannelValues"
+    ]
+  },
+  {
+    "name": "BatchListItem",
+    "fields": [
+      "itemId",
+      "batch",
+      "quantity",
+      "warehouseId"
+    ]
+  },
+  {
+    "name": "BestBeforeListItem",
+    "fields": [
+      "itemId",
+      "bestBeforeDate",
+      "quantity",
+      "warehouseId"
+    ]
+  },
+  {
+    "name": "BillOfMaterials",
+    "fields": [
+      "id",
+      "productionItemId",
+      "version",
+      "name",
+      "description",
+      "state",
+      "createDate",
+      "updateDate",
+      "updateUserId",
+      "activationDate",
+      "producibleStock",
+      "producibleStockCalculationDate",
+      "componentPostingsShelfLifeEndDateRequirements",
+      "componentPostingsBatchNumberRequirements",
+      "shelfLifeEndDateGenerationMode",
+      "additionalShelfLifeEndDateTime"
+    ]
+  },
+  {
+    "name": "BillOfMaterialsChildComponentProperties",
+    "fields": [
+      "parentId"
+    ]
+  },
+  {
+    "name": "BillOfMaterialsComponentProperties",
+    "fields": [
+      "id",
+      "billOfMaterialsId",
+      "sort"
+    ]
+  },
+  {
+    "name": "BillOfMaterialsItem",
+    "fields": [
+      "billOfMaterialsComponentProperties",
+      "billOfMaterialsChildComponentProperties",
+      "billOfMaterialsItemProperties"
+    ]
+  },
+  {
+    "name": "BillOfMaterialsItemProperties",
+    "fields": [
+      "itemId",
+      "quantity",
+      "measurementUnitId",
+      "operationStepId",
+      "componentPostingsShelfLifeEndDateRequirements",
+      "componentPostingsBatchNumberRequirements"
+    ]
+  },
+  {
+    "name": "BillOfMaterialsOperation",
+    "fields": [
+      "billOfMaterialsComponentProperties",
+      "billOfMaterialsOperationProperties"
+    ]
+  },
+  {
+    "name": "BillOfMaterialsOperationProperties",
+    "fields": [
+      "operationId"
+    ]
+  },
+  {
+    "name": "BinLocationListItem",
+    "fields": [
+      "binLocationId",
+      "warehouseId",
+      "name",
+      "status",
+      "type",
+      "sort"
+    ]
+  },
+  {
+    "name": "BinLocationOccupancyItem",
+    "fields": [
+      "binLocationId",
+      "lastInventoryDate",
+      "volumeFillFactor",
+      "weightFillFactor"
+    ]
+  },
+  {
+    "name": "BinLocationPickHeatmapItem",
+    "fields": [
+      "binLocationId",
+      "warehouseId",
+      "pickCount",
+      "pickQuantity"
+    ]
+  },
+  {
+    "name": "BinLocationStatusDto",
+    "fields": [
+      "value",
+      "name"
+    ]
+  },
+  {
+    "name": "BinLocationTypeDto",
+    "fields": [
+      "value",
+      "name"
+    ]
+  },
+  {
+    "name": "CalculateSalesOrderCommandResponse",
+    "fields": [
+      "lineItems",
+      "totalNetAmount",
+      "totalGrossAmount",
+      "companyVatId",
+      "currencyIso",
+      "currencyFactor",
+      "shippingCostNet",
+      "vatAmounts",
+      "shippingCostGross"
+    ]
+  },
+  {
+    "name": "CalculateSalesOrderLineItemResponse",
+    "fields": [
+      "syncNumber",
+      "type",
+      "itemId",
+      "quantity",
+      "salesPriceNet",
+      "salesPriceGross",
+      "discountPercent",
+      "taxRate",
+      "taxClassId",
+      "parentSyncNumber"
+    ]
+  },
+  {
+    "name": "CalculateSalesOrderVatAmount",
+    "fields": [
+      "taxRate",
+      "vatAmount"
+    ]
+  },
+  {
+    "name": "CategoryDetails",
+    "fields": [
+      "id",
+      "parentId",
+      "sortNumber",
+      "descriptions"
+    ]
+  },
+  {
+    "name": "CategoryDetailsDescription",
+    "fields": [
+      "categoryId",
+      "platformId",
+      "salesChannelId",
+      "languageId",
+      "name",
+      "description",
+      "metaDescription",
+      "metaKeywords",
+      "titleTag",
+      "urlPath"
+    ]
+  },
+  {
+    "name": "CategoryListItem",
+    "fields": [
+      "id",
+      "parentId",
+      "sortNumber",
+      "name"
+    ]
+  },
+  {
+    "name": "ChangeItemCommandResponse",
+    "fields": [
+      "item"
+    ]
+  },
+  {
+    "name": "CompanyAddress",
+    "fields": [
+      "id",
+      "name",
+      "entrepreneur",
+      "street",
+      "zipCode",
+      "city",
+      "country",
+      "phone",
+      "mail",
+      "iso"
+    ]
+  },
+  {
+    "name": "CompanyDetailsItem",
+    "fields": [
+      "id",
+      "companyName",
+      "owner",
+      "street",
+      "postalCode",
+      "city",
+      "country",
+      "countryIsoCode",
+      "phone",
+      "fax",
+      "emailAddress",
+      "website",
+      "bankCode",
+      "accountNumber",
+      "bankName",
+      "taxId",
+      "iban",
+      "bic",
+      "accountHolder",
+      "creditorId",
+      "payPalEmailAddress",
+      "isSmallBusinessOwner",
+      "dhlIntrashipCustomerId",
+      "upsCustomerId",
+      "companyVatIdentifiers"
+    ]
+  },
+  {
+    "name": "CompanyListItem",
+    "fields": [
+      "id",
+      "companyName",
+      "owner",
+      "street",
+      "postalCode",
+      "city",
+      "country",
+      "countryIsoCode",
+      "phone",
+      "fax",
+      "emailAddress",
+      "website",
+      "bankCode",
+      "accountNumber",
+      "bankName",
+      "taxId",
+      "iban",
+      "bic",
+      "accountHolder",
+      "creditorId",
+      "payPalEmailAddress",
+      "isSmallBusinessOwner",
+      "dhlIntrashipCustomerId",
+      "upsCustomerId",
+      "companyVatIdentifiers"
+    ]
+  },
+  {
+    "name": "CompanyVatIdDetailsItem",
+    "fields": [
+      "id",
+      "companyId",
+      "countryIsoCode",
+      "vatIdentifier",
+      "isShippingCountry"
+    ]
+  },
+  {
+    "name": "CompanyVatIdItem",
+    "fields": [
+      "id",
+      "companyId",
+      "countryIsoCode",
+      "vatIdentifier",
+      "isShippingCountry"
+    ]
+  },
+  {
+    "name": "CopyItemdetailsCommandResponse",
+    "fields": [
+      "itemId"
+    ]
+  },
+  {
+    "name": "CountryItem",
+    "fields": [
+      "countryIso",
+      "countryIso3",
+      "name",
+      "continent",
+      "currencyIso",
+      "numericIso",
+      "isEu",
+      "defaultCulture",
+      "displayNameState",
+      "knownStates"
+    ]
+  },
+  {
+    "name": "CountryStateItem",
+    "fields": [
+      "regionCode",
+      "isoCode",
+      "name"
+    ]
+  },
+  {
+    "name": "CreateBillOfMaterialsCommandResponse",
+    "fields": [
+      "id"
+    ]
+  },
+  {
+    "name": "CreateBillOfMaterialsItemCommandResponse",
+    "fields": [
+      "id"
+    ]
+  },
+  {
+    "name": "CreateBillOfMaterialsOperationCommandResponse",
+    "fields": [
+      "id"
+    ]
+  },
+  {
+    "name": "CreateBinLocationCommandResponse",
+    "fields": [
+      "binLocationId"
+    ]
+  },
+  {
+    "name": "CreateCategoryCommandResponse",
+    "fields": [
+      "categoryId"
+    ]
+  },
+  {
+    "name": "CreateCustomerCommandResponse",
+    "fields": [
+      "customerId"
+    ]
+  },
+  {
+    "name": "CreateItemCommandResponse",
+    "fields": [
+      "itemId"
+    ]
+  },
+  {
+    "name": "CreateLotSizeCommandResponse",
+    "fields": [
+      "id"
+    ]
+  },
+  {
+    "name": "CreateProductionItemCommandResponse",
+    "fields": [
+      "id"
+    ]
+  },
+  {
+    "name": "CreateProductionOrderCommandResponse",
+    "fields": [
+      "id"
+    ]
+  },
+  {
+    "name": "CreateSalesInvoiceCommandResponse",
+    "fields": [
+      "salesInvoiceId"
+    ]
+  },
+  {
+    "name": "CreateSalesInvoiceCorrectionCommandResponse",
+    "fields": [
+      "salesInvoiceCorrectionId"
+    ]
+  },
+  {
+    "name": "CreateSalesOrderCommandResponse",
+    "fields": [
+      "salesOrderId"
+    ]
+  },
+  {
+    "name": "CreateSalesOrderFromSalesQuotationCommandResponse",
+    "fields": [
+      "salesOrderId"
+    ]
+  },
+  {
+    "name": "CreateSalesQuotationCommandResponse",
+    "fields": [
+      "salesQuotationId"
+    ]
+  },
+  {
+    "name": "CreateShippingBoxCommandResponse",
+    "fields": [
+      "shippingBoxId"
+    ]
+  },
+  {
+    "name": "CreateShippingClassCommandResponse",
+    "fields": [
+      "id"
+    ]
+  },
+  {
+    "name": "CreateWarehouseZoneCommandResponse",
+    "fields": [
+      "zoneId"
+    ]
+  },
+  {
+    "name": "CreateWorkbenchResourceCommandResponse",
+    "fields": [
+      "id"
+    ]
+  },
+  {
+    "name": "CreateWorkbenchResourceTypeCommandResponse",
+    "fields": [
+      "id"
+    ]
+  },
+  {
+    "name": "Currency",
+    "fields": [
+      "id",
+      "factor",
+      "isDefault",
+      "iso",
+      "name",
+      "updated"
+    ]
+  },
+  {
+    "name": "CustomFieldListItem",
+    "fields": [
+      "customFieldKey",
+      "name",
+      "group",
+      "customFieldType",
+      "dataType",
+      "isRequired",
+      "referenceType",
+      "sort",
+      "isReadonly",
+      "isInvisible",
+      "description"
+    ]
+  },
+  {
+    "name": "Customer",
+    "fields": [
+      "customerId",
+      "customerGroupId",
+      "customerNumber",
+      "createdDate",
+      "customerAddresses",
+      "customerGroup",
+      "languageIso"
+    ]
+  },
+  {
+    "name": "CustomerAddress",
+    "fields": [
+      "customerAddressId",
+      "customerId",
+      "isDefault",
+      "addressType",
+      "companyName",
+      "additionalCompanyLine",
+      "salutation",
+      "title",
+      "firstName",
+      "lastName",
+      "street",
+      "additionalAddressLine",
+      "postalCode",
+      "city",
+      "countryIso",
+      "state",
+      "emailAddress",
+      "faxNumber",
+      "phoneNumber",
+      "mobilePhoneNumber",
+      "vatId"
+    ]
+  },
+  {
+    "name": "CustomerCategory",
+    "fields": [
+      "id",
+      "name"
+    ]
+  },
+  {
+    "name": "CustomerGroup",
+    "fields": [
+      "id",
+      "name",
+      "isDefault",
+      "discount",
+      "isNetPrice"
+    ]
+  },
+  {
+    "name": "CustomerGroupSurcharge",
+    "fields": [
+      "customerGroupId",
+      "surcharge",
+      "isActive"
+    ]
+  },
+  {
+    "name": "CustomerListItem",
+    "fields": [
+      "id",
+      "customerNumber",
+      "ebayName",
+      "birthday",
+      "homepage",
+      "lastName",
+      "firstName",
+      "phoneNumber",
+      "faxNumber",
+      "emailAddress",
+      "companyName",
+      "postalCode",
+      "city",
+      "countryName",
+      "countryIso",
+      "additionalCompanyLine",
+      "salutation",
+      "title",
+      "street",
+      "additionalAddressLine",
+      "createdDate",
+      "mobilePhoneNumber",
+      "discountRate",
+      "vatId",
+      "hasNewsletter",
+      "postId",
+      "paymentDueDateInDays",
+      "state",
+      "initialContact",
+      "isCashRegisterBased",
+      "isLocked",
+      "commercialRegisterNumber",
+      "accountsReceivableNumber",
+      "customerCategoryName",
+      "customerGroupName",
+      "customerCategoryId",
+      "customerGroupId",
+      "isJtlFulfillment",
+      "labels",
+      "languageIso"
+    ]
+  },
+  {
+    "name": "DefaultDescription",
+    "fields": [
+      "languageIso",
+      "descriptionData"
+    ]
+  },
+  {
+    "name": "DeleteItemVariationCommandResponse",
+    "fields": [
+      "variationId"
+    ]
+  },
+  {
+    "name": "DeleteItemVariationValueCommandResponse",
+    "fields": [
+      "variationValueId"
+    ]
+  },
+  {
+    "name": "DeliveryNoteItem",
+    "fields": [
+      "id",
+      "createdAt",
+      "number"
+    ]
+  },
+  {
+    "name": "Description",
+    "fields": [
+      "languageIso",
+      "name"
+    ]
+  },
+  {
+    "name": "DescriptionData",
+    "fields": [
+      "itemName",
+      "shortDescription",
+      "description",
+      "metaDescription",
+      "metaKeywords",
+      "titleTag",
+      "urlPath"
+    ]
+  },
+  {
+    "name": "DuplicateItemsCommandResponse",
+    "fields": [
+      "createdItems"
+    ]
+  },
+  {
+    "name": "EbayImages",
+    "fields": [
+      "ebayAccountId",
+      "images"
+    ]
+  },
+  {
+    "name": "EmptySalesOrder",
+    "fields": [
+      "salesOrderDate",
+      "itemDescriptionType",
+      "readOnlyType",
+      "companyId",
+      "languageId",
+      "additionalWeight",
+      "vatId",
+      "specialTaxTreatment",
+      "taxSetting",
+      "departureCountry",
+      "paymentDetails",
+      "billingAddress",
+      "shipmentAddress"
+    ]
+  },
+  {
+    "name": "EmptySalesOrderAddress",
+    "fields": [
+      "salutation",
+      "title",
+      "firstName",
+      "lastName",
+      "company",
+      "additionalCompanyLine",
+      "street",
+      "additionalAddressLine",
+      "postalCode",
+      "city",
+      "state",
+      "countryIso",
+      "countryName",
+      "emailAddress",
+      "phoneNumber",
+      "mobilePhoneNumber",
+      "fax"
+    ]
+  },
+  {
+    "name": "EmptySalesOrderDepartureCountry",
+    "fields": [
+      "countryIso",
+      "currencyIso",
+      "currencyFactor"
+    ]
+  },
+  {
+    "name": "EmptySalesOrderPaymentDetails",
+    "fields": [
+      "currencyIso",
+      "currencyFactor",
+      "paymentDueDateInDays",
+      "cashDiscount",
+      "cashDiscountDays"
+    ]
+  },
+  {
+    "name": "ExternalDocumentInternal",
+    "fields": [
+      "externalDocumentTransactionId",
+      "companyId",
+      "customerId",
+      "platformId",
+      "paymentMethodId",
+      "externalInvoiceDocumentId",
+      "salesInvoiceNumber",
+      "externalDocumentNumber",
+      "externalDocumentDate",
+      "externalDocumentOrderNumber",
+      "currencyFactor",
+      "currency",
+      "departureCountryCurrencyIso",
+      "departureCountryCurrenyFactor",
+      "serviceDate",
+      "payDate",
+      "platformIdentifier",
+      "accountsReceivableNumber",
+      "taxSetting",
+      "externalDocumentType",
+      "companyVatIdNumber",
+      "customerVatIdNumber",
+      "departureCountryIso",
+      "paymentMethodName",
+      "orderDate",
+      "shipmentAddressCompany",
+      "shipmentAddressLastName",
+      "shipmentAddressStreet",
+      "shipmentAddressPostalCode",
+      "shipmentAddressCity",
+      "shipmentAddressPhoneNumber",
+      "shipmentAddressAdditionalAddressLine",
+      "shipmentAddressCountryIso",
+      "shipmentAddressVatIdNumber",
+      "customerDefaultBillingAddressCompany",
+      "customerDefaultBillingAddressSalutation",
+      "customerDefaultBillingAddressTitle",
+      "customerDefaultBillingAddressFirstName",
+      "customerDefaultBillingAddressLastName",
+      "customerDefaultBillingAddressStreet",
+      "customerDefaultBillingAddressPostalCode",
+      "customerDefaultBillingAddressCity",
+      "customerDefaultBillingAddressCountry",
+      "customerDefaultBillingAddressPhoneNumber",
+      "customerDefaultBillingAddressFaxNumber",
+      "customerDefaultBillingAddressForTheAttentionOf",
+      "customerDefaultBillingAddressCountryIso",
+      "customerDefaultBillingAddressEmailAddress",
+      "customerDefaultBillingAddressVatIdNumber",
+      "salesOrderCustomerNumber",
+      "customerGroupName",
+      "paymentDueDateInDays",
+      "customerNumber",
+      "billingAddressCompany",
+      "billingAddressLastName",
+      "billingAddressStreet",
+      "billingAddressPostalCode",
+      "billingAddressCity",
+      "billingAddressPhoneNumber",
+      "billingAddressAdditionalAddressLine",
+      "billingAddressCountryIso",
+      "billingAddressVatIdNumber",
+      "externalDocumentTotalGrossValue",
+      "externalDocumentTotalNetValue",
+      "shipmentDate",
+      "orderPaymentMethodName",
+      "shipmentCountryCount"
+    ]
+  },
+  {
+    "name": "ExternalDocumentLineItemInternal",
+    "fields": [
+      "externalDocumentLineItemId",
+      "externalDocumentId",
+      "externalDocumentSalesPriceGross",
+      "externalDocumentSalesPriceNet",
+      "externalDocumentPurchasePriceNet",
+      "quantity",
+      "itemName",
+      "sku",
+      "taxRate",
+      "taxClassId",
+      "taric",
+      "itemWeight",
+      "itemVolume",
+      "productGroupId",
+      "purchasePriceNet",
+      "productGroup",
+      "warehouseId",
+      "externalDocumentInvoiceLineItemId"
+    ]
+  },
+  {
+    "name": "GetItemSuppliersByIdConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "GetItemSuppliersByIdEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "ItemAttributes",
+    "fields": [
+      "values"
+    ]
+  },
+  {
+    "name": "ItemCategories",
+    "fields": [
+      "categories"
+    ]
+  },
+  {
+    "name": "ItemCategory",
+    "fields": [
+      "categoryId"
+    ]
+  },
+  {
+    "name": "ItemCustomFieldValue",
+    "fields": [
+      "fieldId",
+      "value",
+      "valueCultureName"
+    ]
+  },
+  {
+    "name": "ItemCustomFields",
+    "fields": [
+      "fieldValues"
+    ]
+  },
+  {
+    "name": "ItemCustomerGroupPrices",
+    "fields": [
+      "customerGroupId",
+      "prices"
+    ]
+  },
+  {
+    "name": "ItemCustomerGroupSpecialPrice",
+    "fields": [
+      "customerGroupId",
+      "netPrice",
+      "isActive"
+    ]
+  },
+  {
+    "name": "ItemCustomerPrices",
+    "fields": [
+      "customerId",
+      "prices"
+    ]
+  },
+  {
+    "name": "ItemDescriptions",
+    "fields": [
+      "defaultDescriptions",
+      "salesChannelDescriptions",
+      "platformDescriptions"
+    ]
+  },
+  {
+    "name": "ItemFeature",
+    "fields": [
+      "featureId"
+    ]
+  },
+  {
+    "name": "ItemFeatures",
+    "fields": [
+      "features"
+    ]
+  },
+  {
+    "name": "ItemIdentifiers",
+    "fields": [
+      "sku",
+      "amazonFnsku",
+      "gtin",
+      "manufacturerNumber",
+      "isbn",
+      "tariccode",
+      "upc",
+      "unNumber",
+      "hazardNumber",
+      "ownIdentifier",
+      "defaultAsin",
+      "jfsku"
+    ]
+  },
+  {
+    "name": "ItemImage",
+    "fields": [
+      "blobIdentifier",
+      "url",
+      "previewUrl",
+      "sortNumber",
+      "isMainImage"
+    ]
+  },
+  {
+    "name": "ItemImages",
+    "fields": [
+      "defaultImages",
+      "platformImages",
+      "saleschannelImages",
+      "ebayImages"
+    ]
+  },
+  {
+    "name": "ItemListItem",
+    "fields": [
+      "id",
+      "billOfMaterialsId",
+      "parentItemId",
+      "itemIdForCategoryItemId",
+      "sku",
+      "sortNumber",
+      "name",
+      "unit",
+      "description",
+      "shortDescription",
+      "notes",
+      "labels",
+      "series",
+      "gtin",
+      "manufacturerNumber",
+      "isbn",
+      "defaultAsin",
+      "taricCode",
+      "upc",
+      "unNumber",
+      "hazardNumber",
+      "amazonFnsku",
+      "jfsku",
+      "countryOfOrigin",
+      "manufacturerName",
+      "deliveryStatus",
+      "isDeliveryTimeAutomatic",
+      "manualDeliveryTimeDays",
+      "width",
+      "height",
+      "length",
+      "shippingWeight",
+      "weight",
+      "createdDate",
+      "modifiedDate",
+      "modifiedTimestamp",
+      "releaseDate",
+      "lastPurchaseDate",
+      "lastEditor",
+      "salesPriceNet",
+      "salesPriceGross",
+      "suggestedRetailPrice",
+      "averagePurchasePriceNet",
+      "lastPurchasePrice",
+      "amazonPrice",
+      "ebayPrice",
+      "profit",
+      "profitPercent",
+      "specialPriceStatus",
+      "basePriceValue",
+      "basePriceUnit",
+      "measurementUnit",
+      "stockTotal",
+      "stockOwn",
+      "stockIncoming",
+      "stockOnPurchaseList",
+      "stockInOrders",
+      "stockAvailable",
+      "stockReservedTotal",
+      "stockInAmazonOffers",
+      "ebayStock",
+      "minimumOrderQuantity",
+      "purchaseInterval",
+      "buffer",
+      "minimumStock",
+      "allowNegativeStock",
+      "isInventoryManagementActive",
+      "isDivisible",
+      "hasBatch",
+      "hasBestBeforeDate",
+      "isSerialNumberManaged",
+      "serialNumberTrackingMode",
+      "isActive",
+      "isOnPriceList",
+      "isTopItem",
+      "isNew",
+      "isBillOfMaterials",
+      "isBillOfMaterialsComponent",
+      "isVariationParent",
+      "isVariationChild",
+      "hasMinimumStock",
+      "isBlockedForOrderSuggestions",
+      "isShopActive",
+      "isOrderProcessProhibited",
+      "salesPackagingUnit",
+      "conditionId",
+      "conditionName",
+      "isFulfillmentActive",
+      "isFulfillmentOwn",
+      "taxClassId",
+      "taxClassName",
+      "manufacturerId",
+      "productGroupId",
+      "productGroupName",
+      "defaultSupplierId",
+      "defaultSupplier",
+      "shippingClassId",
+      "shippingClassName",
+      "defaultImageId",
+      "additionalProcessingTime",
+      "metaDescription",
+      "titleTag",
+      "metaKeywords",
+      "languageId",
+      "companyId"
+    ]
+  },
+  {
+    "name": "ItemMeasurements",
+    "fields": [
+      "height",
+      "length",
+      "shippingWeight",
+      "weight",
+      "width"
+    ]
+  },
+  {
+    "name": "ItemPrice",
+    "fields": [
+      "fromQuantity",
+      "netPrice",
+      "reduceStandardPriceByPercent"
+    ]
+  },
+  {
+    "name": "ItemPriceDetails",
+    "fields": [
+      "itemId",
+      "defaultSalesPriceNet",
+      "latestSalesPriceNet",
+      "customersLatestSalesPriceNet",
+      "purchasePriceNet",
+      "latestPurchasePriceNet"
+    ]
+  },
+  {
+    "name": "ItemPrices",
+    "fields": [
+      "ignoreDiscounts",
+      "salesPriceNet",
+      "suggestedRetailPrice",
+      "purchasePriceNet",
+      "ebayPrice",
+      "amazonPrice",
+      "salesChannelPrices",
+      "customerPrices",
+      "defaultPrices"
+    ]
+  },
+  {
+    "name": "ItemSalesChannelSpecialPrices",
+    "fields": [
+      "salesChannelId",
+      "specialPrices"
+    ]
+  },
+  {
+    "name": "ItemSaleschannelPrices",
+    "fields": [
+      "saleschannelId",
+      "customerGroupPrices",
+      "isActive"
+    ]
+  },
+  {
+    "name": "ItemSpecialPrices",
+    "fields": [
+      "isActive",
+      "startDate",
+      "endDate",
+      "isEndDateActive",
+      "minimumStockQuantity",
+      "isStockRestrictionActive",
+      "salesChannelSpecialPrices"
+    ]
+  },
+  {
+    "name": "ItemStorageConstraints",
+    "fields": [
+      "allowNegativeStock",
+      "itemPlatformNegativeStocks",
+      "itemSalesChannelNegativeStocks",
+      "buffer",
+      "globalMinimumStockLevel",
+      "hasBatch",
+      "isInventoryManagementActive",
+      "isBestBeforeManaged",
+      "isStockDivisible",
+      "serialNumberType"
+    ]
+  },
+  {
+    "name": "ItemSupplier",
+    "fields": [
+      "supplierId",
+      "supplierItemName",
+      "supplierItemNumber",
+      "stockLevel",
+      "netPurchasePrice",
+      "minimumPurchaseQuantity",
+      "deliveryTimeInDays",
+      "isDropshippingActive",
+      "packageUnitDescription",
+      "packageUnitQuantity",
+      "notes",
+      "vatRate",
+      "useSupplierDeliveryTime",
+      "includeSupplierStock",
+      "purchaseInterval",
+      "scalePrices"
+    ]
+  },
+  {
+    "name": "ItemSupplierListItem",
+    "fields": [
+      "id",
+      "itemId",
+      "supplierId",
+      "supplierName",
+      "supplierItemName",
+      "supplierItemNumber",
+      "deliveryPeriod",
+      "supplierCurrency",
+      "isDropshippingSupported",
+      "isDropshippingActive",
+      "isDefaultSupplier",
+      "isDefaultDropshippingSupplier",
+      "minimumPurchaseQuantity",
+      "stockLevel",
+      "averageDeliveryTime",
+      "stockLevelLastModified",
+      "includeSupplierStock",
+      "supplierDeliveryTimeInDays",
+      "deliveryTimeInDays",
+      "useSupplierDeliveryTime",
+      "packageUnitDescription",
+      "packageUnitQuantity",
+      "notes",
+      "purchaseInterval",
+      "netPurchasePrice",
+      "vatRate",
+      "scalePrices"
+    ]
+  },
+  {
+    "name": "ItemSupplierPriceListItem",
+    "fields": [
+      "fromQuantity",
+      "netPrice",
+      "usePercentageDiscount",
+      "percentageDiscount"
+    ]
+  },
+  {
+    "name": "ItemSuppliers",
+    "fields": [
+      "defaultSupplier",
+      "defaultDropshippingSupplier",
+      "suppliers"
+    ]
+  },
+  {
+    "name": "ItemTypeListItem",
+    "fields": [
+      "id",
+      "isStockItem",
+      "hasStock",
+      "isSerialNumberItem",
+      "isDivisibleStock",
+      "stockHasExpirationDate",
+      "stockIsBatch",
+      "isBillOfMaterials",
+      "isBillOfMaterialsComponent",
+      "isVariationCombinationParent",
+      "isVariationCombinationChild",
+      "hasVariations",
+      "isVoucher",
+      "isPackaging",
+      "hasConfigurationGroup",
+      "isConfigurationComponent"
+    ]
+  },
+  {
+    "name": "ItemUnitPricing",
+    "fields": [
+      "salesUnitId",
+      "packagingUnitId",
+      "innerQuantity",
+      "innerQuantityUnitId",
+      "isBasePriceDeclared",
+      "basePriceReferenceUnitId",
+      "basePriceReferenceAmount"
+    ]
+  },
+  {
+    "name": "ItemVariations",
+    "fields": [
+      "variations"
+    ]
+  },
+  {
+    "name": "ItemdetailsItem",
+    "fields": [
+      "id",
+      "productGroupId",
+      "shippingClassId",
+      "manufacturerId",
+      "identifiers",
+      "categories",
+      "descriptions",
+      "prices",
+      "images",
+      "measurements",
+      "customFields",
+      "suppliers",
+      "includeInPriceList",
+      "ignoreOrderSuggestions",
+      "ignoreDiscounts",
+      "countryOfOrigin",
+      "notes",
+      "variations",
+      "features",
+      "attributes",
+      "unitPricing",
+      "specialPrices",
+      "storageConstraints"
+    ]
+  },
+  {
+    "name": "LanguageItem",
+    "fields": [
+      "cultureIso",
+      "languageIso2",
+      "languageIso3",
+      "name",
+      "isDefault"
+    ]
+  },
+  {
+    "name": "LotSize",
+    "fields": [
+      "id",
+      "productionItemId",
+      "quantity"
+    ]
+  },
+  {
+    "name": "ManufacturerListItem",
+    "fields": [
+      "id",
+      "sortNumber",
+      "name"
+    ]
+  },
+  {
+    "name": "MarketplaceExternalDocumentListItem",
+    "fields": [
+      "invoiceId",
+      "creditNoteId",
+      "salesOrderId",
+      "documentType",
+      "origin",
+      "shopName",
+      "invoiceDate",
+      "externalSalesOrderNumber",
+      "grossTotal",
+      "documentFileId",
+      "documentNumber",
+      "sellerId",
+      "currency"
+    ]
+  },
+  {
+    "name": "MarketplaceNotificationDetailListItem",
+    "fields": [
+      "id",
+      "notificationId",
+      "code",
+      "message"
+    ]
+  },
+  {
+    "name": "MarketplaceNotificationListItem",
+    "fields": [
+      "id",
+      "referenceId",
+      "eventId",
+      "creationDate",
+      "severity",
+      "notificationType",
+      "reference",
+      "isRead",
+      "shopId",
+      "orderCancellationRequestId",
+      "shortMessage",
+      "channel",
+      "shopName",
+      "offerTitle"
+    ]
+  },
+  {
+    "name": "MarketplaceOfferListItem",
+    "fields": [
+      "offerId",
+      "itemId",
+      "sku",
+      "productNumber",
+      "offerTitle",
+      "channelName",
+      "channelId",
+      "channel",
+      "shopId",
+      "shopScxId",
+      "quantity",
+      "expirationDate",
+      "categoryId",
+      "channelCategoryId",
+      "channelCategoryName",
+      "netPrice",
+      "percent",
+      "priceId",
+      "customerGroupId",
+      "salePriceNet",
+      "taxClassId",
+      "companyId",
+      "currency",
+      "availableQuantity",
+      "quantityInOrders",
+      "inboundQuantity",
+      "gtin",
+      "productWeight",
+      "mpn",
+      "isbn",
+      "asin",
+      "manufacturer",
+      "purchasePriceNet",
+      "activeSince",
+      "processingTime",
+      "inboundAvailableAt",
+      "offerType",
+      "offerStatus",
+      "listingUrl",
+      "isListed",
+      "salesChannelItemDataId",
+      "minimumStock",
+      "maximumStock",
+      "lastUpload",
+      "deletionIntervalPendingOffer",
+      "shopName",
+      "isExtern",
+      "quantityUpdatedAt",
+      "priceUpdatedAt",
+      "statusReceivedAt",
+      "lastUploadedPrice",
+      "stockUpdateEnabled",
+      "channelOfferId"
+    ]
+  },
+  {
+    "name": "MarketplaceOrderCancellationRequestUploadListItem",
+    "fields": [
+      "id",
+      "orderId",
+      "shopId",
+      "sellerId",
+      "shopName",
+      "salesOrderNumber",
+      "salesChannelDisplayName",
+      "externalSalesOrderNumber",
+      "salesOrderId",
+      "createdAt",
+      "uploadCountRemaining",
+      "status",
+      "uploadCount"
+    ]
+  },
+  {
+    "name": "MarketplaceOrderCancellationUploadListItem",
+    "fields": [
+      "id",
+      "shopId",
+      "sellerId",
+      "shopName",
+      "cancellationUploadRequired",
+      "salesOrderNumber",
+      "externalSalesOrderNumber",
+      "salesChannelDisplayName",
+      "salesOrderGrossAmount",
+      "createdAt",
+      "salesOrderId",
+      "cancellationUploadCount",
+      "cancellationUploadFailedAt",
+      "uploadCountRemaining",
+      "status"
+    ]
+  },
+  {
+    "name": "MarketplacePaymentUploadListItem",
+    "fields": [
+      "id",
+      "shopId",
+      "sellerId",
+      "shopName",
+      "paymentUploadRequired",
+      "salesOrderNumber",
+      "externalSalesOrderNumber",
+      "salesChannelDisplayName",
+      "salesOrderGrossAmount",
+      "salesOrderPaymentGrossAmount",
+      "createdAt",
+      "salesOrderId",
+      "paymentUploadCount",
+      "paymentUploadFailedAt",
+      "uploadCountRemaining",
+      "status"
+    ]
+  },
+  {
+    "name": "MarketplaceReturnUploadLineItemListItem",
+    "fields": [
+      "id",
+      "orderId",
+      "returnId",
+      "quantity",
+      "creditNoteRequired",
+      "sku",
+      "name"
+    ]
+  },
+  {
+    "name": "MarketplaceReturnUploadListItem",
+    "fields": [
+      "id",
+      "shopId",
+      "sellerId",
+      "shopName",
+      "returnUploadRequired",
+      "salesOrderNumber",
+      "externalSalesOrderNumber",
+      "returnNumber",
+      "salesChannelDisplayName",
+      "salesOrderGrossAmount",
+      "createdAt",
+      "salesOrderId",
+      "returnUploadCount",
+      "returnUploadFailedAt",
+      "uploadCountRemaining",
+      "status",
+      "creditNoteGrossAmount",
+      "returnId"
+    ]
+  },
+  {
+    "name": "MarketplaceShippingInformationUploadListItem",
+    "fields": [
+      "id",
+      "deliveryNoteId",
+      "orderId",
+      "shopId",
+      "sellerId",
+      "salesOrderId",
+      "shopName",
+      "salesChannelDisplayName",
+      "deliveryNoteNumber",
+      "salesOrderNumber",
+      "externalSalesOrderNumber",
+      "createdAt",
+      "uploadFailedAt",
+      "uploadCount",
+      "uploadCountRemaining",
+      "status"
+    ]
+  },
+  {
+    "name": "Mutation",
+    "fields": [
+      "DeleteBillOfMaterialsItem",
+      "DeleteBillOfMaterialsOperation",
+      "DeleteBillOfMaterials",
+      "CreateBillOfMaterials",
+      "CreateBillOfMaterialsItem",
+      "CreateBillOfMaterialsOperation",
+      "CreateLotSize",
+      "CreateProductionItem",
+      "CreateProductionOrder",
+      "ReleaseProductionOrder",
+      "CreateWorkbenchResource",
+      "CreateWorkbenchResourceType",
+      "CreateCategory",
+      "DeleteCategory",
+      "UpdateCategory",
+      "CopyItemdetails",
+      "DuplicateItems",
+      "AddItemSupplier",
+      "AddItemVariation",
+      "AddItemVariationValue",
+      "ChangeItem",
+      "CreateItem",
+      "DeleteItemVariation",
+      "DeleteItemVariationValue",
+      "AddProductGroups",
+      "DeleteProductGroups",
+      "UpdateProductGroups",
+      "UpdateItemSalesChannels",
+      "CreateShippingClass",
+      "CreateCustomer",
+      "UpdateCustomer",
+      "ExcludeMarketplaceInvoiceCorrectionFromUpload",
+      "ExcludeMarketplaceInvoicePdfFromUpload",
+      "ResetMarketplaceInvoiceCorrectionUploadCounter",
+      "ResetMarketplaceInvoicePdfPrinting",
+      "DeleteMarketplaceOffer",
+      "SetMarketplaceOfferMaxQuantity",
+      "SetMarketplaceOfferMinQuantity",
+      "TriggerMarketplaceStockSynchronisation",
+      "ExcludeMarketplaceOrderCancellationUploadFromUpload",
+      "ExcludeMarketplaceReturnUploadFromUpload",
+      "ExcludeMarketplaceShippingInformationUploadFromUpload",
+      "ResetMarketplaceOrderCancellationUploadCounter",
+      "ResetMarketplaceReturnUploadCounter",
+      "ActivateLanguage",
+      "DeactivateLanguage",
+      "CreateTaxClass",
+      "CreateTaxCode",
+      "DeleteTaxClass",
+      "DeleteTaxCode",
+      "UpdateTaxClass",
+      "UpdateTaxCode",
+      "CancelSalesInvoiceCorrection",
+      "CreateSalesInvoiceCorrection",
+      "CancelSalesInvoice",
+      "CreateSalesInvoice",
+      "CalculateSalesOrder",
+      "CreateSalesOrder",
+      "UpdateSalesOrder",
+      "CancelSalesQuotation",
+      "CreateSalesOrderFromSalesQuotation",
+      "CreateSalesQuotation",
+      "ChangePackageWeight",
+      "CreateDeliverPackage",
+      "AssignShippingBoxToLocation",
+      "CreateShippingBox",
+      "DeleteShippingBox",
+      "UpdateShippingBoxMetadata",
+      "ActivateBinLocation",
+      "CreateBinLocation",
+      "DeactivateBinLocation",
+      "DeleteBinLocation",
+      "LockBinLocation",
+      "LockBinLocationForAvailableStock",
+      "UnlockBinLocationForAvailableStock",
+      "UpdateBinLocationMetadata",
+      "AddBinLocationsToZone",
+      "CreateWarehouseZone",
+      "DeleteWarehouseZone",
+      "RemoveBinLocationsFromZone",
+      "UpdateWarehouseZoneMetadata"
+    ]
+  },
+  {
+    "name": "NegativeStockPlatform",
+    "fields": [
+      "platformId",
+      "isNegativeStockAllowed"
+    ]
+  },
+  {
+    "name": "NegativeStockSalesChannel",
+    "fields": [
+      "salesChannelId",
+      "isNegativeStockAllowed"
+    ]
+  },
+  {
+    "name": "OrderDataItem",
+    "fields": [
+      "id",
+      "totalWeight",
+      "orderId",
+      "customerId",
+      "companyId",
+      "warehouseId",
+      "shippingAddress",
+      "companyAddress",
+      "warehouseAddress",
+      "deliveryNotes",
+      "content"
+    ]
+  },
+  {
+    "name": "PackageContent",
+    "fields": [
+      "id",
+      "number",
+      "contentType",
+      "amount",
+      "weight"
+    ]
+  },
+  {
+    "name": "PageInfo",
+    "fields": [
+      "hasNextPage",
+      "hasPreviousPage",
+      "startCursor",
+      "endCursor"
+    ]
+  },
+  {
+    "name": "PaymentMethod",
+    "fields": [
+      "id",
+      "name",
+      "generalLedgerAccount",
+      "isActive",
+      "isDefault",
+      "isDebit",
+      "isDunningActive",
+      "canShipBeforePayment",
+      "cashDiscountDays",
+      "cashDiscountValue",
+      "paymentOption"
+    ]
+  },
+  {
+    "name": "PickList",
+    "fields": [
+      "id",
+      "pickListNumber",
+      "status",
+      "warehouseId",
+      "positions"
+    ]
+  },
+  {
+    "name": "PickListPosition",
+    "fields": [
+      "positionId",
+      "itemId",
+      "itemNumber",
+      "quantity",
+      "binLocationId",
+      "binLocationName",
+      "positionStatus",
+      "processingTimestamp"
+    ]
+  },
+  {
+    "name": "PlatformDescription",
+    "fields": [
+      "platformId",
+      "languageIso",
+      "descriptionData"
+    ]
+  },
+  {
+    "name": "PlatformImages",
+    "fields": [
+      "platformId",
+      "images"
+    ]
+  },
+  {
+    "name": "ProductGroupsListItem",
+    "fields": [
+      "id",
+      "name"
+    ]
+  },
+  {
+    "name": "ProductionItem",
+    "fields": [
+      "id",
+      "itemId",
+      "lotType",
+      "productionType",
+      "lotLabelTemplateKey",
+      "singleItemLabelTemplateKey",
+      "createDate",
+      "updateDate",
+      "updateUserId"
+    ]
+  },
+  {
+    "name": "ProductionOrder",
+    "fields": [
+      "id",
+      "productionItemId",
+      "billOfMaterialId",
+      "dispositionId",
+      "lotCount",
+      "lotSize",
+      "targetTotalQuantity",
+      "actualQuantity",
+      "isTargetTotalQuantityBelowLotSizeAllowed",
+      "progress",
+      "targetStartTimestamp",
+      "targetCompletionTimestamp",
+      "actualStartTimestamp",
+      "actualCompletionTimestamp",
+      "projectNumber",
+      "referenceNumber",
+      "issueNumber",
+      "issueDate",
+      "notice",
+      "releaseTimestamp",
+      "deliveryTimestamp",
+      "creationUserId",
+      "releaseUserId",
+      "lastModificationUserId",
+      "lastModificationTimestamp",
+      "resourceTypeId",
+      "workbenchResourceId"
+    ]
+  },
+  {
+    "name": "Query",
+    "fields": [
+      "QueryBillOfMaterialsItemById",
+      "QueryBillOfMaterialsItemsByBillOfMaterialsId",
+      "QueryBillOfMaterialsItemsByBillOfMaterialsOperationId",
+      "QueryBillOfMaterialsOperationById",
+      "QueryBillOfMaterialsOperationsByBillOfMaterialsId",
+      "QueryBillOfMaterialsById",
+      "QueryBillsOfMaterialsByProductionItemId",
+      "QueryLotSizeById",
+      "QueryLotSizesByProductionItemId",
+      "QueryProductionItems",
+      "QueryProductionItemById",
+      "QueryProductionItemByItemId",
+      "QueryProductionOrders",
+      "QueryProductionOrderById",
+      "QueryResourceCategories",
+      "QueryWorkbenchResources",
+      "QueryWorkbenchResourceById",
+      "QueryWorkbenchResourceTypes",
+      "QueryWorkbenchResourceTypeById",
+      "GetCategoryById",
+      "QueryCategories",
+      "GetCompanyById",
+      "QueryCompanies",
+      "QueryCustomFields",
+      "GetItemById",
+      "QueryItems",
+      "GetItemSuppliersById",
+      "QueryItemTypes",
+      "QueryManufacturers",
+      "QueryProductGroups",
+      "QueryShippingClasses",
+      "GetCustomerById",
+      "QueryCustomerCategories",
+      "QueryCustomerGroups",
+      "QueryCustomers",
+      "QueryMarketplaceNotificationDetail",
+      "QueryMarketplaceNotification",
+      "QueryMarketplaceOffer",
+      "QueryMarketplaceExternalDocument",
+      "QueryMarketplaceOrderCancellationRequestUpload",
+      "QueryMarketplaceOrderCancellationUpload",
+      "QueryMarketplacePaymentUpload",
+      "QueryMarketplaceReturnUploadLineItem",
+      "QueryMarketplaceReturnUpload",
+      "QueryMarketplaceShippingInformationUpload",
+      "QueryShippingMethods",
+      "QueryCountries",
+      "QueryLanguages",
+      "QueryTaxClasses",
+      "ListTaxClassesWithTaxRates",
+      "QueryTaxCodes",
+      "QueryCurrencies",
+      "QueryExternalDocumentsInternal",
+      "QueryExternalDocumentLineItemsInternal",
+      "QuerySalesInvoiceCorrectionsInternal",
+      "QuerySalesInvoiceCorrectionLineItemsInternal",
+      "QuerySalesInvoicesInternal",
+      "QuerySalesInvoiceLineItemsInternal",
+      "QuerySalesInvoiceCancellationsInternal",
+      "QueryPaymentMethods",
+      "QuerySalesChannels",
+      "QuerySalesInvoiceCorrections",
+      "QuerySalesInvoiceCancellationReasons",
+      "QuerySalesInvoices",
+      "GetEmptySalesOrder",
+      "ListItemPriceDetails",
+      "GetSalesOrderById",
+      "QuerySalesOrders",
+      "GetSalesQuotationById",
+      "QuerySalesQuotations",
+      "QuerySuppliers",
+      "QueryPicklists",
+      "QueryOrderData",
+      "QueryBatches",
+      "QueryBestBeforeDates",
+      "QueryStockReservations",
+      "QuerySerialNumbers",
+      "QueryStockItem",
+      "QueryStock",
+      "QueryBinLocationPickHeatmap",
+      "QueryShippingBoxes",
+      "QueryShippingBoxTypes",
+      "QueryBinLocations",
+      "GetBinLocationById",
+      "QueryBinLocationOccupancy",
+      "GetBinLocationStatuses",
+      "GetBinLocationTypes",
+      "QueryStockMovementHistory",
+      "QueryWarehouseZones",
+      "QueryZoneBinLocations",
+      "QueryZoneTypes",
+      "QueryStorageLocations",
+      "QueryWarehouses"
+    ]
+  },
+  {
+    "name": "QueryBatchesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryBatchesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryBestBeforeDatesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryBestBeforeDatesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryBillsOfMaterialsByProductionItemIdConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryBillsOfMaterialsByProductionItemIdEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryBinLocationOccupancyConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryBinLocationOccupancyEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryBinLocationPickHeatmapConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryBinLocationPickHeatmapEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryBinLocationsConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryBinLocationsEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryCategoriesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryCategoriesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryCompaniesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryCompaniesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryCountriesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryCountriesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryCurrenciesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryCurrenciesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryCustomFieldsConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryCustomFieldsEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryCustomerCategoriesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryCustomerCategoriesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryCustomerGroupsConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryCustomerGroupsEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryCustomersConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryCustomersEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryExternalDocumentLineItemsInternalConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryExternalDocumentLineItemsInternalEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryExternalDocumentsInternalConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryExternalDocumentsInternalEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryItemTypesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryItemTypesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryItemsConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryItemsEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryLanguagesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryLanguagesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryLotSizesByProductionItemIdConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryLotSizesByProductionItemIdEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryManufacturersConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryManufacturersEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryMarketplaceExternalDocumentConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryMarketplaceExternalDocumentEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryMarketplaceNotificationConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryMarketplaceNotificationDetailConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryMarketplaceNotificationDetailEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryMarketplaceNotificationEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryMarketplaceOfferConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryMarketplaceOfferEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryMarketplaceOrderCancellationRequestUploadConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryMarketplaceOrderCancellationRequestUploadEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryMarketplaceOrderCancellationUploadConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryMarketplaceOrderCancellationUploadEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryMarketplacePaymentUploadConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryMarketplacePaymentUploadEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryMarketplaceReturnUploadConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryMarketplaceReturnUploadEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryMarketplaceReturnUploadLineItemConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryMarketplaceReturnUploadLineItemEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryMarketplaceShippingInformationUploadConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryMarketplaceShippingInformationUploadEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryPaymentMethodsConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryPaymentMethodsEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryPicklistsConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryPicklistsEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryProductGroupsConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryProductGroupsEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryProductionItemsConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryProductionItemsEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryProductionOrdersConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryProductionOrdersEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryResourceCategoriesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryResourceCategoriesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QuerySalesChannelsConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QuerySalesChannelsEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QuerySalesInvoiceCancellationReasonsConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QuerySalesInvoiceCancellationReasonsEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QuerySalesInvoiceCancellationsInternalConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QuerySalesInvoiceCancellationsInternalEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QuerySalesInvoiceCorrectionLineItemsInternalConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QuerySalesInvoiceCorrectionLineItemsInternalEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QuerySalesInvoiceCorrectionsConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QuerySalesInvoiceCorrectionsEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QuerySalesInvoiceCorrectionsInternalConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QuerySalesInvoiceCorrectionsInternalEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QuerySalesInvoiceLineItemsInternalConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QuerySalesInvoiceLineItemsInternalEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QuerySalesInvoicesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QuerySalesInvoicesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QuerySalesInvoicesInternalConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QuerySalesInvoicesInternalEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QuerySalesOrdersConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QuerySalesOrdersEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QuerySalesQuotationsConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QuerySalesQuotationsEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QuerySerialNumbersConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QuerySerialNumbersEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryShippingBoxTypesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryShippingBoxTypesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryShippingBoxesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryShippingBoxesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryShippingClassesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryShippingClassesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryShippingMethodsConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryShippingMethodsEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryStock",
+    "fields": [
+      "stockEntryId",
+      "warehouseId",
+      "binLocationId",
+      "articleId",
+      "availableQuantity",
+      "reservedQuantity",
+      "batchNumber",
+      "bestBeforeDate",
+      "serialNumber"
+    ]
+  },
+  {
+    "name": "QueryStockConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryStockEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryStockItem",
+    "fields": [
+      "storageLocationId",
+      "itemId",
+      "quantityTotal",
+      "comment1",
+      "comment2"
+    ]
+  },
+  {
+    "name": "QueryStockItemConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryStockItemEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryStockMovementHistoryConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryStockMovementHistoryEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryStockReservationsConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryStockReservationsEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryStorageLocationsConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryStorageLocationsEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QuerySuppliersConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QuerySuppliersEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryTaxClassesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryTaxClassesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryTaxCodesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryTaxCodesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryWarehouseZonesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryWarehouseZonesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryWarehousesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryWarehousesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryWorkbenchResourceTypesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryWorkbenchResourceTypesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryWorkbenchResourcesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryWorkbenchResourcesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryZoneBinLocationsConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryZoneBinLocationsEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "QueryZoneTypesConnection",
+    "fields": [
+      "pageInfo",
+      "edges",
+      "nodes",
+      "totalCount"
+    ]
+  },
+  {
+    "name": "QueryZoneTypesEdge",
+    "fields": [
+      "cursor",
+      "node"
+    ]
+  },
+  {
+    "name": "ReleaseProductionOrderCommandResponse",
+    "fields": [
+      "result"
+    ]
+  },
+  {
+    "name": "ReleaseProductionOrderCommandResult",
+    "fields": [
+      "releaseTimestamp",
+      "releaseUserId"
+    ]
+  },
+  {
+    "name": "ResourceCategory",
+    "fields": [
+      "id",
+      "name",
+      "isVisible",
+      "isEnabled"
+    ]
+  },
+  {
+    "name": "SalesChannel",
+    "fields": [
+      "id",
+      "name"
+    ]
+  },
+  {
+    "name": "SalesChannelDescription",
+    "fields": [
+      "salesChannelId",
+      "languageIso",
+      "descriptionData"
+    ]
+  },
+  {
+    "name": "SalesChannelSurcharge",
+    "fields": [
+      "salesChannelId",
+      "surcharges"
+    ]
+  },
+  {
+    "name": "SalesInvoiceCancellationInternal",
+    "fields": [
+      "salesOrderId",
+      "salesInvoiceId",
+      "companyId",
+      "customerId",
+      "platformId",
+      "salesInvoiceNumber",
+      "salesInvoiceCancellationDate",
+      "externalOrderNumber",
+      "salesOrderNumber",
+      "createdInErpDate",
+      "taxSetting",
+      "currencyIso",
+      "currencyFactor",
+      "departureCountryCurrencyIso",
+      "departureCountryCurrencyFactor",
+      "serviceDate",
+      "lastShippingDate",
+      "platformName",
+      "shippingMethodId",
+      "valueDate",
+      "customerVatIdNumber",
+      "salesInvoiceVatIdNumber",
+      "departureCountryIso",
+      "totalGrossAmount",
+      "totalNetAmount",
+      "salesInvoiceCustomerNumber",
+      "accountsReceivableNumber",
+      "paymentDueDateInDays",
+      "paymentStatus",
+      "invoicePaymentMethodId",
+      "paymentMethodId",
+      "paymentMethodName",
+      "salesOrderDepartureCountryCurrencyIso",
+      "salesOrderDepartureCountryCurrencyFactor",
+      "shipmentAddressCompany",
+      "shipmentAddressSalutation",
+      "shipmentAddressTitle",
+      "shipmentAddressFirstName",
+      "shipmentAddressLastName",
+      "shipmentAddressStreet",
+      "shipmentAddressPostalCode",
+      "shipmentAddressCity",
+      "shipmentAddressCountry",
+      "shipmentAddressPhoneNumber",
+      "shipmentAddressFaxNumber",
+      "shipmentAddressAdditionalAddressLine",
+      "shipmentAddressCountryIso",
+      "shipmentAddressVatIdNumber",
+      "billingAddressCompany",
+      "billingAddressSalutation",
+      "billingAddressTitle",
+      "billingAddressFirstName",
+      "billingAddressLastName",
+      "billingAddressStreet",
+      "billingAddressPostalCode",
+      "billingAddressCity",
+      "billingAddressCountry",
+      "billingAddressPhoneNumber",
+      "billingAddressFaxNumber",
+      "billingAddressAdditionalAddressLine",
+      "billingAddressCountryIso",
+      "customerDefaultBillingAddressCompany",
+      "customerDefaultBillingAddressSalutation",
+      "customerDefaultBillingAddressTitle",
+      "customerDefaultBillingAddressFirstName",
+      "customerDefaultBillingAddressLastName",
+      "customerDefaultBillingAddressStreet",
+      "customerDefaultBillingAddressPostalCode",
+      "customerDefaultBillingAddressCity",
+      "customerDefaultBillingAddressCountry",
+      "customerDefaultBillingAddressPhoneNumber",
+      "customerDefaultBillingAddressFaxNumber",
+      "customerDefaultBillingAddressCountryIso",
+      "customerDefaultBillingAddressEmailAddress",
+      "customerDefaultBillingAddressVatIdNumber",
+      "customerNumber",
+      "customerGroupId",
+      "customerPaymentDueDateInDays",
+      "deposit",
+      "dropShippingDeliveryNoteCount"
+    ]
+  },
+  {
+    "name": "SalesInvoiceCancellationReason",
+    "fields": [
+      "id",
+      "name",
+      "isCommentRequired"
+    ]
+  },
+  {
+    "name": "SalesInvoiceCorrectionInternal",
+    "fields": [
+      "salesOrderId",
+      "salesInvoiceCorrectionId",
+      "customerId",
+      "companyId",
+      "salesInvoiceId",
+      "platformId",
+      "cancelledSalesInvoiceId",
+      "salesInvoicePaymentMethodId",
+      "salesInvoiceCorrectionPaymentMethodId",
+      "salesInvoiceCorrectionNumber",
+      "salesInvoiceCorrectionDate",
+      "salesInvoiceNumber",
+      "salesInvoiceDate",
+      "externalOrderNumber",
+      "salesOrderNumber",
+      "createdInErpDate",
+      "currencyIso",
+      "currencyFactor",
+      "departureCountryCurrencyIso",
+      "departureCountryCurrencyFactor",
+      "salesOrderDepartureCountryCurrencyIso",
+      "salesOrderDepartureCountryCurrencyFactor",
+      "salesOrderShippingMethodId",
+      "salesInvoiceShippingMethodId",
+      "serviceDate",
+      "deliveryDate",
+      "totalGrossAmount",
+      "salesOrderTotalGrossAmount",
+      "salesOrderTotalNetAmount",
+      "platformID",
+      "accountsReceivableNumber",
+      "shipmentCompany",
+      "shipmentSalutation",
+      "shipmentTitle",
+      "shipmentFirstName",
+      "shipmentLastName",
+      "shipmentStreet",
+      "shipmentPostalCode",
+      "shipmentCity",
+      "shipmentCountry",
+      "shipmentPhoneNumber",
+      "shipmentFaxNumber",
+      "shipmentAdditionalAddressLine",
+      "shipmentCountryIso",
+      "shipmentVatIdNumber",
+      "salesOrderCustomerVatIdNumber",
+      "salesInvoiceCompany",
+      "salesInvoiceSalutation",
+      "salesInvoiceTitle",
+      "salesInvoiceFirstName",
+      "salesInvoiceLastName",
+      "salesInvoiceStreet",
+      "salesInvoicePostalCode",
+      "salesInvoiceCity",
+      "salesInvoiceCountry",
+      "salesInvoicePhoneNumber",
+      "salesInvoiceFaxNumber",
+      "salesInvoiceAdditionalAddressLine",
+      "salesInvoiceIso",
+      "customerCompany",
+      "customerSalutation",
+      "customerTitle",
+      "customerFirstName",
+      "customerLastName",
+      "customerStreet",
+      "customerPostalCode",
+      "customerCity",
+      "customerCountry",
+      "customerPhoneNumber",
+      "customerFaxNumber",
+      "customerAddressIso",
+      "customerAddressEmailAddress",
+      "customerAddressVatIdNumber",
+      "customerNumber",
+      "customerGroupId",
+      "customerPaymentDueDateInDays",
+      "lastShippingDate",
+      "taxSetting",
+      "salesOrderVatIdNumber",
+      "departureCountryIso",
+      "paymentMethod",
+      "customerVatIdNumber",
+      "salesInvoiceVatIdNumber",
+      "salesInvoiceCustomerNumber",
+      "paymentMethodName",
+      "paymentMethodId",
+      "isCancelled",
+      "deposit",
+      "salesInvoiceId2",
+      "dropShippingDeliveryNoteCount"
+    ]
+  },
+  {
+    "name": "SalesInvoiceCorrectionLineItemInternal",
+    "fields": [
+      "salesInvoiceCorrectionLineItemId",
+      "salesOrderLineItemId",
+      "salesPriceGross",
+      "discount",
+      "salesPriceNet",
+      "quantity",
+      "lineItemName",
+      "sku",
+      "taxRate",
+      "salesOrderLineItemPurchasePriceNet",
+      "itemPurchasePriceNet",
+      "taxClassId",
+      "lineItemType",
+      "itemId",
+      "billOfMaterialsSalesOrderLineItemId",
+      "parentItemId",
+      "taric",
+      "itemWeight",
+      "itemVolume",
+      "productGroupId",
+      "productGroupName",
+      "warehouseId",
+      "salesInvoiceLineItemId"
+    ]
+  },
+  {
+    "name": "SalesInvoiceCorrectionListItem",
+    "fields": [
+      "id",
+      "salesInvoiceCorrectionNumber",
+      "salesInvoiceNumber",
+      "customerNumber",
+      "totalGrossAmount",
+      "totalNetAmount",
+      "revenueAccount",
+      "plattformId",
+      "currencyIso",
+      "customerGroupName",
+      "salesInvoiceCorrectionDate",
+      "printDate",
+      "mailDate",
+      "salesInvoiceComment",
+      "cancelledDate",
+      "cancellationUserName",
+      "cancellationReason",
+      "cancellationComment",
+      "shortText",
+      "billingAddressCompany",
+      "billingAddressFirstName",
+      "billingAddressLastName",
+      "billingAddressStreet",
+      "billingAddressPostalCode",
+      "billingAddressCity",
+      "billingAddressCountryName",
+      "billingAddressPhoneNumber",
+      "billingAddressFax",
+      "billingAddressEmailAddress",
+      "billingAddressAdditionalCompanyLine",
+      "billingAddressAdditionalAddressLine",
+      "billingAddressState",
+      "shipmentAddressCompany",
+      "shipmentAddressFirstName",
+      "shipmentAddressLastName",
+      "shipmentAddressStreet",
+      "shipmentAddressPostalCode",
+      "shipmentAddressCity",
+      "shipmentAddressCountryName",
+      "shipmentAddressPhoneNumber",
+      "shipmentAddressFax",
+      "shipmentAddressEmailAddress",
+      "shipmentAddressAdditionalCompanyLine",
+      "shipmentAddressAdditionalAddressLine",
+      "shipmentAddressState",
+      "createdByUserId",
+      "status",
+      "salesChannelId",
+      "companyId",
+      "comment",
+      "ebayUsername"
+    ]
+  },
+  {
+    "name": "SalesInvoiceInternal",
+    "fields": [
+      "salesOrderId",
+      "salesInvoiceId",
+      "customerId",
+      "platformId",
+      "salesInvoicePaymentMethodId",
+      "companyId",
+      "paymentDueDateInDays",
+      "paymentStatus",
+      "salesInvoiceNumber",
+      "salesInvoiceDate",
+      "externalOrderNumber",
+      "shipmentType",
+      "valueDate",
+      "taxSetting",
+      "customerVatIdNumber",
+      "salesInvoiceVatIdNumber",
+      "departureCountryIso",
+      "paymentMethodId",
+      "serviceDate",
+      "salesInvoiceCustomerNumber",
+      "accountsReceivableNumber",
+      "currencyIso",
+      "currencyFactor",
+      "departureCountryCurrencyIso",
+      "departureCountryCurrencyFactor",
+      "totalGrossAmount",
+      "totalNetAmount",
+      "lastShippingDate",
+      "salesOrderNumber",
+      "createdInErpDate",
+      "platformID",
+      "paymentMethod",
+      "paymentMethodName",
+      "shipmentAddressCompany",
+      "shipmentAddressSalutation",
+      "shipmentAddressTitle",
+      "shipmentAddressFirstName",
+      "shipmentAddressLastName",
+      "shipmentAddressStreet",
+      "shipmentAddressPostalCode",
+      "shipmentAddressCity",
+      "shipmentAddressCountry",
+      "shipmentAddressPhoneNumber",
+      "shipmentAddressFaxNumber",
+      "shipmentAddressAdditionalAddressLine",
+      "shipmentAddressCountryIso",
+      "shipmentAddressVatIdNumber",
+      "salesOrderShipmentCountryIso",
+      "billingAddressCompany",
+      "billingAddressSalutation",
+      "billingAddressTitle",
+      "billingAddressFirstName",
+      "billingAddressLastName",
+      "billingAddressStreet",
+      "billingAddressPostalCode",
+      "billingAddressCity",
+      "billingAddressCountry",
+      "billingAddressPhoneNumber",
+      "billingAddressFaxNumber",
+      "billingAddressAdditionalAddressLine",
+      "billingAddressCountryIso",
+      "customerDefaultBillingAddressCompany",
+      "customerDefaultBillingAddressSalutation",
+      "customerDefaultBillingAddressTitle",
+      "customerDefaultBillingAddressFirstName",
+      "customerDefaultBillingAddressLastName",
+      "customerDefaultBillingAddressStreet",
+      "customerDefaultBillingAddressPostalCode",
+      "customerDefaultBillingAddressCity",
+      "customerDefaultBillingAddressCountry",
+      "customerDefaultBillingAddressPhoneNumber",
+      "customerDefaultBillingAddressFaxNumber",
+      "customerDefaultBillingAddressCountryIso",
+      "customerDefaultBillingAddressEmailAddress",
+      "customerDefaultBillingAddressVatIdNumber",
+      "customerNumber",
+      "customerGroupId",
+      "customerPaymentDueDateInDays",
+      "deposit",
+      "cancelledSalesInvoiceId",
+      "dropShippingDeliveryNoteCount"
+    ]
+  },
+  {
+    "name": "SalesInvoiceLineItemInternal",
+    "fields": [
+      "salesInvoiceId",
+      "salesInvoicePositionId",
+      "salesOrderId",
+      "itemId",
+      "billOfMaterialsSalesInvoiceLineItemId",
+      "salesInvoiceLineItemId",
+      "salesPriceGross",
+      "salesPriceNet",
+      "purchasePriceNet",
+      "itemPurchasePriceNet",
+      "quantity",
+      "name",
+      "sku",
+      "taxRate",
+      "taxClassId",
+      "invoiceLineItemType",
+      "parentItemId",
+      "taric",
+      "itemWeight",
+      "itemVolume",
+      "productGroupId",
+      "productGroupName",
+      "warehouseId"
+    ]
+  },
+  {
+    "name": "SalesInvoiceListItem",
+    "fields": [
+      "salesInvoiceId",
+      "createdByUserId",
+      "customerId",
+      "currencyIso",
+      "companyId",
+      "companyName",
+      "vatIdNumber",
+      "paymentMethodId",
+      "paymentMethodName",
+      "isDunningBlocked",
+      "salesInvoiceDate",
+      "valueDate",
+      "salesInvoiceNumber",
+      "currencyFactor",
+      "shippingMethodId",
+      "shippingMethodName",
+      "isDraft",
+      "salesChannelId",
+      "platformId",
+      "languageId",
+      "taxSetting",
+      "isIntraCommunityDelivery",
+      "isExemptFromVat",
+      "ebayUsername",
+      "salesChannelName",
+      "isExternalSalesInvoice",
+      "printExistingSalesInvoice",
+      "paymentDate",
+      "printDate",
+      "mailDate",
+      "isDunned",
+      "stillToPay",
+      "alreadyPaidAmount",
+      "isCompletelyPaid",
+      "comment",
+      "customerComment",
+      "salesInvoiceCorrectionTotalGrossAmount",
+      "hasSalesInvoiceCorrection",
+      "paymentStatus",
+      "shipmentAddressCompanyName",
+      "shipmentAddressSalutation",
+      "shipmentAddressTitle",
+      "shipmentAddressFirstName",
+      "shipmentAddressLastName",
+      "shipmentAddressStreet",
+      "shipmentAddressAdditionalAddressLine",
+      "shipmentAddressPostalCode",
+      "shipmentAddressCity",
+      "shipmentAddressCountryName",
+      "shipmentAddressPhoneNumber",
+      "shipmentAddressMobilePhoneNumber",
+      "shipmentAddressFaxNumber",
+      "shipmentAddressEmailAddress",
+      "shipmentAddressAdditionalCompanyLine",
+      "shipmentAddressPostId",
+      "shipmentAddressState",
+      "shipmentAddressCountryIso",
+      "billingAddressCompanyName",
+      "billingAddressSalutation",
+      "billingAddressTitle",
+      "billingAddressFirstName",
+      "billingAddressLastName",
+      "billingAddressStreet",
+      "billingAddressAdditionalAddressLine",
+      "billingAddressPostalCode",
+      "billingAddressCity",
+      "billingAddressCountryName",
+      "billingAddressPhoneNumber",
+      "billingAddressMobilePhoneNumber",
+      "billingAddressFaxNumber",
+      "billingAddressEmailAddress",
+      "billingAddressAdditionalCompanyLine",
+      "billingAddressPostId",
+      "billingAddressState",
+      "billingAddressCountryIso",
+      "totalGrossAmount",
+      "shippingCountryTotalGrossAmount",
+      "totalNetAmount",
+      "shippingCountryTotalNetAmount",
+      "createdByUserName",
+      "customerNumber",
+      "accountsReceivableNumber",
+      "customerGroupName",
+      "paymentDueDateInDays",
+      "paymentDueDate",
+      "dunningLevel",
+      "dunningDate",
+      "isArchived",
+      "processColourCode",
+      "processColourName",
+      "platformType",
+      "salesOrderNumber",
+      "isCorrected",
+      "isCancelled",
+      "cancelledDate",
+      "cancellationComment",
+      "cancellationUserName",
+      "cancellationReason",
+      "salesOrderId",
+      "externalSalesOrderNumber",
+      "serviceDateFrom",
+      "serviceDateTo",
+      "lastShippingDate"
+    ]
+  },
+  {
+    "name": "SalesOrder",
+    "fields": [
+      "id",
+      "customerId",
+      "paymentInfo",
+      "text",
+      "salesOrderDate",
+      "isCancelled",
+      "isPending",
+      "itemDescriptionType",
+      "readOnlyType",
+      "salesOrderStatus",
+      "salesOrderNumber",
+      "departureCountry",
+      "externalDetails",
+      "paymentDetails",
+      "shippingDetails",
+      "taxDetails",
+      "processColourId",
+      "onHoldReasonId",
+      "cartonItemId",
+      "paymentMethodId",
+      "shippingMethodId",
+      "processStatusId",
+      "languageIso",
+      "customerSalesOrderNumber",
+      "vatId",
+      "companyId",
+      "shipmentAddress",
+      "billingAddress",
+      "otherAddress",
+      "lineItems"
+    ]
+  },
+  {
+    "name": "SalesOrderAddress",
+    "fields": [
+      "salesOrderId",
+      "type",
+      "customerId",
+      "salutation",
+      "title",
+      "firstName",
+      "lastName",
+      "company",
+      "additionalCompanyLine",
+      "street",
+      "additionalAddressLine",
+      "city",
+      "postalCode",
+      "state",
+      "countryIso",
+      "postId",
+      "emailAddress",
+      "phoneNumber",
+      "mobilePhoneNumber",
+      "fax",
+      "country",
+      "customsDocumentsRequired",
+      "vatId"
+    ]
+  },
+  {
+    "name": "SalesOrderDepartureCountry",
+    "fields": [
+      "countryIso",
+      "currencyIso",
+      "currencyFactor",
+      "state"
+    ]
+  },
+  {
+    "name": "SalesOrderExternalDetails",
+    "fields": [
+      "externalCreatedDate",
+      "externalInvoiceType",
+      "externalSalesOrderNumber"
+    ]
+  },
+  {
+    "name": "SalesOrderLineItem",
+    "fields": [
+      "id",
+      "salesOrderId",
+      "itemId",
+      "sku",
+      "isReserved",
+      "name",
+      "fnSku",
+      "type",
+      "quantity",
+      "salesUnit",
+      "salesPriceNet",
+      "discountPercent",
+      "purchasePriceNet",
+      "taxRate",
+      "taxClassId",
+      "taxCodeId",
+      "note",
+      "totalSalesPriceNet",
+      "totalSalesPriceGross",
+      "sortOrder",
+      "configurationItemType",
+      "billOfMaterialsType",
+      "standardName",
+      "hasUpload"
+    ]
+  },
+  {
+    "name": "SalesOrderListItem",
+    "fields": [
+      "id",
+      "accountsReceivableNumber",
+      "assignedUserId",
+      "companyName",
+      "createdByUserId",
+      "currencyFactor",
+      "currencyIso",
+      "customerId",
+      "customerNumber",
+      "deliveryCompleteStatus",
+      "departureCountryIso",
+      "departureCountryCurrencyFactor",
+      "departureCountryCurrencyIso",
+      "ebayUsername",
+      "estimatedDeliveryDate",
+      "externalSalesInvoiceType",
+      "externalSalesOrderNumber",
+      "extraWeight",
+      "isIntraCommunityDelivery",
+      "isCancelled",
+      "isPending",
+      "itemDescriptionType",
+      "languageIso",
+      "lastShippingDate",
+      "needsOnlineSynchronisation",
+      "onHoldReasonId",
+      "paymentMethodId",
+      "paymentDueDateInDays",
+      "platformId",
+      "processColourCode",
+      "processColourName",
+      "processStatusName",
+      "readOnlyType",
+      "salesChannelId",
+      "salesOrderDate",
+      "salesOrderNumber",
+      "salesOrderStatus",
+      "shippingMethodId",
+      "shippingPriority",
+      "shopPaymentModule",
+      "taxSetting",
+      "totalGrossAmount",
+      "isExemptFromVat",
+      "companyId",
+      "onlineSalesOrderId",
+      "comment",
+      "printDate",
+      "mailDate",
+      "paymentMailDate",
+      "dateOfPayment",
+      "paymentDate",
+      "onHoldReasonName",
+      "salesInvoiceStatus",
+      "billingAddressCompany",
+      "billingAddressAdditionalCompanyLine",
+      "billingAddressSalutation",
+      "billingAddressTitle",
+      "billingAddressFirstName",
+      "billingAddressLastName",
+      "billingAddressStreet",
+      "billingAddressAdditionalAddressLine",
+      "billingAddressPostalCode",
+      "billingAddressCity",
+      "billingAddressCountryName",
+      "billingAddressPhoneNumber",
+      "billingAddressMobilePhoneNumber",
+      "billingAddressFax",
+      "billingAddressEmailAddress",
+      "billingAddressPostId",
+      "billingAddressState",
+      "billingAddressCountryIso",
+      "shipmentAddressCompany",
+      "shipmentAddressAdditionalCompanyLine",
+      "shipmentAddressSalutation",
+      "shipmentAddressTitle",
+      "shipmentAddressFirstName",
+      "shipmentAddressLastName",
+      "shipmentAddressStreet",
+      "shipmentAddressAdditionalAddressLine",
+      "shipmentAddressPostalCode",
+      "shipmentAddressCity",
+      "shipmentAddressCountryName",
+      "shipmentAddressPhoneNumber",
+      "shipmentAddressMobilePhoneNumber",
+      "shipmentAddressFax",
+      "shipmentAddressEmailAddress",
+      "shipmentAddressPostId",
+      "shipmentAddressState",
+      "shipmentAddressCountryIso",
+      "assignedUserName",
+      "salesChannelName",
+      "customerGroupName",
+      "paymentMethodName",
+      "shippingMethodName",
+      "shippingCountryTotalGrossAmount",
+      "customerComment",
+      "paymentReference",
+      "salesInvoiceCorrectionTotalGrossAmount",
+      "alreadyPaidAmount",
+      "stillToPay",
+      "totalNetAmount",
+      "wmsLocked",
+      "wmsPartialShipment",
+      "wmsPrePicking",
+      "paymentStatus",
+      "deliveryStatus",
+      "platformType",
+      "salesInvoiceNumbers",
+      "cancelledDate",
+      "cancellationComment",
+      "cancellationUserName",
+      "cancellationReason",
+      "amazonUserId",
+      "createdByUserName",
+      "salesInvoices"
+    ]
+  },
+  {
+    "name": "SalesOrderPaymentDetails",
+    "fields": [
+      "cashDiscount",
+      "cashDiscountDays",
+      "financingCosts",
+      "paymentDueDateInDays",
+      "currencyIso",
+      "currencyFactor"
+    ]
+  },
+  {
+    "name": "SalesOrderPaymentInfo",
+    "fields": [
+      "accountHolder",
+      "bankName",
+      "bic",
+      "creditorId",
+      "dueDate",
+      "endToEndId",
+      "iban",
+      "mandateReference",
+      "paymentInfo",
+      "paymentInfoType",
+      "paymentReference",
+      "referenceEmail"
+    ]
+  },
+  {
+    "name": "SalesOrderShippingDetails",
+    "fields": [
+      "deliveryFromDate",
+      "estimatedDeliveryDate",
+      "extraWeight",
+      "maxDeliveryDays",
+      "shippingDate",
+      "shippingPriority"
+    ]
+  },
+  {
+    "name": "SalesOrderTaxDetails",
+    "fields": [
+      "taxReference",
+      "specialTaxTreatment",
+      "taxSetting"
+    ]
+  },
+  {
+    "name": "SalesOrderText",
+    "fields": [
+      "comment",
+      "customerComment",
+      "printText",
+      "processStatus"
+    ]
+  },
+  {
+    "name": "SalesQuotation",
+    "fields": [
+      "id",
+      "customerId",
+      "paymentInfo",
+      "text",
+      "salesQuotationDate",
+      "isCancelled",
+      "isPending",
+      "itemDescriptionType",
+      "readOnlyType",
+      "salesQuotationStatus",
+      "salesQuotationNumber",
+      "departureCountry",
+      "externalDetails",
+      "paymentDetails",
+      "shippingDetails",
+      "taxDetails",
+      "processColourId",
+      "onHoldReasonId",
+      "cartonItemId",
+      "paymentMethodId",
+      "shippingMethodId",
+      "processStatusId",
+      "languageIso",
+      "customerSalesQuotationNumber",
+      "vatId",
+      "companyId",
+      "shipmentAddress",
+      "billingAddress",
+      "otherAddress",
+      "lineItems"
+    ]
+  },
+  {
+    "name": "SalesQuotationAddress",
+    "fields": [
+      "salesQuotationId",
+      "type",
+      "customerId",
+      "salutation",
+      "title",
+      "firstName",
+      "lastName",
+      "company",
+      "additionalCompanyLine",
+      "street",
+      "additionalAddressLine",
+      "city",
+      "postalCode",
+      "state",
+      "countryIso",
+      "postId",
+      "emailAddress",
+      "phoneNumber",
+      "mobilePhoneNumber",
+      "fax",
+      "country",
+      "customsDocumentsRequired"
+    ]
+  },
+  {
+    "name": "SalesQuotationDepartureCountry",
+    "fields": [
+      "countryIso",
+      "currencyIso",
+      "currencyFactor",
+      "stateCode"
+    ]
+  },
+  {
+    "name": "SalesQuotationExternalDetails",
+    "fields": [
+      "externalCreatedDate",
+      "externalInvoiceType",
+      "externalSalesQuotationNumber"
+    ]
+  },
+  {
+    "name": "SalesQuotationLineItem",
+    "fields": [
+      "id",
+      "salesQuotationId",
+      "itemId",
+      "sku",
+      "isReserved",
+      "name",
+      "fnSku",
+      "type",
+      "quantity",
+      "salesUnit",
+      "salesPriceNet",
+      "discountPercent",
+      "purchasePriceNet",
+      "taxRate",
+      "taxClassId",
+      "taxCodeId",
+      "note",
+      "totalSalesPriceNet",
+      "totalSalesPriceGross",
+      "sortOrder",
+      "configurationItemType",
+      "billOfMaterialsType",
+      "standardName",
+      "hasUpload"
+    ]
+  },
+  {
+    "name": "SalesQuotationListItem",
+    "fields": [
+      "id",
+      "assignedUserId",
+      "customerId",
+      "shippingMethodId",
+      "companyId",
+      "paymentMethodId",
+      "salesQuotationNumber",
+      "externalSalesQuotationNumber",
+      "platformName",
+      "comment",
+      "currencyIso",
+      "currencyFactor",
+      "printDate",
+      "mailDate",
+      "processStatusName",
+      "extraWeight",
+      "shippingWeight",
+      "salesQuotationDate",
+      "departureCountryIso",
+      "departureCountryName",
+      "departureCountryCurrencyIso",
+      "departureCountryCurrencyFactor",
+      "billingAddressCompany",
+      "billingAddressFirstName",
+      "billingAddressLastName",
+      "billingAddressStreet",
+      "billingAddressAdditionalAddressLine",
+      "billingAddressPostalCode",
+      "billingAddressCity",
+      "billingAddressCountryName",
+      "billingAddressPhoneNumber",
+      "billingAddressFax",
+      "billingAddressEmailAddress",
+      "billingAddressAdditionalCompanyLine",
+      "billingAddressState",
+      "shipmentAddressCompany",
+      "shipmentAddressFirstName",
+      "shipmentAddressLastName",
+      "shipmentAddressStreet",
+      "shipmentAddressAdditionalAddressLine",
+      "shipmentAddressPostalCode",
+      "shipmentAddressCity",
+      "shipmentAddressCountryName",
+      "shipmentAddressPhoneNumber",
+      "shipmentAddressFax",
+      "shipmentAddressEmailAddress",
+      "shipmentAddressAdditionalCompanyLine",
+      "shipmentAddressState",
+      "assignedUserName",
+      "createdByUserName",
+      "companyName",
+      "salesChannelName",
+      "customerGroupName",
+      "paymentMethodName",
+      "shippingMethodName",
+      "customerNumber",
+      "totalGrossAmount",
+      "totalNetAmount",
+      "shippingCountryTotalGrossAmount",
+      "shippingCountryTotalNetAmount",
+      "customerComment",
+      "processColourCode",
+      "processColourName"
+    ]
+  },
+  {
+    "name": "SalesQuotationPaymentDetails",
+    "fields": [
+      "cashDiscount",
+      "cashDiscountDays",
+      "financingCosts",
+      "paymentDueDateInDays",
+      "currencyIso",
+      "currencyFactor"
+    ]
+  },
+  {
+    "name": "SalesQuotationPaymentInfo",
+    "fields": [
+      "accountHolder",
+      "bankName",
+      "bic",
+      "creditorId",
+      "dueDate",
+      "endToEndId",
+      "iban",
+      "mandateReference",
+      "paymentInfo",
+      "paymentInfoType",
+      "paymentReference",
+      "referenceEmail"
+    ]
+  },
+  {
+    "name": "SalesQuotationShippingDetails",
+    "fields": [
+      "deliveryFromDate",
+      "estimatedDeliveryDate",
+      "extraWeight",
+      "maxDeliveryDays",
+      "shippingDate",
+      "shippingPriority"
+    ]
+  },
+  {
+    "name": "SalesQuotationTaxDetails",
+    "fields": [
+      "specialTaxTreatment",
+      "taxSetting"
+    ]
+  },
+  {
+    "name": "SalesQuotationText",
+    "fields": [
+      "comment",
+      "customerComment",
+      "printText",
+      "processStatus"
+    ]
+  },
+  {
+    "name": "SaleschannelImages",
+    "fields": [
+      "saleschannelId",
+      "images"
+    ]
+  },
+  {
+    "name": "SerialNumberListItem",
+    "fields": [
+      "warehouseId",
+      "storageLocationId",
+      "itemId",
+      "serialNumber",
+      "isActive"
+    ]
+  },
+  {
+    "name": "ShippingAddress",
+    "fields": [
+      "company",
+      "salutation",
+      "title",
+      "firstName",
+      "lastName",
+      "street",
+      "zipCode",
+      "city",
+      "country",
+      "phone",
+      "addressSupplement",
+      "addressSupplement2",
+      "postId",
+      "mobile",
+      "mail",
+      "fax",
+      "state",
+      "iso",
+      "customsDocumentsRequired"
+    ]
+  },
+  {
+    "name": "ShippingBoxListItem",
+    "fields": [
+      "id",
+      "displayId",
+      "typeId",
+      "binLocationId",
+      "warehouseId",
+      "locked"
+    ]
+  },
+  {
+    "name": "ShippingBoxType",
+    "fields": [
+      "value",
+      "name"
+    ]
+  },
+  {
+    "name": "ShippingClassListItem",
+    "fields": [
+      "id",
+      "name"
+    ]
+  },
+  {
+    "name": "ShippingMethodLookupItem",
+    "fields": [
+      "id",
+      "name",
+      "isActive"
+    ]
+  },
+  {
+    "name": "StockMovementHistoryItem",
+    "fields": [
+      "articleNumber",
+      "articleName",
+      "quantity",
+      "bestBeforeDate",
+      "batchNumber",
+      "serialNumber",
+      "serialNumberCount",
+      "sourceBinLocation",
+      "targetBinLocation",
+      "sourceBoxDisplayId",
+      "targetBoxDisplayId",
+      "transferTypeId",
+      "transferTypeName",
+      "userName",
+      "timestamp",
+      "comment"
+    ]
+  },
+  {
+    "name": "StockReservationListItem",
+    "fields": [
+      "itemId",
+      "salesOrderId",
+      "customerId",
+      "amount",
+      "createdAt",
+      "ebayItemId",
+      "platform"
+    ]
+  },
+  {
+    "name": "StorageLocationListItem",
+    "fields": [
+      "id",
+      "name"
+    ]
+  },
+  {
+    "name": "Supplier",
+    "fields": [
+      "id",
+      "name",
+      "canDropship",
+      "currencyIso"
+    ]
+  },
+  {
+    "name": "SupplierPrice",
+    "fields": [
+      "fromQuantity",
+      "netPrice",
+      "usePercentageDiscount",
+      "percentageDiscount"
+    ]
+  },
+  {
+    "name": "TaxClass",
+    "fields": [
+      "id",
+      "isStandard",
+      "name",
+      "taxType"
+    ]
+  },
+  {
+    "name": "TaxClassWithTaxRate",
+    "fields": [
+      "id",
+      "name",
+      "isStandard",
+      "rate"
+    ]
+  },
+  {
+    "name": "TaxCode",
+    "fields": [
+      "id",
+      "cashDiscountAccount",
+      "generalLedgerAccount",
+      "isAutomatic",
+      "name",
+      "number"
+    ]
+  },
+  {
+    "name": "UpdateCategoryCommandResponse",
+    "fields": [
+      "categoryId"
+    ]
+  },
+  {
+    "name": "UpdateCustomerCommandResponse",
+    "fields": [
+      "customerId"
+    ]
+  },
+  {
+    "name": "UpdateSalesOrderCommandResponse",
+    "fields": [
+      "salesOrderId"
+    ]
+  },
+  {
+    "name": "Variation",
+    "fields": [
+      "variationId",
+      "position",
+      "descriptions",
+      "values",
+      "variationType"
+    ]
+  },
+  {
+    "name": "VariationValue",
+    "fields": [
+      "variationValueId",
+      "itemNumber",
+      "gtin",
+      "weightOffset",
+      "descriptions",
+      "surcharges",
+      "position",
+      "image"
+    ]
+  },
+  {
+    "name": "VariationValueSurcharges",
+    "fields": [
+      "defaultSurchargeNet",
+      "customerGroupSurcharges",
+      "salesChannelSurcharges"
+    ]
+  },
+  {
+    "name": "WarehouseAddress",
+    "fields": [
+      "id",
+      "name",
+      "shortcut",
+      "description",
+      "street",
+      "zipCode",
+      "city",
+      "country",
+      "phone",
+      "mail",
+      "addressSupplement"
+    ]
+  },
+  {
+    "name": "WarehouseListItem",
+    "fields": [
+      "id",
+      "name",
+      "active"
+    ]
+  },
+  {
+    "name": "WarehouseZoneListItem",
+    "fields": [
+      "zoneId",
+      "code",
+      "description",
+      "warehouseId",
+      "zoneType"
+    ]
+  },
+  {
+    "name": "WorkbenchResource",
+    "fields": [
+      "id",
+      "number",
+      "name",
+      "description",
+      "workbenchResourceTypeId",
+      "hostName",
+      "warehouseId",
+      "reservationMode",
+      "autoShowProcessParameterValuesInProduction",
+      "expiredComponentsUsage",
+      "replenishmentCreationStockReservationMode"
+    ]
+  },
+  {
+    "name": "WorkbenchResourceType",
+    "fields": [
+      "id",
+      "name"
+    ]
+  },
+  {
+    "name": "ZoneBinLocationItem",
+    "fields": [
+      "zoneId",
+      "binLocationId"
+    ]
+  },
+  {
+    "name": "ZoneType",
+    "fields": [
+      "value",
+      "name"
+    ]
+  }
+]

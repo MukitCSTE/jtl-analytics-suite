@@ -245,7 +245,7 @@ const ReorderAlertsView: React.FC<ReorderAlertsViewProps> = ({ appBridge }) => {
       <div className="flex items-center justify-between">
         <div>
           <Text type="h2" weight="bold">
-            Reorder Alerts
+            Stock Alerts
           </Text>
           <Text type="small" color="muted">
             Never run out of stock again. Smart inventory monitoring that tells you exactly what to order and when.

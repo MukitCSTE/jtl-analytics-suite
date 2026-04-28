@@ -9,7 +9,7 @@ const require = createRequire(import.meta.url);
 // https://vite.dev/config/
 export default defineConfig({
   server: {
-    port: 50142,
+    port: 5004,
     proxy: {
       '/api': {
         target: 'http://localhost:3005',

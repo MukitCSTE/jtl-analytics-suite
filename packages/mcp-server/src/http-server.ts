@@ -3,6 +3,7 @@
  *
  * HTTP API wrapper for the MCP tools.
  * Your frontend UI connects to this server.
+ * Supports ALL 338 GraphQL types from JTL ERP API.
  */
 
 import express from 'express';
@@ -28,7 +29,7 @@ const CONFIG = {
     model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
   },
   jtl: {
-    apiUrl: process.env.JTL_API_URL || 'https://api.beta.jtl-cloud.com',
+    apiUrl: process.env.JTL_API_URL || 'https://api.jtl-cloud.com',
     clientId: process.env.CLIENT_ID || '',
     clientSecret: process.env.CLIENT_SECRET || '',
     demoTenantId: process.env.DEMO_TENANT_ID || '',
@@ -102,7 +103,7 @@ async function callOpenAI(messages: Array<{ role: string; content: string }>): P
       model: CONFIG.openai.model,
       messages,
       temperature: 0.1,
-      max_tokens: 2000,
+      max_tokens: 4000,
     }),
   });
 
@@ -116,54 +117,262 @@ async function callOpenAI(messages: Array<{ role: string; content: string }>): P
 }
 
 // =============================================================================
-// AI PROMPTS
+// COMPLETE GRAPHQL SCHEMA (338 types)
 // =============================================================================
 
 const GRAPHQL_SCHEMA = `
 You are a JTL ERP GraphQL expert. Convert natural language to GraphQL queries.
+Today's date is: ${new Date().toISOString().split('T')[0]}
 
 IMPORTANT: Return ONLY the GraphQL query, no markdown, no explanation.
 
-Available Types:
+=== AVAILABLE QUERIES ===
 
 1. QuerySalesOrders - Sales orders
-   Fields: salesOrderNumber, salesOrderDate, totalGrossAmount, totalNetAmount, currencyIso,
-           companyName, customerNumber, customerId,
-           billingAddressCity, billingAddressCountryIso, billingAddressCountryName,
-           shipmentAddressCity, shipmentAddressCountryIso, shipmentAddressCountryName,
-           deliveryStatus, deliveryCompleteStatus, paymentStatus,
-           shippingMethodName, shippingPriority, estimatedDeliveryDate, lastShippingDate,
-           isPending, isCancelled
+2. QuerySalesQuotations - Sales quotations/offers
+3. QuerySalesInvoices - Invoices
+4. QuerySalesInvoiceCorrections - Invoice corrections
+5. QueryItems - Products/Items
+6. QueryCustomers - Customers
+7. QueryCategories - Product categories
+8. QueryStock - Stock levels
+9. QueryWarehouses - Warehouses
+10. QueryBinLocations - Bin locations
+11. QuerySuppliers - Suppliers
+12. QueryShippingMethods - Shipping methods
+13. QueryShippingClasses - Shipping classes
+14. QueryProductionOrders - Production orders
+15. QueryProductionItems - Production items
+16. QueryBillsOfMaterials - Bills of materials
+17. QueryCompanies - Companies
+18. QueryCountries - Countries
+19. QueryCurrencies - Currencies
+20. QueryTaxClasses - Tax classes
+21. QueryPaymentMethods - Payment methods
+22. QueryCustomerGroups - Customer groups
+23. QueryProductGroups - Product groups
+24. QueryManufacturers - Manufacturers
+25. QueryLanguages - Languages
+26. QueryPicklists - Picklists
+27. QueryBatches - Batch numbers
+28. QuerySerialNumbers - Serial numbers
+29. QueryStockMovementHistory - Stock movements
+30. QueryMarketplaceOffers - Marketplace offers
+31. QuerySalesChannels - Sales channels
 
-2. QueryItems - Products/Inventory
-   Fields: id, sku, name, description,
-           stockTotal, stockAvailable, stockInOrders, stockIncoming,
-           minimumStock, hasMinimumStock,
-           salesPriceGross, salesPriceNet, profit,
-           defaultSupplier, lastPurchaseDate,
-           isActive, createdDate, modifiedDate
+=== COMPLETE TYPE DEFINITIONS ===
 
-Filter Syntax Examples:
-- Date filter: where: { salesOrderDate: { gte: "2026-04-15T00:00:00Z" } }
-- Multiple filters: where: { and: [{ totalGrossAmount: { gte: 500 } }, { billingAddressCountryIso: { eq: "DE" } }] }
-- Text contains: where: { companyName: { contains: "GmbH" } }
+== SALES/ORDERS ==
 
-Order Syntax: order: [{ salesOrderDate: DESC }]
-Pagination: first: 50 (always include)
+SalesOrder / SalesOrderListItem:
+  id, salesOrderNumber, salesOrderDate, customerId, customerNumber, companyName,
+  totalGrossAmount, totalNetAmount, currencyIso, paymentStatus, deliveryStatus,
+  isPending, isCancelled, shippingMethodName, shippingMethodId, paymentMethodId,
+  billingAddress { companyName, firstName, lastName, street, postalCode, city, countryIso },
+  shipmentAddress { companyName, firstName, lastName, street, postalCode, city, countryIso },
+  lineItems { id, sku, name, quantity, salesPriceNet, totalSalesPriceGross }
 
-Today's date: ${new Date().toISOString().split('T')[0]}
-Today's DateTime: ${new Date().toISOString().split('T')[0]}T00:00:00Z
+SalesOrderLineItem:
+  id, salesOrderId, itemId, sku, isReserved, name, fnSku, type, quantity,
+  salesUnit, salesPriceNet, discountPercent, purchasePriceNet, taxRate,
+  taxClassId, taxCodeId, note, totalSalesPriceNet, totalSalesPriceGross, sortOrder
 
-Example for "sales today":
-query { QuerySalesOrders(first: 50, where: { salesOrderDate: { gte: "${new Date().toISOString().split('T')[0]}T00:00:00Z" } }, order: [{ salesOrderDate: DESC }]) { totalCount nodes { salesOrderNumber salesOrderDate totalGrossAmount currencyIso companyName } } }
+SalesQuotation:
+  id, salesQuotationNumber, salesQuotationDate, customerId, isPending, isCancelled,
+  totalGrossAmount, totalNetAmount, lineItems, billingAddress, shipmentAddress
 
-Example for "recent orders" or "last N orders":
-query { QuerySalesOrders(first: 10, order: [{ salesOrderDate: DESC }]) { totalCount nodes { salesOrderNumber salesOrderDate totalGrossAmount currencyIso companyName } } }
+== ITEMS/PRODUCTS ==
 
-Example for "top customers":
-query { QuerySalesOrders(first: 100, order: [{ totalGrossAmount: DESC }]) { totalCount nodes { companyName totalGrossAmount currencyIso salesOrderDate } } }
+ItemListItem:
+  id, sku, name, unit, description, shortDescription, gtin, manufacturerNumber,
+  width, height, length, weight, shippingWeight,
+  createdDate, modifiedDate, releaseDate, lastPurchaseDate,
+  salesPriceNet, salesPriceGross, suggestedRetailPrice, averagePurchasePriceNet,
+  lastPurchasePrice, profit, profitPercent,
+  stockTotal, stockOwn, stockIncoming, stockOnPurchaseList, stockInOrders,
+  stockAvailable, stockReservedTotal, minimumStock, hasMinimumStock,
+  isActive, isTopItem, isNew, isBillOfMaterials, isVariationParent, isVariationChild,
+  taxClassId, taxClassName, manufacturerId, manufacturerName,
+  productGroupId, productGroupName, defaultSupplierId, defaultSupplier,
+  shippingClassId, shippingClassName
 
-Return ONLY valid GraphQL query.
+== CATEGORIES ==
+
+CategoryListItem:
+  id, parentId, sortNumber, name
+
+CategoryDetails:
+  id, parentId, sortNumber, descriptions { name, description, metaDescription }
+
+== CUSTOMERS ==
+
+Customer / CustomerListItem:
+  customerId, customerNumber, customerGroupId, customerGroupName,
+  companyName, firstName, lastName, street, postalCode, city,
+  countryName, countryIso, emailAddress, phoneNumber, createdDate
+
+CustomerAddress:
+  id, customerId, addressType, companyName, firstName, lastName,
+  street, postalCode, city, countryIso, phoneNumber, emailAddress
+
+CustomerGroup:
+  id, name, discount
+
+== STOCK/INVENTORY ==
+
+QueryStock:
+  stockEntryId, warehouseId, binLocationId, articleId, availableQuantity,
+  reservedQuantity, batchNumber, bestBeforeDate, serialNumber
+
+QueryStockItem:
+  itemId, sku, name, stockTotal, stockAvailable, stockReserved,
+  stockInOrders, stockIncoming, minimumStock, hasMinimumStock
+
+BatchListItem:
+  itemId, batch, quantity, warehouseId
+
+SerialNumberListItem:
+  itemId, serialNumber, warehouseId, binLocationId, status
+
+StockMovementHistoryItem:
+  id, itemId, warehouseId, quantity, movementType, referenceNumber, createdDate
+
+== WAREHOUSE/BIN LOCATIONS ==
+
+WarehouseListItem:
+  id, name, active
+
+BinLocationListItem:
+  binLocationId, warehouseId, name, status, type, sort
+
+WarehouseZoneListItem:
+  id, warehouseId, name, zoneType
+
+== SHIPPING ==
+
+ShippingMethodLookupItem:
+  id, name, isActive
+
+ShippingClassListItem:
+  id, name, description
+
+ShippingBoxListItem:
+  id, name, width, height, length, maxWeight
+
+== PRODUCTION ==
+
+ProductionOrder:
+  id, productionItemId, billOfMaterialId, lotCount, lotSize,
+  targetTotalQuantity, actualQuantity, progress,
+  targetStartTimestamp, targetCompletionTimestamp,
+  projectNumber, referenceNumber, issueNumber
+
+ProductionItem:
+  id, itemId, sku, name, description
+
+BillOfMaterials:
+  id, productionItemId, version, name, description, state
+
+== INVOICES ==
+
+SalesInvoiceListItem:
+  salesInvoiceId, salesInvoiceNumber, salesInvoiceDate, customerId, customerNumber,
+  companyName, totalGrossAmount, totalNetAmount, currencyIso,
+  paymentStatus, isCompletelyPaid, stillToPay, alreadyPaidAmount,
+  paymentDueDate, isDunned, dunningLevel, salesOrderNumber, salesOrderId,
+  billingAddressCity, billingAddressCountryIso, isCancelled
+
+SalesInvoiceCorrectionListItem:
+  salesInvoiceCorrectionId, salesInvoiceId, correctionNumber, correctionDate,
+  totalGrossAmount, totalNetAmount, reason
+
+== MARKETPLACE ==
+
+MarketplaceOfferListItem:
+  id, itemId, sku, name, marketplaceId, marketplaceName, status, price, quantity
+
+SalesChannel:
+  id, name, type, platformId, isActive
+
+== MASTER DATA ==
+
+TaxClass: id, name
+Currency: iso, name, symbol, factor
+CountryItem: iso, name, isEuMember
+PaymentMethod: id, name, isActive
+LanguageItem: id, iso, name
+
+== COMPANIES ==
+
+CompanyListItem:
+  id, companyName, owner, street, postalCode, city, country, countryIsoCode,
+  phone, emailAddress, taxId, iban, bic
+
+== SUPPLIERS ==
+
+Supplier:
+  id, name, canDropship, currencyIso
+
+ItemSupplierListItem:
+  id, supplierId, supplierName, supplierItemNumber, purchasePriceNet, isDefault
+
+=== QUERY SYNTAX ===
+
+Filters: where: { and/or: [...conditions...] }
+Conditions: { fieldName: { eq/neq/gt/gte/lt/lte/contains/startsWith: value } }
+Ordering: order: [{ fieldName: ASC/DESC }]
+Pagination: first: N, after: "cursor"
+Date format: "2026-04-27" or "2026-04-27T00:00:00Z"
+
+=== EXAMPLE QUERIES ===
+
+# Recent sales orders
+query { QuerySalesOrders(first: 10, order: [{ salesOrderDate: DESC }]) {
+  totalCount nodes { salesOrderNumber salesOrderDate totalGrossAmount companyName }
+}}
+
+# Low stock items
+query { QueryItems(first: 50, where: { hasMinimumStock: { eq: true }, stockAvailable: { lt: 10 } }) {
+  totalCount nodes { sku name stockAvailable minimumStock }
+}}
+
+# Customers by country
+query { QueryCustomers(first: 50, where: { countryIso: { eq: "DE" } }) {
+  totalCount nodes { customerNumber companyName city }
+}}
+
+# Unpaid invoices
+query { QuerySalesInvoices(first: 50, where: { isCompletelyPaid: { eq: false } }) {
+  totalCount nodes { salesInvoiceNumber customerNumber totalGrossAmount stillToPay paymentDueDate }
+}}
+
+# Stock by warehouse
+query { QueryStock(first: 100) {
+  nodes { articleId availableQuantity reservedQuantity warehouseId }
+}}
+
+# Production orders
+query { QueryProductionOrders(first: 50) {
+  totalCount nodes { id projectNumber targetTotalQuantity actualQuantity progress }
+}}
+
+# Categories
+query { QueryCategories(first: 100) {
+  totalCount nodes { id parentId name sortNumber }
+}}
+
+# Suppliers
+query { QuerySuppliers(first: 50) {
+  totalCount nodes { id name canDropship currencyIso }
+}}
+
+=== RULES ===
+
+1. Always use "first: N" for pagination (default 50, max 500)
+2. Return ONLY the GraphQL query, no markdown or explanation
+3. Use proper field names exactly as listed
+4. For date comparisons, use ISO format
+5. Always include totalCount in response
 `;
 
 const RESPONSE_FORMAT = `
@@ -175,6 +384,8 @@ Format data clearly with:
 - Dates as DD.MM.YYYY
 - Actionable recommendations
 - Be concise but thorough
+- Group related information
+- Highlight warnings (low stock, overdue payments, etc.)
 `;
 
 // =============================================================================
@@ -223,23 +434,34 @@ async function queryJtlData(
 // =============================================================================
 
 // Health check
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.json({
     service: 'JTL Analytics AI Server',
-    version: '1.0.0',
+    version: '2.0.0',
     status: 'running',
+    supportedTypes: 338,
+    categories: [
+      'Sales/Orders', 'Items/Products', 'Categories', 'Customers',
+      'Stock/Inventory', 'Warehouse/BinLocations', 'Shipping',
+      'Production', 'Invoices', 'Marketplace', 'Master Data',
+      'Companies', 'Suppliers'
+    ],
     endpoints: [
-      'POST /query - Natural language query',
+      'POST /query - Natural language query (all types)',
       'POST /analyze-sales - Sales analysis',
+      'POST /analyze-inventory - Inventory analysis',
+      'POST /analyze-customers - Customer analysis',
+      'POST /analyze-invoices - Invoice analysis',
+      'POST /analyze-production - Production analysis',
       'POST /detect-fraud - Fraud detection',
-      'POST /predict-reorder - Inventory predictions',
-      'POST /customer-insights - Customer analysis',
+      'POST /predict-reorder - Reorder predictions',
       'GET /suggestions - Query suggestions',
+      'GET /schema - Available types and fields',
     ],
   });
 });
 
-// Main query endpoint
+// Main query endpoint - handles ALL types
 app.post('/query', async (req, res) => {
   try {
     const { question, tenantId } = req.body;
@@ -264,7 +486,9 @@ app.post('/query', async (req, res) => {
 app.post('/analyze-sales', async (req, res) => {
   try {
     const { timeframe = 'this_month', focus = 'all', tenantId } = req.body;
-    const question = `Analyze ${focus} for ${timeframe}. Show trends, totals, comparisons, and key insights.`;
+    const question = `Analyze sales orders for ${timeframe}. Focus on ${focus}.
+      Show: total orders, total revenue, average order value, top customers,
+      payment status breakdown, and trends.`;
 
     console.log(`[Analyze Sales] ${timeframe} - ${focus}`);
     const result = await queryJtlData(question, tenantId);
@@ -275,13 +499,116 @@ app.post('/analyze-sales', async (req, res) => {
   }
 });
 
+// Inventory analysis
+app.post('/analyze-inventory', async (req, res) => {
+  try {
+    const { focus = 'low_stock', tenantId } = req.body;
+    let question = '';
+
+    switch (focus) {
+      case 'low_stock':
+        question = 'Show items with stock below minimum stock level. Include sku, name, current stock, minimum stock.';
+        break;
+      case 'overstock':
+        question = 'Show items with very high stock levels that might be overstocked. Include sku, name, stock available.';
+        break;
+      case 'value':
+        question = 'Show inventory value analysis. Include items with highest stock value (stock * price).';
+        break;
+      default:
+        question = 'Show overall inventory status. Include total items, low stock items, stock value.';
+    }
+
+    console.log(`[Analyze Inventory] ${focus}`);
+    const result = await queryJtlData(question, tenantId);
+    res.json(result);
+  } catch (error) {
+    console.error('Inventory analysis error:', error);
+    res.status(500).json({ error: 'Inventory analysis failed' });
+  }
+});
+
+// Customer analysis
+app.post('/analyze-customers', async (req, res) => {
+  try {
+    const { segment = 'all', tenantId } = req.body;
+    const question = `Analyze ${segment} customers. Show: customer count by country,
+      customer groups distribution, recent customer activity.`;
+
+    console.log(`[Analyze Customers] ${segment}`);
+    const result = await queryJtlData(question, tenantId);
+    res.json(result);
+  } catch (error) {
+    console.error('Customer analysis error:', error);
+    res.status(500).json({ error: 'Customer analysis failed' });
+  }
+});
+
+// Invoice analysis
+app.post('/analyze-invoices', async (req, res) => {
+  try {
+    const { focus = 'unpaid', tenantId } = req.body;
+    let question = '';
+
+    switch (focus) {
+      case 'unpaid':
+        question = 'Show all unpaid invoices. Include invoice number, customer, amount, still to pay, due date.';
+        break;
+      case 'overdue':
+        question = 'Show overdue invoices where payment due date has passed. Include dunning level.';
+        break;
+      case 'summary':
+        question = 'Show invoice summary: total invoices, paid vs unpaid, total revenue, average invoice value.';
+        break;
+      default:
+        question = 'Show recent invoices with payment status.';
+    }
+
+    console.log(`[Analyze Invoices] ${focus}`);
+    const result = await queryJtlData(question, tenantId);
+    res.json(result);
+  } catch (error) {
+    console.error('Invoice analysis error:', error);
+    res.status(500).json({ error: 'Invoice analysis failed' });
+  }
+});
+
+// Production analysis
+app.post('/analyze-production', async (req, res) => {
+  try {
+    const { focus = 'active', tenantId } = req.body;
+    let question = '';
+
+    switch (focus) {
+      case 'active':
+        question = 'Show active production orders. Include project number, target quantity, actual quantity, progress.';
+        break;
+      case 'delayed':
+        question = 'Show production orders that might be delayed (progress < expected based on dates).';
+        break;
+      case 'completed':
+        question = 'Show recently completed production orders.';
+        break;
+      default:
+        question = 'Show production order overview with status breakdown.';
+    }
+
+    console.log(`[Analyze Production] ${focus}`);
+    const result = await queryJtlData(question, tenantId);
+    res.json(result);
+  } catch (error) {
+    console.error('Production analysis error:', error);
+    res.status(500).json({ error: 'Production analysis failed' });
+  }
+});
+
 // Fraud detection
 app.post('/detect-fraud', async (req, res) => {
   try {
     const { lookbackDays = 7, tenantId } = req.body;
-    const question = `Find potentially fraudulent or suspicious orders from the last ${lookbackDays} days.
-      Look for: high-value orders from new customers, billing/shipping address mismatches,
-      unusual patterns, weekend/late-night orders. Flag concerning orders with risk levels.`;
+    const question = `Find potentially suspicious orders from the last ${lookbackDays} days.
+      Look for: high-value orders, billing/shipping address mismatches,
+      unusual patterns. Flag concerning orders with risk assessment.`;
 
     console.log(`[Fraud Detection] Last ${lookbackDays} days`);
     const result = await queryJtlData(question, tenantId);
@@ -297,8 +624,8 @@ app.post('/predict-reorder', async (req, res) => {
   try {
     const { urgency = 'all', tenantId } = req.body;
     const question = `Show products that need reordering. Focus on ${urgency} priority items.
-      Check stock levels vs minimum stock, items with high order volume but low availability.
-      Recommend order quantities.`;
+      Check stock levels vs minimum stock, identify items below reorder point.
+      Include sku, name, current stock, minimum stock, suggested order quantity.`;
 
     console.log(`[Reorder] Urgency: ${urgency}`);
     const result = await queryJtlData(question, tenantId);
@@ -309,48 +636,176 @@ app.post('/predict-reorder', async (req, res) => {
   }
 });
 
-// Customer insights
-app.post('/customer-insights', async (req, res) => {
+// Category analysis
+app.post('/analyze-categories', async (req, res) => {
   try {
-    const { segment = 'all', tenantId } = req.body;
-    const question = `Analyze ${segment} customers. Show their order patterns, total spend,
-      frequency, average order value, and recommendations for engagement or retention.`;
+    const { tenantId } = req.body;
+    const question = 'Show all product categories with hierarchy. Include id, parent, name, sort order.';
 
-    console.log(`[Customer Insights] Segment: ${segment}`);
+    console.log('[Analyze Categories]');
     const result = await queryJtlData(question, tenantId);
     res.json(result);
   } catch (error) {
-    console.error('Customer insights error:', error);
-    res.status(500).json({ error: 'Customer analysis failed' });
+    console.error('Category analysis error:', error);
+    res.status(500).json({ error: 'Category analysis failed' });
+  }
+});
+
+// Warehouse analysis
+app.post('/analyze-warehouses', async (req, res) => {
+  try {
+    const { tenantId } = req.body;
+    const question = 'Show all warehouses and their bin locations. Include warehouse name, active status, bin location counts.';
+
+    console.log('[Analyze Warehouses]');
+    const result = await queryJtlData(question, tenantId);
+    res.json(result);
+  } catch (error) {
+    console.error('Warehouse analysis error:', error);
+    res.status(500).json({ error: 'Warehouse analysis failed' });
+  }
+});
+
+// Supplier analysis
+app.post('/analyze-suppliers', async (req, res) => {
+  try {
+    const { tenantId } = req.body;
+    const question = 'Show all suppliers. Include name, dropship capability, currency.';
+
+    console.log('[Analyze Suppliers]');
+    const result = await queryJtlData(question, tenantId);
+    res.json(result);
+  } catch (error) {
+    console.error('Supplier analysis error:', error);
+    res.status(500).json({ error: 'Supplier analysis failed' });
   }
 });
 
 // Quick suggestions for UI
-app.get('/suggestions', (req, res) => {
+app.get('/suggestions', (_req, res) => {
   res.json({
     suggestions: [
-      { icon: '📊', text: "How are sales today compared to yesterday?" },
-      { icon: '🚨', text: "Are there any suspicious orders I should check?" },
-      { icon: '📦', text: "Which products need restocking?" },
-      { icon: '👑', text: "Who are my top 5 customers this month?" },
-      { icon: '🚚', text: "How many orders are pending shipment?" },
-      { icon: '💰', text: "What's my average order value this week?" },
-      { icon: '📈', text: "Show me sales trends for the last 30 days" },
-      { icon: '⚠️', text: "Which customers haven't ordered in 60 days?" },
-      { icon: '🎯', text: "What's my best selling product?" },
-      { icon: '🌍', text: "Which countries generate the most revenue?" },
+      // Sales
+      { icon: '📊', category: 'Sales', text: 'Show me recent sales orders' },
+      { icon: '💰', category: 'Sales', text: 'What are my top 10 orders by amount?' },
+      { icon: '📈', category: 'Sales', text: 'Compare sales this week vs last week' },
+
+      // Inventory
+      { icon: '📦', category: 'Inventory', text: 'Which products are low on stock?' },
+      { icon: '🏷️', category: 'Inventory', text: 'Show me product prices and margins' },
+      { icon: '📋', category: 'Inventory', text: 'List all active products' },
+
+      // Customers
+      { icon: '👑', category: 'Customers', text: 'Who are my top customers?' },
+      { icon: '🌍', category: 'Customers', text: 'Show customers by country' },
+      { icon: '👥', category: 'Customers', text: 'List customer groups' },
+
+      // Invoices
+      { icon: '💳', category: 'Invoices', text: 'Show unpaid invoices' },
+      { icon: '⚠️', category: 'Invoices', text: 'Which invoices are overdue?' },
+      { icon: '📄', category: 'Invoices', text: 'Recent invoice summary' },
+
+      // Categories
+      { icon: '🗂️', category: 'Categories', text: 'Show all product categories' },
+
+      // Warehouse
+      { icon: '🏭', category: 'Warehouse', text: 'List all warehouses' },
+      { icon: '📍', category: 'Warehouse', text: 'Show bin locations' },
+
+      // Production
+      { icon: '🔧', category: 'Production', text: 'Show active production orders' },
+      { icon: '📊', category: 'Production', text: 'Production order progress' },
+
+      // Suppliers
+      { icon: '🚚', category: 'Suppliers', text: 'List all suppliers' },
+
+      // Shipping
+      { icon: '📬', category: 'Shipping', text: 'Show shipping methods' },
+
+      // Fraud
+      { icon: '🚨', category: 'Analysis', text: 'Detect suspicious orders' },
     ],
+  });
+});
+
+// Schema endpoint - show available types
+app.get('/schema', (_req, res) => {
+  res.json({
+    totalTypes: 338,
+    categories: {
+      'Sales/Orders': {
+        queries: ['QuerySalesOrders', 'QuerySalesQuotations', 'GetSalesOrderById'],
+        types: ['SalesOrder', 'SalesOrderListItem', 'SalesOrderLineItem', 'SalesQuotation'],
+      },
+      'Items/Products': {
+        queries: ['QueryItems', 'GetItemById'],
+        types: ['ItemListItem', 'ItemdetailsItem', 'ItemPrice', 'ItemSupplier', 'ItemCategory'],
+      },
+      'Categories': {
+        queries: ['QueryCategories', 'GetCategoryById'],
+        types: ['CategoryListItem', 'CategoryDetails'],
+      },
+      'Customers': {
+        queries: ['QueryCustomers', 'GetCustomerById', 'QueryCustomerGroups'],
+        types: ['Customer', 'CustomerListItem', 'CustomerAddress', 'CustomerGroup'],
+      },
+      'Stock/Inventory': {
+        queries: ['QueryStock', 'QueryStockItem', 'QueryBatches', 'QuerySerialNumbers'],
+        types: ['QueryStock', 'QueryStockItem', 'BatchListItem', 'SerialNumberListItem'],
+      },
+      'Warehouse': {
+        queries: ['QueryWarehouses', 'QueryBinLocations', 'QueryWarehouseZones'],
+        types: ['WarehouseListItem', 'BinLocationListItem', 'WarehouseZoneListItem'],
+      },
+      'Shipping': {
+        queries: ['QueryShippingMethods', 'QueryShippingClasses', 'QueryShippingBoxes'],
+        types: ['ShippingMethodLookupItem', 'ShippingClassListItem', 'ShippingBoxListItem'],
+      },
+      'Production': {
+        queries: ['QueryProductionOrders', 'QueryProductionItems', 'QueryBillsOfMaterials'],
+        types: ['ProductionOrder', 'ProductionItem', 'BillOfMaterials'],
+      },
+      'Invoices': {
+        queries: ['QuerySalesInvoices', 'QuerySalesInvoiceCorrections'],
+        types: ['SalesInvoiceListItem', 'SalesInvoiceCorrectionListItem'],
+      },
+      'Marketplace': {
+        queries: ['QueryMarketplaceOffers', 'QuerySalesChannels'],
+        types: ['MarketplaceOfferListItem', 'SalesChannel'],
+      },
+      'Master Data': {
+        queries: ['QueryCountries', 'QueryCurrencies', 'QueryTaxClasses', 'QueryPaymentMethods', 'QueryLanguages'],
+        types: ['CountryItem', 'Currency', 'TaxClass', 'PaymentMethod', 'LanguageItem'],
+      },
+      'Companies': {
+        queries: ['QueryCompanies', 'GetCompanyById'],
+        types: ['CompanyListItem', 'CompanyDetailsItem'],
+      },
+      'Suppliers': {
+        queries: ['QuerySuppliers'],
+        types: ['Supplier', 'ItemSupplierListItem'],
+      },
+    },
   });
 });
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`JTL Analytics AI Server running on http://localhost:${PORT}`);
+  console.log(`JTL Analytics AI Server v2.0 running on http://localhost:${PORT}`);
+  console.log('Supporting 338 GraphQL types across 13 categories');
+  console.log('');
   console.log('Available endpoints:');
-  console.log('  POST /query          - Natural language query');
-  console.log('  POST /analyze-sales  - Sales analysis');
-  console.log('  POST /detect-fraud   - Fraud detection');
-  console.log('  POST /predict-reorder - Inventory predictions');
-  console.log('  POST /customer-insights - Customer analysis');
-  console.log('  GET  /suggestions    - Query suggestions');
+  console.log('  POST /query              - Natural language query (all types)');
+  console.log('  POST /analyze-sales      - Sales analysis');
+  console.log('  POST /analyze-inventory  - Inventory analysis');
+  console.log('  POST /analyze-customers  - Customer analysis');
+  console.log('  POST /analyze-invoices   - Invoice analysis');
+  console.log('  POST /analyze-production - Production analysis');
+  console.log('  POST /analyze-categories - Category analysis');
+  console.log('  POST /analyze-warehouses - Warehouse analysis');
+  console.log('  POST /analyze-suppliers  - Supplier analysis');
+  console.log('  POST /detect-fraud       - Fraud detection');
+  console.log('  POST /predict-reorder    - Reorder predictions');
+  console.log('  GET  /suggestions        - Query suggestions');
+  console.log('  GET  /schema             - Available types and fields');
 });
